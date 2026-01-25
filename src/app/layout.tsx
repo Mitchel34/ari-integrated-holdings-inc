@@ -12,7 +12,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Ari Integrated Holdings Inc.",
-  description: "Building the Strategic Reserve of the Digital Age.",
+  description: "Ari Integrated Holdings Inc. is building the strategic reserve of the digital age.",
 };
 
 export default function RootLayout({

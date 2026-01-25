@@ -8,7 +8,7 @@ export function Footer() {
             <Container>
                 <div className={styles.content}>
                     <div className={styles.column}>
-                        <h3>Ari Integrated</h3>
+                        <h3>Ari Integrated Holdings Inc.</h3>
                         <p>Building the Strategic Reserve of the Digital Age.</p>
                     </div>
                     <div className={styles.column}>

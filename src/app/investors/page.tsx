@@ -13,7 +13,7 @@ export default function InvestorsPage() {
             <div style={{ maxWidth: '800px', margin: '0 auto 4rem' }}>
                 <h2>Shareholder Structure</h2>
                 <p>
-                    Ari Integrated is currently a closely held private company. Our structure allows us
+                    Ari Integrated Holdings Inc. is currently a closely held private company. Our structure allows us
                     to take a long-term view, aligned with a risk-aware approach to digital asset markets.
                     We are committed to robust disclosure practices and institutional-grade transparency.
                 </p>

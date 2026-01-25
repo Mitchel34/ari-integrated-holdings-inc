@@ -24,7 +24,7 @@ export function Navbar() {
         <nav className={styles.navbar} aria-label="Primary">
             <Container className={styles.container}>
                 <div className={styles.logo}>
-                    <Link href="/">Ari Integrated</Link>
+                    <Link href="/">Ari Integrated Holdings Inc.</Link>
                 </div>
                 <div className={styles.links}>
                     {navItems.map((item) => {

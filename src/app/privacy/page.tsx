@@ -12,7 +12,7 @@ export default function PrivacyPage() {
             <div className={styles.textBlock}>
                 <h2>Policy Overview</h2>
                 <p>
-                    We are preparing a full privacy policy for the Ari Integrated investor experience.
+                    We are preparing a full privacy policy for the Ari Integrated Holdings Inc. investor experience.
                     In the meantime, we limit data collection to what is necessary for communications
                     and do not sell personal information.
                 </p>

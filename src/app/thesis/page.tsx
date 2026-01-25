@@ -13,7 +13,7 @@ export default function ThesisPage() {
                 <div className={styles.textBlock}>
                     <h2>The Case for Digital Assets</h2>
                     <p>
-                        Ari Integrated is founded on the conviction that Bitcoin, Ethereum, and Solana
+                        Ari Integrated Holdings Inc. is founded on the conviction that Bitcoin, Ethereum, and Solana
                         are not only high-potential investments but also strategic reserve assets
                         in an increasingly digital financial system.
                     </p>

@@ -13,7 +13,7 @@ export default function HarmonyPage() {
             <div style={{ maxWidth: '800px', margin: '0 auto', marginBottom: '4rem' }}>
                 <p>
                     Harmony Trading App is the Company’s operating subsidiary. Its primary purpose
-                    is to generate modest, steady revenue to cover Ari Integrated’s operating expenses,
+                    is to generate modest, steady revenue to cover Ari Integrated Holdings Inc.’s operating expenses,
                     avoiding the need to liquidate core treasury assets.
                 </p>
             </div>
