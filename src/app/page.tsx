@@ -1,66 +1,61 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import Link from 'next/link';
+import { Container } from '../components/ui/Container';
+import { Button } from '../components/ui/Button';
+import { Card } from '../components/ui/Card';
+import styles from './page.module.css';
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
+    <>
+      <section className={styles.hero}>
+        <Container>
+          <h1>Building the Strategic Reserve<br />of the Digital Age</h1>
           <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
+            Ari Integrated Holdings Inc. aims to bridge traditional equity markets
+            with the high-growth potential of premier digital assets.
           </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+          <div className={styles.heroActions}>
+            <Link href="/thesis">
+              <Button size="lg">Read Our Thesis</Button>
+            </Link>
+            <Link href="/contact">
+              <Button variant="outline" size="lg">Contact Us</Button>
+            </Link>
+          </div>
+        </Container>
+      </section>
+
+      <section className={styles.section}>
+        <Container>
+          <div className={styles.sectionHeader}>
+            <h2>Strategic Pillars</h2>
+            <p>Our business model rests on three core tenets.</p>
+          </div>
+          <div className={styles.grid}>
+            <Card variant="glass">
+              <h3 className={styles.cardTitle}>Digital Treasury</h3>
+              <p className={styles.cardText}>
+                Accumulating high-conviction assets: Bitcoin (BTC), Ethereum (ETH), and Solana (SOL).
+                We view these as foundational assets for the future digital economy.
+              </p>
+            </Card>
+            <Card variant="glass">
+              <h3 className={styles.cardTitle}>AI-Driven Decisions</h3>
+              <p className={styles.cardText}>
+                Leveraging proprietary AI to inform capital allocation and risk management.
+                Our &ldquo;Copilot&rdquo; analyzes on-chain data to support decision-making (not guarantee results).
+              </p>
+            </Card>
+            <Card variant="glass">
+              <h3 className={styles.cardTitle}>Regulated Exposure</h3>
+              <p className={styles.cardText}>
+                Aiming to provide investors with secure, equity-based exposure to crypto assets
+                without the complexities of self-custody or regulatory hurdles.
+              </p>
+            </Card>
+          </div>
+        </Container>
+      </section>
+    </>
   );
 }

@@ -1,0 +1,48 @@
+.footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 4rem 0 2rem;
+    margin-top: 4rem;
+    background-color: var(--color-secondary-bg);
+}
+
+.content {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 4rem;
+    margin-bottom: 3rem;
+}
+
+.column h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.column h4 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    color: var(--color-text-muted);
+}
+
+.column p {
+    color: var(--color-text-muted);
+    max-width: 300px;
+}
+
+.column a {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+}
+
+.column a:hover {
+    color: var(--color-text-main);
+}
+
+.copyright {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 2rem;
+}
