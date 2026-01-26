@@ -1,13 +1,21 @@
 :root {
-  /* Color Palette - Ari Integrated Holdings Inc. */
-  --color-primary-bg: #050507; /* Deepest Navy/Black */
-  --color-secondary-bg: #0a0b10; /* Slightly lighter for cards */
+  /* Color Palette - Ari Integrated Holdings Inc. - Refined Brightness */
+  --color-primary-bg: #0f1116;
+  /* Lighter Deep Navy/Charcoal (was #050507) */
+  --color-secondary-bg: #181b21;
+  /* Significantly lighter for cards (was #0a0b10) */
   --color-text-main: #ffffff;
-  --color-text-muted: #a1a1aa;
-  
-  --color-accent-gold: #d4af37; /* Gold/Bronze for Bitcoin/Equity */
-  --color-accent-blue: #3b82f6; /* Electric Blue for AI/Tech */
-  --color-accent-purple: #8b5cf6; /* Solana/Gradient */
+  --color-text-muted: #cbd5e1;
+  /* Lighter gray for better readability (was #a1a1aa) */
+
+  --color-accent-gold: #e2c044;
+  /* Brighter Gold */
+  --color-accent-blue: #60a5fa;
+  /* Brighter Blue */
+  --color-accent-purple: #a78bfa;
+  /* Brighter Purple */
+
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   --font-sans: var(--font-inter);
 }
@@ -32,7 +40,12 @@ main {
   flex: 1;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 0;
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -54,6 +67,23 @@ button:focus-visible {
   outline-offset: 3px;
 }
 
-*{
+* {
   box-sizing: border-box;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-entrance {
+  animation: fadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
