@@ -7,14 +7,15 @@ export default function HarmonyPage() {
         <Container className={styles.section}>
             <div className={styles.sectionHeader}>
                 <h1>Harmony Trading App</h1>
-                <p>Our Operating Subsidiary</p>
+                <p>Supporting Subsidiary for Operational Stability</p>
             </div>
 
-            <div style={{ maxWidth: '800px', margin: '0 auto', marginBottom: '4rem' }}>
+            <div className={styles.textBlock}>
+                <h2>Purpose</h2>
                 <p>
-                    Harmony Trading App is the Company’s operating subsidiary. Its primary purpose
-                    is to generate modest, steady revenue to cover Ari Integrated Holdings Inc.’s operating expenses,
-                    avoiding the need to liquidate core treasury assets.
+                    Harmony Trading App is Ari Integrated Holdings Inc.&rsquo;s operating subsidiary that handles
+                    limited trading activity. Its primary role is to generate modest, steady revenue to cover
+                    operating expenses and reduce the need to liquidate core treasury assets.
                 </p>
             </div>
 
@@ -22,22 +23,22 @@ export default function HarmonyPage() {
                 <Card>
                     <h3>Proprietary Platform</h3>
                     <p>
-                        An internal tool employing algorithmic and AI-driven trading strategies.
-                        Not customer-facing, but a powerhouse for our internal capital efficiency.
+                        An internal trading application employing algorithmic and AI-driven strategies. It is not
+                        a customer-facing product today, but may evolve in the future.
                     </p>
                 </Card>
                 <Card>
-                    <h3>Limited Scope</h3>
+                    <h3>Limited Scope & Risk Controls</h3>
                     <p>
-                        Only a small portion of assets is allocated to trading. The mandate is capital
-                        preservation while earning moderate returns to &ldquo;keep the lights on.&rdquo;
+                        A small portion of assets is allocated to trading with strict risk limits to protect
+                        the core BTC, ETH, and SOL treasury holdings.
                     </p>
                 </Card>
                 <Card>
                     <h3>AI Sandbox</h3>
                     <p>
-                        Harmony serves as a sandbox for our AI development. Insights from trading algorithms
-                        feed back into our broader treasury allocation strategies.
+                        Harmony serves as a testing ground for analytics and models that inform broader
+                        treasury allocation decisions.
                     </p>
                 </Card>
             </div>

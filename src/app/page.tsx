@@ -59,8 +59,8 @@ export default function Home() {
             <Card variant="glass">
               <h3 className={styles.cardTitle}>Digital Treasury</h3>
               <p className={styles.cardText}>
-                Accumulating high-conviction assets: Bitcoin (BTC), Ethereum (ETH), and Solana (SOL).
-                We view these as foundational assets for the future digital economy.
+                A buy-and-hold balance-sheet strategy focused on Bitcoin (BTC), Ethereum (ETH), and Solana (SOL),
+                held as long-term treasury assets rather than speculative trading positions.
               </p>
             </Card>
             <Card variant="glass">
@@ -74,7 +74,7 @@ export default function Home() {
               <h3 className={styles.cardTitle}>Regulated Exposure</h3>
               <p className={styles.cardText}>
                 Aiming to provide investors with secure, equity-based exposure to crypto assets
-                without the complexities of self-custody or regulatory hurdles.
+                without the complexities of self-custody, with a long-term path toward public-market access.
               </p>
             </Card>
           </div>
