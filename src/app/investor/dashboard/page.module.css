@@ -31,40 +31,18 @@
     justify-content: center;
     width: 72px;
     height: 72px;
-    background: linear-gradient(135deg, var(--color-accent-purple), #7c3aed);
+    background: linear-gradient(135deg, var(--color-accent-gold), var(--color-accent-gold-dim));
     border-radius: 16px;
     font-size: 1.75rem;
     font-weight: 700;
-    color: white;
-    box-shadow: 0 8px 24px rgba(167, 139, 250, 0.3);
-}
-
-.welcomeText {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.roleBadge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.25rem 0.75rem;
-    background: rgba(167, 139, 250, 0.2);
-    border: 1px solid rgba(167, 139, 250, 0.4);
-    border-radius: 100px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--color-accent-purple);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    width: fit-content;
-    margin-bottom: 0.25rem;
+    color: var(--color-primary-bg);
+    box-shadow: 0 8px 24px rgba(226, 192, 68, 0.25);
 }
 
 .welcomeText h1 {
     font-size: 1.75rem;
     font-weight: 700;
-    margin-bottom: 0.125rem;
+    margin-bottom: 0.375rem;
     background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -98,7 +76,7 @@
 
 .statCard:hover {
     background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(167, 139, 250, 0.3);
+    border-color: rgba(226, 192, 68, 0.3);
     transform: translateY(-2px);
 }
 
@@ -108,14 +86,14 @@
     justify-content: center;
     width: 48px;
     height: 48px;
-    background: rgba(167, 139, 250, 0.15);
+    background: rgba(226, 192, 68, 0.15);
     border-radius: 12px;
 }
 
 .statIcon svg {
     width: 24px;
     height: 24px;
-    color: var(--color-accent-purple);
+    color: var(--color-accent-gold);
 }
 
 .statContent {
@@ -155,7 +133,7 @@
     font-size: 1.25rem;
     font-weight: 600;
     margin-bottom: 0.25rem;
-    background: linear-gradient(135deg, var(--color-accent-purple) 0%, #c4b5fd 100%);
+    background: linear-gradient(135deg, var(--color-accent-gold) 0%, #f5d76e 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -181,10 +159,6 @@
     .welcomeHeader {
         flex-direction: column;
         text-align: center;
-    }
-
-    .welcomeText {
-        align-items: center;
     }
 
     .welcomeText h1 {

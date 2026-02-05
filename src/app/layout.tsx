@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Navbar } from "../components/layout/Navbar";
 import { Footer } from "../components/layout/Footer";
+import { AuthSessionProvider } from "../components/auth/AuthSessionProvider";
+import { CryptoBackground } from "../components/auth/CryptoBackground";
 import "./globals.css";
 
 const inter = Inter({
@@ -23,11 +25,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body suppressHydrationWarning>
-        <div className="layout-wrapper">
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-        </div>
+        <AuthSessionProvider>
+          <CryptoBackground />
+          <div className="layout-wrapper">
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+          </div>
+        </AuthSessionProvider>
       </body>
     </html>
   );

@@ -10,10 +10,17 @@
 
   --color-accent-gold: #e2c044;
   /* Brighter Gold */
+  --color-accent-gold-bright: #f5d76e;
+  --color-accent-gold-dim: #b8941f;
   --color-accent-blue: #60a5fa;
   /* Brighter Blue */
   --color-accent-purple: #a78bfa;
   /* Brighter Purple */
+
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-highlight: rgba(255, 255, 255, 0.15);
 
   --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -34,6 +41,8 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 1;
 }
 
 main {

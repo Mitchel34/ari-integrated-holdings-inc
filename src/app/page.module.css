@@ -6,7 +6,9 @@
   align-items: center;
   text-align: center;
   padding: 4rem 0;
-  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(226, 192, 68, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(96, 165, 250, 0.06) 0%, transparent 50%);
 }
 
 .heroContent {
@@ -22,9 +24,10 @@
   font-size: 3.5rem;
   line-height: 1.1;
   margin-bottom: 0;
-  background: linear-gradient(to right, #fff, #94a3b8);
+  background: linear-gradient(135deg, #fff 0%, var(--color-accent-gold) 50%, #fff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .hero p {
@@ -62,11 +65,19 @@
 .sectionHeader h1 {
   font-size: 2.75rem;
   margin-bottom: 0.75rem;
+  background: linear-gradient(135deg, var(--color-accent-gold) 0%, #f5d76e 50%, var(--color-accent-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .sectionHeader h2 {
   font-size: 2.5rem;
   margin-bottom: 1rem;
+  background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .sectionHeader p {
@@ -81,10 +92,20 @@
 }
 
 .textBlock {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
   padding: 2rem;
+  transition: all 0.3s ease;
+}
+
+.textBlock:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(226, 192, 68, 0.25);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
 }
 
 .textBlock h2 {
