@@ -19,7 +19,7 @@ export default function HarmonyPage() {
                 </p>
             </div>
 
-            <div className={styles.grid}>
+            <div className={styles.grid} style={{ marginTop: '3rem' }}>
                 <Card>
                     <h3>Proprietary Platform</h3>
                     <p>
