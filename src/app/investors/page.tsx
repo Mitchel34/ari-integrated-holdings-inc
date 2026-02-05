@@ -37,7 +37,7 @@ export default function InvestorsPage() {
                 </div>
             </div>
 
-            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.05)', padding: '3rem', borderRadius: '12px' }}>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.05)', padding: '3rem', borderRadius: '12px', marginTop: '3rem' }}>
                 <h2>Contact Us</h2>
                 <p style={{ marginBottom: '2rem', color: 'var(--color-text-muted)' }}>
                     For inquiries regarding investment opportunities or partnerships.
