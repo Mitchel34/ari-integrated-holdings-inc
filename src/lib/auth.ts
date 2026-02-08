@@ -35,25 +35,6 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as Adapter,
 
   providers: [
-    // Google OAuth
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
-    }),
-
-    // Apple OAuth
-    AppleProvider({
-      clientId: process.env.APPLE_ID ?? "",
-      clientSecret: process.env.APPLE_SECRET ?? "",
-    }),
-
-    // X (Twitter) OAuth 2.0
-    TwitterProvider({
-      clientId: process.env.TWITTER_CLIENT_ID ?? "",
-      clientSecret: process.env.TWITTER_CLIENT_SECRET ?? "",
-      version: "2.0",
-    }),
-
     // Credentials Provider
     CredentialsProvider({
       name: "credentials",
@@ -66,18 +47,33 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
+        const loginIdentifier = credentials.email.trim();
+
+        const user = await prisma.user.findFirst({
+          where: {
+            OR: [{ email: loginIdentifier }, { id: loginIdentifier }],
+          },
         });
 
         if (!user || !user.password) {
           return null;
         }
 
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
+        let isPasswordValid = false;
+        const storedPassword = user.password;
+
+        if (storedPassword.startsWith("$2a$") || storedPassword.startsWith("$2b$")) {
+          isPasswordValid = await bcrypt.compare(credentials.password, storedPassword);
+        } else {
+          // Backwards compatibility for legacy plaintext rows; migrate on successful login.
+          isPasswordValid = credentials.password === storedPassword;
+          if (isPasswordValid) {
+            await prisma.user.update({
+              where: { id: user.id },
+              data: { password: await bcrypt.hash(credentials.password, 12) },
+            });
+          }
+        }
 
         if (!isPasswordValid) {
           return null;
@@ -92,6 +88,31 @@ export const authOptions: NextAuthOptions = {
         };
       },
     }),
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+      ? [
+          GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          }),
+        ]
+      : []),
+    ...(process.env.APPLE_ID && process.env.APPLE_SECRET
+      ? [
+          AppleProvider({
+            clientId: process.env.APPLE_ID,
+            clientSecret: process.env.APPLE_SECRET,
+          }),
+        ]
+      : []),
+    ...(process.env.TWITTER_CLIENT_ID && process.env.TWITTER_CLIENT_SECRET
+      ? [
+          TwitterProvider({
+            clientId: process.env.TWITTER_CLIENT_ID,
+            clientSecret: process.env.TWITTER_CLIENT_SECRET,
+            version: "2.0",
+          }),
+        ]
+      : []),
   ],
 
   session: {
