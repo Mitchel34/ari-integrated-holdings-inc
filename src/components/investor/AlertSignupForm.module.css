@@ -1,0 +1,30 @@
+.form {
+    display: grid;
+    gap: 1rem;
+}
+
+.formHint {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+.feedback {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.feedbackSuccess {
+    color: #9de7b3;
+}
+
+.feedbackError {
+    color: #ffc7c7;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Container } from '../components/ui/Container';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
+import { TreasurySnapshot } from '../components/treasury/TreasurySnapshot';
 import styles from './page.module.css';
 
 export default function Home() {
@@ -16,20 +17,30 @@ export default function Home() {
               with the high-growth potential of premier digital assets.
             </p>
             <p className={styles.heroSubtext}>
-              Ari Integrated Holdings Inc. is an AI-enabled crypto treasury company focused on long-term
-              capital appreciation through buy-and-hold exposure to BTC, ETH, and SOL. The company is
+              The Company is an AI-enabled crypto treasury company focused on long-term
+              capital appreciation through buy-and-hold exposure to BTC, ETH, and SOL. It is
               structured as a balance-sheet-driven treasury vehicle with human oversight, not a speculative
               trading firm.
             </p>
             <div className={styles.heroActions}>
-              <Link href="/thesis">
-                <Button size="lg">Read Our Thesis</Button>
-              </Link>
-              <Link href="/contact">
-                <Button variant="outline" size="lg">Contact Us</Button>
-              </Link>
+              <Button asChild size="lg">
+                <Link href="/thesis">Read Our Thesis</Link>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <Link href="/contact">Contact Us</Link>
+              </Button>
             </div>
           </div>
+        </Container>
+      </section>
+
+      <section className={styles.section}>
+        <Container>
+          <div className={styles.sectionHeader}>
+            <h2>Treasury Snapshot</h2>
+            <p>Core BTC, ETH, and SOL reserve metrics for investor review.</p>
+          </div>
+          <TreasurySnapshot withDisclosureLink />
         </Container>
       </section>
 

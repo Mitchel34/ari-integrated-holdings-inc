@@ -1,0 +1,141 @@
+.wrapper {
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.07) 100%);
+    box-shadow: 0 12px 34px rgba(7, 12, 18, 0.26);
+    overflow: hidden;
+}
+
+.header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(10, 15, 22, 0.25);
+}
+
+.headerLabel {
+    margin: 0;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+.headerValue {
+    margin: 0;
+    color: var(--color-text-main);
+    font-weight: 600;
+}
+
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 0.75rem;
+    padding: 1.2rem;
+}
+
+.metric {
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(11, 16, 24, 0.38);
+    padding: 0.9rem;
+}
+
+.metricLabel {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.metricValue {
+    margin: 0.4rem 0 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.metricValuePositive {
+    color: #9de7b3;
+}
+
+.metricValueNegative {
+    color: #ffc7c7;
+}
+
+.tableWrap {
+    overflow-x: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+}
+
+.table th,
+.table td {
+    text-align: left;
+    padding: 0.9rem 1.2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.table th {
+    color: var(--color-text-muted);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.table td {
+    color: var(--color-text-main);
+    font-size: 0.95rem;
+}
+
+.assetSymbol {
+    font-weight: 600;
+}
+
+.assetName {
+    color: var(--color-text-muted);
+    margin-left: 0.4rem;
+    font-size: 0.85rem;
+}
+
+.footer {
+    padding: 1rem 1.2rem 1.2rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.note {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+}
+
+.link {
+    color: var(--color-accent-gold-bright);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+@media (max-width: 767px) {
+    .table th,
+    .table td {
+        padding: 0.8rem 0.85rem;
+    }
+
+    .footer {
+        align-items: flex-start;
+    }
+}

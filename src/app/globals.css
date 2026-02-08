@@ -1,34 +1,27 @@
 :root {
-  /* Color Palette - Ari Integrated Holdings Inc. - Refined Brightness */
-  --color-primary-bg: #0f1116;
-  /* Lighter Deep Navy/Charcoal (was #050507) */
-  --color-secondary-bg: #181b21;
-  /* Significantly lighter for cards (was #0a0b10) */
-  --color-text-main: #ffffff;
-  --color-text-muted: #cbd5e1;
-  /* Lighter gray for better readability (was #a1a1aa) */
-
+  --color-primary-bg: #141922;
+  --color-secondary-bg: #1d2430;
+  --color-surface-bg: #252f3b;
+  --color-text-main: #f8fafc;
+  --color-text-muted: #d6dee9;
   --color-accent-gold: #e2c044;
-  /* Brighter Gold */
-  --color-accent-gold-bright: #f5d76e;
+  --color-accent-gold-bright: #f3d983;
   --color-accent-gold-dim: #b8941f;
-  --color-accent-blue: #60a5fa;
-  /* Brighter Blue */
-  --color-accent-purple: #a78bfa;
-  /* Brighter Purple */
-
-  /* Glassmorphism */
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.12);
-  --glass-highlight: rgba(255, 255, 255, 0.15);
-
-  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
+  --color-accent-blue: #84b8ff;
+  --color-accent-purple: #b49dff;
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-highlight: rgba(255, 255, 255, 0.24);
+  --transition-base: 0.24s ease-in-out;
+  --transition-medium: 0.28s ease-in-out;
   --font-sans: var(--font-inter);
 }
 
 body {
-  background-color: var(--color-primary-bg);
+  background:
+    radial-gradient(ellipse at 18% 8%, rgba(226, 192, 68, 0.11) 0%, transparent 52%),
+    radial-gradient(ellipse at 82% 22%, rgba(96, 165, 250, 0.1) 0%, transparent 50%),
+    var(--color-primary-bg);
   color: var(--color-text-main);
   font-family: var(--font-sans), system-ui, sans-serif;
   margin: 0;
@@ -63,17 +56,19 @@ h6 {
 a {
   color: inherit;
   text-decoration: none;
-  transition: opacity 0.2s ease;
+  transition: color var(--transition-base), opacity var(--transition-base);
 }
 
 a:hover {
-  opacity: 0.8;
+  opacity: 1;
 }
 
 a:focus-visible,
 button:focus-visible {
   outline: 2px solid var(--color-accent-gold);
-  outline-offset: 3px;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(226, 192, 68, 0.22);
+  border-radius: 10px;
 }
 
 * {
@@ -95,4 +90,20 @@ button:focus-visible {
 
 .animate-entrance {
   animation: fadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.motion-reduce-transition-none {
+  transition: none !important;
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { Navbar } from "../components/layout/Navbar";
+import { SiteHeader } from "../components/layout/Navbar";
 import { Footer } from "../components/layout/Footer";
 import { AuthSessionProvider } from "../components/auth/AuthSessionProvider";
 import { CryptoBackground } from "../components/auth/CryptoBackground";
@@ -28,7 +28,7 @@ export default function RootLayout({
         <AuthSessionProvider>
           <CryptoBackground />
           <div className="layout-wrapper">
-            <Navbar />
+            <SiteHeader />
             <main>{children}</main>
             <Footer />
           </div>

@@ -15,6 +15,8 @@ export function Footer() {
                         <h4>Company</h4>
                         <Link href="/thesis">Investment Thesis</Link>
                         <Link href="/harmony">Harmony Trading</Link>
+                        <Link href="/disclosures">Disclosures</Link>
+                        <Link href="/investors">Investor Relations</Link>
                         <Link href="/team">Team</Link>
                     </div>
                     <div className={styles.column}>
