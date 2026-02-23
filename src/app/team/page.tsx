@@ -14,17 +14,14 @@ export default function TeamPage() {
                     <h2>Curtis Carson</h2>
                     <h3>Chief Executive Officer & Chief Financial Officer</h3>
                     <p>
-                        Visionary entrepreneur with over 15 years of experience in technology and finance.
-                        Spearheads capital allocation, strategic direction, and financial operations.
-                        Ensures rigorous governance and audit-readiness.
+                        U.S. Military Veteran and visionary entrepreneur with over 15 years of experience in technology, finance, and cross-functional leadership. Leveraging disciplined operational strategies honed in military service, he spearheads capital allocation, strategic direction, and financial operations. Ensures rigorous governance and audit-readiness across all corporate initiatives.
                     </p>
                 </div>
                 <div className={styles.textBlock}>
                     <h2>Judith Carson</h2>
                     <h3>Chief Marketing Officer</h3>
                     <p>
-                        Leads brand strategy, investor relations, and market positioning.
-                        Drives awareness and engagement across all stakeholder channels.
+                        U.S. Military Veteran and accomplished strategic leader. Drawing on extensive experience in mission-critical communications and global operations, she leads brand strategy, investor relations, and market positioning. Drives awareness and fosters engagement across all stakeholder channels with precision and strategic foresight.
                     </p>
                 </div>
                 <div className={styles.textBlock}>

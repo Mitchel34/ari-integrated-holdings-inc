@@ -1,14 +1,18 @@
 :root {
-  --color-primary-bg: #141922;
-  --color-secondary-bg: #1d2430;
-  --color-surface-bg: #252f3b;
+  --color-primary-bg: #0A1324;
+  --color-secondary-bg: #12203A;
+  --color-surface-bg: #1B2D4F;
   --color-text-main: #f8fafc;
   --color-text-muted: #d6dee9;
-  --color-accent-gold: #e2c044;
-  --color-accent-gold-bright: #f3d983;
-  --color-accent-gold-dim: #b8941f;
+  --color-accent-gold: #C29B4E;
+  --color-accent-gold-bright: #E8C87A;
+  --color-accent-gold-dim: #9E7B36;
+  --color-accent-silver: #C0C5CB;
+  --color-accent-silver-bright: #E8EBF0;
   --color-accent-blue: #84b8ff;
   --color-accent-purple: #b49dff;
+  --gradient-gold: linear-gradient(135deg, #E8C87A 0%, #C29B4E 50%, #9E7B36 100%);
+  --gradient-silver: linear-gradient(135deg, #E8EBF0 0%, #C0C5CB 50%, #8F97A3 100%);
   --glass-bg: rgba(255, 255, 255, 0.08);
   --glass-border: rgba(255, 255, 255, 0.2);
   --glass-highlight: rgba(255, 255, 255, 0.24);
@@ -19,8 +23,8 @@
 
 body {
   background:
-    radial-gradient(ellipse at 18% 8%, rgba(226, 192, 68, 0.11) 0%, transparent 52%),
-    radial-gradient(ellipse at 82% 22%, rgba(96, 165, 250, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 18% 8%, rgba(194, 155, 78, 0.11) 0%, transparent 52%),
+    radial-gradient(ellipse at 82% 22%, rgba(192, 197, 203, 0.1) 0%, transparent 50%),
     var(--color-primary-bg);
   color: var(--color-text-main);
   font-family: var(--font-sans), system-ui, sans-serif;
@@ -98,6 +102,7 @@ button:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {

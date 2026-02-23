@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
@@ -67,16 +68,14 @@ export function SiteHeader() {
                         <MenuIcon />
                     </button>
                     <Link href="/" className={styles.mobileBrand}>
-                        <span className={styles.brandText}>Ari Integrated Holdings Inc.</span>
-                        <span className={styles.brandMarks} aria-hidden="true">₿ Ξ ◎</span>
+                        <Image src="/logo.jpeg" alt="Ari Integrated Holdings Inc. Logo" width={110} height={50} className={styles.navLogo} />
                     </Link>
                     <span className={styles.mobileSpacer} aria-hidden="true" />
                 </div>
 
                 <div className={styles.desktopBar}>
                     <Link href="/" className={styles.logo}>
-                        <span className={styles.brandText}>Ari Integrated Holdings Inc.</span>
-                        <span className={styles.brandMarks} aria-hidden="true">₿ Ξ ◎</span>
+                        <Image src="/logo.jpeg" alt="Ari Integrated Holdings Inc. Logo" width={140} height={60} className={styles.navLogo} />
                     </Link>
 
                     <nav className={styles.links} aria-label="Primary">

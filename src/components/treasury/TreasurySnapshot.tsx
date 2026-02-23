@@ -92,14 +92,14 @@ export function TreasurySnapshot({ withDisclosureLink = false }: TreasurySnapsho
                     <tbody>
                         {snapshot.assets.map((asset) => (
                             <tr key={asset.symbol}>
-                                <td>
+                                <td data-label="Asset">
                                     <span className={styles.assetSymbol}>{asset.symbol}</span>
                                     <span className={styles.assetName}>{asset.name}</span>
                                 </td>
-                                <td>{unitFormatter.format(asset.units)}</td>
-                                <td>{currencyFormatter.format(asset.spotPriceUsd)}</td>
-                                <td>{currencyFormatter.format(asset.marketValueUsd)}</td>
-                                <td>{currencyFormatter.format(asset.costBasisUsd)}</td>
+                                <td data-label="Units">{unitFormatter.format(asset.units)}</td>
+                                <td data-label="Spot Price">{currencyFormatter.format(asset.spotPriceUsd)}</td>
+                                <td data-label="Market Value">{currencyFormatter.format(asset.marketValueUsd)}</td>
+                                <td data-label="Cost Basis">{currencyFormatter.format(asset.costBasisUsd)}</td>
                             </tr>
                         ))}
                     </tbody>
