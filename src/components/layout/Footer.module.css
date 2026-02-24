@@ -12,6 +12,40 @@
     margin-bottom: 3rem;
 }
 
+.footerLogo {
+    width: auto;
+    max-height: 80px;
+    object-fit: contain;
+    background: var(--color-primary-bg);
+    border-radius: 10px;
+    margin-bottom: 0.85rem;
+    display: block;
+}
+
+.contactList {
+    list-style: none;
+    margin: 0.9rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.contactItem {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+}
+
+.contactIcon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    color: var(--color-accent-gold);
+}
+
 .column h3 {
     font-size: 1.25rem;
     margin-bottom: 1rem;

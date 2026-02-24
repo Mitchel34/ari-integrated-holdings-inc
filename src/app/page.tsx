@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Container } from '../components/ui/Container';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
@@ -11,6 +12,15 @@ export default function Home() {
       <section className={styles.hero}>
         <Container>
           <div className={styles.heroContent}>
+            <Image
+              src="/logo.jpeg"
+              alt="Ari Integrated Holdings Inc."
+              width={220}
+              height={220}
+              className={styles.heroLogo}
+              priority
+            />
+            <p className={styles.heroEyebrow}>Leadership &amp; Strength</p>
             <h1>Building the Strategic Reserve<br />of the Digital Age</h1>
             <p className={styles.heroLead}>
               Ari Integrated Holdings Inc. aims to bridge traditional equity markets
@@ -68,6 +78,12 @@ export default function Home() {
           </div>
           <div className={styles.grid}>
             <Card variant="glass">
+              <div className={styles.cardIcon}>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" stroke="url(#cardGold1)" strokeWidth="1.5"/>
+                  <defs><linearGradient id="cardGold1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E8C87A"/><stop offset="100%" stopColor="#9E7B36"/></linearGradient></defs>
+                </svg>
+              </div>
               <h3 className={styles.cardTitle}>Digital Treasury</h3>
               <p className={styles.cardText}>
                 A buy-and-hold balance-sheet strategy focused on Bitcoin (BTC), Ethereum (ETH), and Solana (SOL),
@@ -75,6 +91,12 @@ export default function Home() {
               </p>
             </Card>
             <Card variant="glass">
+              <div className={styles.cardIcon}>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" stroke="url(#cardGold2)" strokeWidth="1.5"/>
+                  <defs><linearGradient id="cardGold2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E8C87A"/><stop offset="100%" stopColor="#9E7B36"/></linearGradient></defs>
+                </svg>
+              </div>
               <h3 className={styles.cardTitle}>AI-Driven Decisions</h3>
               <p className={styles.cardText}>
                 AI serves as a decision-support layer for risk analysis, capital allocation timing,
@@ -82,6 +104,12 @@ export default function Home() {
               </p>
             </Card>
             <Card variant="glass">
+              <div className={styles.cardIcon}>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" stroke="url(#cardGold3)" strokeWidth="1.5"/>
+                  <defs><linearGradient id="cardGold3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E8C87A"/><stop offset="100%" stopColor="#9E7B36"/></linearGradient></defs>
+                </svg>
+              </div>
               <h3 className={styles.cardTitle}>Regulated Exposure</h3>
               <p className={styles.cardText}>
                 Aiming to provide investors with secure, equity-based exposure to crypto assets

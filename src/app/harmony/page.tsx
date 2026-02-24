@@ -4,12 +4,17 @@ import styles from '../page.module.css';
 
 export default function HarmonyPage() {
     return (
-        <Container className={styles.section}>
-            <div className={styles.sectionHeader}>
-                <h1>Harmony Trading App</h1>
-                <p>Supporting Subsidiary for Operational Stability</p>
-            </div>
+        <>
+        <section className={styles.pageHeroSection}>
+            <Container>
+                <div className={styles.sectionHeader}>
+                    <h1>Harmony Trading App</h1>
+                    <p>Supporting Subsidiary for Operational Stability</p>
+                </div>
+            </Container>
+        </section>
 
+        <Container className={styles.section}>
             <div className={styles.textBlock}>
                 <h2>Purpose</h2>
                 <p>
@@ -21,13 +26,26 @@ export default function HarmonyPage() {
 
             <div className={styles.grid} style={{ marginTop: '3rem' }}>
                 <Card>
+                    <div className={styles.cardIcon}>
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" stroke="url(#harmonyGold1)" strokeWidth="1.5"/>
+                            <defs><linearGradient id="harmonyGold1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E8C87A"/><stop offset="100%" stopColor="#9E7B36"/></linearGradient></defs>
+                        </svg>
+                    </div>
                     <h3>Proprietary Platform</h3>
                     <p>
-                        An internal trading application employing algorithmic and AI-driven strategies. It is not
-                        a customer-facing product today, but may evolve in the future.
+                        An internal trading application employing algorithmic and AI-driven strategies. It
+                        operates as an internal-only platform today, with a customer-facing product roadmap
+                        under active evaluation.
                     </p>
                 </Card>
                 <Card>
+                    <div className={styles.cardIcon}>
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" stroke="url(#harmonyGold2)" strokeWidth="1.5"/>
+                            <defs><linearGradient id="harmonyGold2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E8C87A"/><stop offset="100%" stopColor="#9E7B36"/></linearGradient></defs>
+                        </svg>
+                    </div>
                     <h3>Limited Scope & Risk Controls</h3>
                     <p>
                         A small portion of assets is allocated to trading with strict risk limits to protect
@@ -35,6 +53,12 @@ export default function HarmonyPage() {
                     </p>
                 </Card>
                 <Card>
+                    <div className={styles.cardIcon}>
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" stroke="url(#harmonyGold3)" strokeWidth="1.5"/>
+                            <defs><linearGradient id="harmonyGold3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E8C87A"/><stop offset="100%" stopColor="#9E7B36"/></linearGradient></defs>
+                        </svg>
+                    </div>
                     <h3>AI Sandbox</h3>
                     <p>
                         Harmony serves as a testing ground for analytics and models that inform broader
@@ -43,5 +67,6 @@ export default function HarmonyPage() {
                 </Card>
             </div>
         </Container>
+        </>
     );
 }

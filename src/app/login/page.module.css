@@ -31,6 +31,15 @@
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: border-color 0.26s ease-in-out, box-shadow 0.26s ease-in-out;
+}
+
+.loginCard:hover {
+  border-color: rgba(194, 155, 78, 0.4);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(194, 155, 78, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .loginHeader {
@@ -38,22 +47,15 @@
   margin-bottom: 2rem;
 }
 
-.logoIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 64px;
-  height: 64px;
+.loginLogo {
+  display: block;
+  width: auto;
+  height: 100px;
+  object-fit: contain;
   margin: 0 auto 1.25rem;
-  background: linear-gradient(135deg, var(--color-accent-gold), #b8941f);
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(226, 192, 68, 0.25);
-}
-
-.logoIcon svg {
-  width: 32px;
-  height: 32px;
-  color: var(--color-primary-bg);
+  background: var(--color-primary-bg);
+  border-radius: 14px;
+  filter: drop-shadow(0 0 20px rgba(194, 155, 78, 0.28)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.45));
 }
 
 .title {
@@ -138,9 +140,8 @@
     border-radius: 20px;
   }
 
-  .logoIcon {
-    width: 56px;
-    height: 56px;
+  .loginLogo {
+    height: 80px;
   }
 
   .title {

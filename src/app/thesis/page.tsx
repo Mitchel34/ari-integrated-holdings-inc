@@ -1,16 +1,23 @@
 import { Container } from '../../components/ui/Container';
+import { Card } from '../../components/ui/Card';
 import styles from '../page.module.css'; // Reusing home styles for consistency
 
 export default function ThesisPage() {
     return (
-        <Container className={styles.section}>
-            <div className={styles.sectionHeader}>
-                <h1>Investment Thesis</h1>
-                <p>Digital Assets as Strategic Long-Term Holdings</p>
-            </div>
+        <>
+        <section className={styles.pageHeroSection}>
+            <Container>
+                <div className={styles.sectionHeader}>
+                    <h1>Investment Thesis</h1>
+                    <p>Digital Assets as Strategic Long-Term Holdings</p>
+                </div>
+            </Container>
+        </section>
 
+        <Container className={styles.section}>
             <div className={styles.grid}>
-                <div className={styles.textBlock}>
+                <Card variant="glass">
+                    <span className={styles.heroEyebrow}>01</span>
                     <h2>Executive Summary</h2>
                     <p>
                         Ari Integrated Holdings Inc. is a Nevada-based, AI-enabled crypto treasury company
@@ -25,9 +32,10 @@ export default function ThesisPage() {
                         layer for risk analysis, capital allocation timing, and scenario stress testing, with human
                         oversight remaining central to all investment decisions.
                     </p>
-                </div>
+                </Card>
 
-                <div className={styles.textBlock}>
+                <Card variant="glass">
+                    <span className={styles.heroEyebrow}>02</span>
                     <h2>The Case for Digital Assets</h2>
                     <p>
                         Ari Integrated Holdings Inc. is founded on the conviction that Bitcoin, Ethereum, and Solana
@@ -36,7 +44,7 @@ export default function ThesisPage() {
                     </p>
                     <h3>Scarcity & Long-Term Appreciation</h3>
                     <p>
-                        Bitcoin’s hard-capped supply of 21 million and Ethereum’s role in decentralized finance
+                        Bitcoin&rsquo;s hard-capped supply of 21 million and Ethereum&rsquo;s role in decentralized finance
                         support a long-term investment thesis. Outcomes are uncertain and dependent on adoption,
                         regulatory shifts, and market structure.
                     </p>
@@ -45,18 +53,20 @@ export default function ThesisPage() {
                         In a world of monetary expansion, digital assets can serve as a potential hedge against
                         currency devaluation and provide diversification from traditional asset classes.
                     </p>
-                </div>
+                </Card>
 
-                <div className={styles.textBlock}>
+                <Card variant="glass">
+                    <span className={styles.heroEyebrow}>03</span>
                     <h2>Why These Assets?</h2>
                     <ul>
                         <li><strong>Bitcoin (BTC):</strong> Scarcity-driven asset with long-term appreciation potential.</li>
                         <li><strong>Ethereum (ETH):</strong> Utility layer for programmable finance and decentralized applications.</li>
                         <li><strong>Solana (SOL):</strong> High-performance infrastructure for scalable blockchain adoption.</li>
                     </ul>
-                </div>
+                </Card>
 
-                <div className={styles.textBlock}>
+                <Card variant="glass">
+                    <span className={styles.heroEyebrow}>04</span>
                     <h2>Core Business Model</h2>
                     <ul>
                         <li><strong>Buy-and-hold treasury:</strong> Capital is deployed primarily into BTC, ETH, and SOL holdings.</li>
@@ -64,9 +74,10 @@ export default function ThesisPage() {
                         <li><strong>Investor transparency:</strong> Regular updates on holdings and treasury value.</li>
                         <li><strong>Regulated exposure:</strong> Equity ownership provides a compliant pathway to crypto markets.</li>
                     </ul>
-                </div>
+                </Card>
 
-                <div className={styles.textBlock}>
+                <Card variant="glass">
+                    <span className={styles.heroEyebrow}>05</span>
                     <h2>Role of Artificial Intelligence</h2>
                     <ul>
                         <li><strong>Decision support:</strong> AI informs, but does not replace, management judgment.</li>
@@ -74,18 +85,20 @@ export default function ThesisPage() {
                         <li><strong>Capital allocation:</strong> Timing and sizing insights for BTC, ETH, and SOL deployments.</li>
                         <li><strong>Operational visibility:</strong> Consolidated reporting across custodians and exchanges.</li>
                     </ul>
-                </div>
+                </Card>
 
-                <div className={styles.textBlock}>
+                <Card variant="glass">
+                    <span className={styles.heroEyebrow}>06</span>
                     <h2>Harmony Trading App</h2>
                     <ul>
                         <li><strong>Supporting subsidiary:</strong> Designed to generate modest revenue and offset costs.</li>
                         <li><strong>Limited scope:</strong> Small allocation with strict risk controls to protect core holdings.</li>
                         <li><strong>AI sandbox:</strong> Testing ground for analytics that inform treasury decisions.</li>
                     </ul>
-                </div>
+                </Card>
 
-                <div className={styles.textBlock}>
+                <Card variant="glass">
+                    <span className={styles.heroEyebrow}>07</span>
                     <h2>Risk Management & Governance</h2>
                     <p>
                         The Company prioritizes asset security, compliance, and governance. Custody is intended to
@@ -93,7 +106,7 @@ export default function ThesisPage() {
                         shareholder value. Regulatory and legal positioning will be finalized prior to any formal
                         public offering.
                     </p>
-                </div>
+                </Card>
             </div>
 
             <div className={styles.disclaimer} role="note">
@@ -102,5 +115,6 @@ export default function ThesisPage() {
                 Past performance is not indicative of future results.
             </div>
         </Container>
+        </>
     );
 }

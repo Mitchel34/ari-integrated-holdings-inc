@@ -19,6 +19,27 @@
   margin: 0 auto;
 }
 
+.heroLogo {
+  width: auto;
+  height: 180px;
+  object-fit: contain;
+  border-radius: 16px;
+  filter: drop-shadow(0 0 32px rgba(194, 155, 78, 0.35)) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.5));
+}
+
+.heroEyebrow {
+  display: block;
+  margin: 0 0 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .hero h1 {
   font-size: clamp(2.05rem, 5.9vw, 3.7rem);
   line-height: 1.08;
@@ -56,6 +77,17 @@
 .section {
   padding: clamp(3.5rem, 7vw, 5.5rem) 0;
   border-top: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.pageHeroSection {
+  padding: clamp(3rem, 6vw, 4.5rem) 0 clamp(2rem, 4vw, 3rem);
+  background:
+    radial-gradient(ellipse at 18% 50%, rgba(226, 192, 68, 0.1) 0%, transparent 58%),
+    radial-gradient(ellipse at 82% 50%, rgba(192, 197, 203, 0.07) 0%, transparent 52%);
+}
+
+.pageHeroSection + .section {
+  border-top: none;
 }
 
 .sectionHeader {
@@ -157,6 +189,17 @@
   font-size: 0.9375rem;
 }
 
+.cardIcon {
+  width: 38px;
+  height: 38px;
+  margin-bottom: 0.9rem;
+}
+
+.cardIcon svg {
+  width: 100%;
+  height: 100%;
+}
+
 .cardTitle {
   font-size: 1.38rem;
   margin-bottom: 0.9rem;
@@ -236,6 +279,10 @@
 @media (max-width: 767px) {
   .hero {
     min-height: calc(100dvh - 76px);
+  }
+
+  .heroLogo {
+    height: 130px;
   }
 
   .heroActions {

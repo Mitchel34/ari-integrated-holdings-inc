@@ -17,6 +17,12 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
     margin-bottom: 2rem;
+    transition: border-color 0.26s ease-in-out, box-shadow 0.26s ease-in-out;
+}
+
+.welcomeCard:hover {
+    border-color: rgba(194, 155, 78, 0.38);
+    box-shadow: 0 0 0 1px rgba(194, 155, 78, 0.1), 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .welcomeHeader {

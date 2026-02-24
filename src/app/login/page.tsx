@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
+import Image from "next/image";
 import { Container } from "../../components/ui/Container";
 import { OAuthButtons } from "../../components/auth/OAuthButtons";
 import { LoginForm } from "../../components/auth/LoginForm";
@@ -26,13 +27,14 @@ export default function LoginPage() {
       <Container className={styles.loginContainer}>
         <div className={styles.loginCard}>
           <div className={styles.loginHeader}>
-            <div className={styles.logoIcon}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                <path d="M2 17l10 5 10-5" />
-                <path d="M2 12l10 5 10-5" />
-              </svg>
-            </div>
+            <Image
+              src="/logo.jpeg"
+              alt="Ari Integrated Holdings Inc."
+              width={110}
+              height={110}
+              className={styles.loginLogo}
+              priority
+            />
             <h1 className={styles.title}>Investor Portal</h1>
             <p className={styles.subtitle}>
               Secure access to your investment dashboard

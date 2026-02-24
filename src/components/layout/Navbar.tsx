@@ -129,7 +129,9 @@ export function SiteHeader() {
                                     </svg>
                                 </button>
                             </div>
-                        ) : null}
+                        ) : (
+                            <Link href="/login" className={styles.loginBtn}>Login</Link>
+                        )}
                     </div>
                 </div>
             </Container>
@@ -201,7 +203,17 @@ export function SiteHeader() {
                                 </svg>
                             </button>
                         </div>
-                    ) : null}
+                    ) : (
+                        <div className={styles.sheetAccount}>
+                            <Link
+                                href="/login"
+                                className={styles.loginBtn}
+                                onClick={() => setMobileMenuOpen(false)}
+                            >
+                                Login
+                            </Link>
+                        </div>
+                    )}
                 </div>
             </Sheet>
         </header>

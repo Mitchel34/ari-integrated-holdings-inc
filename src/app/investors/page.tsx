@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Container } from '../../components/ui/Container';
 import { Button } from '../../components/ui/Button';
+import { Card } from '../../components/ui/Card';
 import { TreasurySnapshot } from '../../components/treasury/TreasurySnapshot';
 import { AlertSignupForm } from '../../components/investor/AlertSignupForm';
 import {
@@ -35,12 +36,17 @@ export default function InvestorsPage() {
     const events = getInvestorEvents();
 
     return (
-        <Container className={styles.section}>
-            <div className={styles.sectionHeader}>
-                <h1>Investor Relations</h1>
-                <p>Transparency, disclosure discipline, and long-term treasury execution.</p>
-            </div>
+        <>
+        <section className={styles.pageHeroSection}>
+            <Container>
+                <div className={styles.sectionHeader}>
+                    <h1>Investor Relations</h1>
+                    <p>Transparency, disclosure discipline, and long-term treasury execution.</p>
+                </div>
+            </Container>
+        </section>
 
+        <Container className={styles.section}>
             <section aria-labelledby="treasury-snapshot-heading">
                 <div className={styles.sectionHeader}>
                     <h2 id="treasury-snapshot-heading">Treasury Snapshot</h2>
@@ -57,7 +63,13 @@ export default function InvestorsPage() {
                 </h2>
 
                 <div className={styles.grid}>
-                    <article className={styles.textBlock}>
+                    <Card variant="glass">
+                        <div className={styles.cardIcon}>
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" stroke="url(#investorGold1)" strokeWidth="1.5"/>
+                                <defs><linearGradient id="investorGold1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E8C87A"/><stop offset="100%" stopColor="#9E7B36"/></linearGradient></defs>
+                            </svg>
+                        </div>
                         <h3>Latest Disclosures</h3>
                         <ul className={styles.infoList}>
                             {disclosures.map((item) => (
@@ -70,9 +82,15 @@ export default function InvestorsPage() {
                         <p className={styles.linkRow}>
                             <Link href="/disclosures">View all disclosures</Link>
                         </p>
-                    </article>
+                    </Card>
 
-                    <article className={styles.textBlock}>
+                    <Card variant="glass">
+                        <div className={styles.cardIcon}>
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" stroke="url(#investorGold2)" strokeWidth="1.5"/>
+                                <defs><linearGradient id="investorGold2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E8C87A"/><stop offset="100%" stopColor="#9E7B36"/></linearGradient></defs>
+                            </svg>
+                        </div>
                         <h3>Investor Documents</h3>
                         <ul className={styles.infoList}>
                             {documents.map((item) => (
@@ -84,9 +102,15 @@ export default function InvestorsPage() {
                                 </li>
                             ))}
                         </ul>
-                    </article>
+                    </Card>
 
-                    <article className={styles.textBlock}>
+                    <Card variant="glass">
+                        <div className={styles.cardIcon}>
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" stroke="url(#investorGold3)" strokeWidth="1.5"/>
+                                <defs><linearGradient id="investorGold3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E8C87A"/><stop offset="100%" stopColor="#9E7B36"/></linearGradient></defs>
+                            </svg>
+                        </div>
                         <h3>Upcoming Events</h3>
                         <ul className={styles.infoList}>
                             {events.map((event) => (
@@ -98,13 +122,19 @@ export default function InvestorsPage() {
                                 </li>
                             ))}
                         </ul>
-                    </article>
+                    </Card>
                 </div>
             </section>
 
             <section className={styles.contactPanel} aria-labelledby="investor-contact-heading">
                 <div className={styles.grid}>
-                    <article className={styles.textBlock}>
+                    <Card variant="glass">
+                        <div className={styles.cardIcon}>
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" stroke="url(#investorGold4)" strokeWidth="1.5"/>
+                                <defs><linearGradient id="investorGold4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E8C87A"/><stop offset="100%" stopColor="#9E7B36"/></linearGradient></defs>
+                            </svg>
+                        </div>
                         <h2 id="investor-contact-heading">Investor Contact</h2>
                         <p>
                             For diligence inquiries, partnership requests, or direct investor communication,
@@ -113,14 +143,21 @@ export default function InvestorsPage() {
                         <Button asChild size="lg">
                             <Link href="/contact">Contact Investor Relations</Link>
                         </Button>
-                    </article>
+                    </Card>
 
-                    <article className={styles.textBlock}>
+                    <Card variant="glass">
+                        <div className={styles.cardIcon}>
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" stroke="url(#investorGold5)" strokeWidth="1.5"/>
+                                <defs><linearGradient id="investorGold5" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E8C87A"/><stop offset="100%" stopColor="#9E7B36"/></linearGradient></defs>
+                            </svg>
+                        </div>
                         <h2>Email Alerts</h2>
                         <AlertSignupForm />
-                    </article>
+                    </Card>
                 </div>
             </section>
         </Container>
+        </>
     );
 }

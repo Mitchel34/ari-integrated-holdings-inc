@@ -15,11 +15,17 @@ export default function DisclosuresPage() {
     const disclosures = getDisclosures();
 
     return (
+        <>
+        <section className={styles.pageHeroSection}>
+            <Container>
+                <div className={styles.sectionHeader}>
+                    <h1>Disclosures</h1>
+                    <p>Material updates, treasury actions, and financial communications.</p>
+                </div>
+            </Container>
+        </section>
+
         <Container className={styles.section}>
-            <div className={styles.sectionHeader}>
-                <h1>Disclosures</h1>
-                <p>Material updates, treasury actions, and financial communications.</p>
-            </div>
 
             <div className={styles.grid}>
                 {disclosures.map((item) => (
@@ -47,5 +53,6 @@ export default function DisclosuresPage() {
                 </div>
             </section>
         </Container>
+        </>
     );
 }
