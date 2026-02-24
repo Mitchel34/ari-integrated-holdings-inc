@@ -26,12 +26,11 @@ export default function Home() {
               Ari Integrated Holdings Inc. aims to bridge traditional equity markets
               with the high-growth potential of premier digital assets.
             </p>
-            <p className={styles.heroSubtext}>
-              The Company is an AI-enabled crypto treasury company focused on long-term
-              capital appreciation through buy-and-hold exposure to BTC, ETH, and SOL. It is
-              structured as a balance-sheet-driven treasury vehicle with human oversight, not a speculative
-              trading firm.
-            </p>
+            <ul className={styles.heroBullets}>
+              <li>Long-term buy-and-hold reserve of Bitcoin (BTC), Ethereum (ETH), and Solana (SOL)</li>
+              <li>AI decision support with human oversight for risk analysis and capital allocation</li>
+              <li>Regulated, equity-based exposure — no self-custody or private keys required</li>
+            </ul>
             <div className={styles.heroActions}>
               <Button asChild size="lg">
                 <Link href="/thesis">Read Our Thesis</Link>
@@ -117,6 +116,7 @@ export default function Home() {
               </p>
             </Card>
           </div>
+          <p className={styles.sectionNote}>Not a speculative trading firm — all positions are long-term treasury holdings with human oversight.</p>
         </Container>
       </section>
 

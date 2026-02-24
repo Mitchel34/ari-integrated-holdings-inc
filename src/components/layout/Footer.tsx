@@ -9,13 +9,15 @@ export function Footer() {
             <Container>
                 <div className={styles.content}>
                     <div className={styles.column}>
-                        <Image
-                            src="/logo.jpeg"
-                            alt="Ari Integrated Holdings Inc."
-                            width={90}
-                            height={90}
-                            className={styles.footerLogo}
-                        />
+                        <Link href="/">
+                            <Image
+                                src="/logo.jpeg"
+                                alt="Ari Integrated Holdings Inc."
+                                width={90}
+                                height={90}
+                                className={styles.footerLogo}
+                            />
+                        </Link>
                         <p>Building the Strategic Reserve of the Digital Age.</p>
                         <ul className={styles.contactList}>
                             <li className={styles.contactItem}>
@@ -48,6 +50,11 @@ export function Footer() {
                         <Link href="/privacy">Privacy Policy</Link>
                         <Link href="/terms">Terms of Service</Link>
                         <Link href="/disclaimer">Disclaimer</Link>
+                    </div>
+                    <div className={styles.column}>
+                        <h4>Contact</h4>
+                        <Link href="/contact">Contact Us</Link>
+                        <span className={styles.contactItem}>contact@ariholdings.com</span>
                     </div>
                 </div>
                 <div className={styles.copyright}>

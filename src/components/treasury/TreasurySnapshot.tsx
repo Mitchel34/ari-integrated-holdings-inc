@@ -40,7 +40,7 @@ export function TreasurySnapshot({ withDisclosureLink = false }: TreasurySnapsho
         <article className={styles.wrapper} aria-label="Treasury snapshot">
             <div className={styles.header}>
                 <div>
-                    <p className={styles.headerLabel}>Data Timestamp</p>
+                    <p className={styles.headerLabel}>Last Updated</p>
                     <p className={styles.headerValue}>{formatAsOf(snapshot.asOfIso)}</p>
                 </div>
                 <div>
@@ -80,6 +80,7 @@ export function TreasurySnapshot({ withDisclosureLink = false }: TreasurySnapsho
 
             <div className={styles.tableWrap}>
                 <table className={styles.table}>
+                    <caption className={styles.caption}>Treasury holdings — {formatAsOf(snapshot.asOfIso)}</caption>
                     <thead>
                         <tr>
                             <th scope="col">Asset</th>

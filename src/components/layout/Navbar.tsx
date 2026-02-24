@@ -130,7 +130,7 @@ export function SiteHeader() {
                                 </button>
                             </div>
                         ) : (
-                            <Link href="/login" className={styles.loginBtn}>Login</Link>
+                            <Link href="/login" className={styles.loginBtn}>Investor Portal</Link>
                         )}
                     </div>
                 </div>
@@ -210,7 +210,7 @@ export function SiteHeader() {
                                 className={styles.loginBtn}
                                 onClick={() => setMobileMenuOpen(false)}
                             >
-                                Login
+                                Investor Portal
                             </Link>
                         </div>
                     )}

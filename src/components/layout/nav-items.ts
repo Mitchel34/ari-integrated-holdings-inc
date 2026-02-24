@@ -10,5 +10,5 @@ export const NAV_ITEMS: NavItem[] = [
     { href: '/disclosures', label: 'Disclosures' },
     { href: '/team', label: 'Team' },
     { href: '/investors', label: 'Investors' },
-    { href: '/login', label: 'Investor Login', gated: true },
+    { href: '/contact', label: 'Contact' },
 ];
