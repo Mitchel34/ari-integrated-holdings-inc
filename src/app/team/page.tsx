@@ -5,8 +5,8 @@ import styles from './page.module.css';
 const TEAM = [
     {
         name: 'Curtis Carson',
-        role: 'Chief Executive Officer & Chief Financial Officer',
-        bio: null,
+        role: 'Chief Executive Officer & Chairman',
+        bio: 'Co-founder, CEO, and Chairman of Ari Integrated Holdings with more than 40 years of combined corporate and entrepreneurial experience. A first-generation college graduate with a degree in Economics and Business Management, Curtis spent 16 years in corporate insurance before founding and leading a Loss Control and Risk Management consulting firm for 26 years. His background in probabilistic risk assessment, capital preservation, and decision-making under uncertainty shapes Ari’s long-term treasury strategy. He leads with a ten-year investment horizon focused on balance sheet strength, disciplined capital deployment, and compounding intrinsic value over time.',
     },
     {
         name: 'Judith Carson',
