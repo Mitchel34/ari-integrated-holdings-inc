@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { Container } from '../../components/ui/Container';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-import { TreasurySnapshot } from '../../components/treasury/TreasurySnapshot';
 import { AlertSignupForm } from '../../components/investor/AlertSignupForm';
 import {
     getDisclosures,
@@ -47,15 +46,6 @@ export default function InvestorsPage() {
         </section>
 
         <Container className={styles.section}>
-            <section aria-labelledby="treasury-snapshot-heading">
-                <div className={styles.sectionHeader}>
-                    <h2 id="treasury-snapshot-heading">Treasury Snapshot</h2>
-                    <p>
-                        BTC, ETH, and SOL holdings, valuation, and mNAV context published for investor review.
-                    </p>
-                </div>
-                <TreasurySnapshot withDisclosureLink />
-            </section>
 
             <section className={styles.sectionPanel} aria-labelledby="ir-hub-heading">
                 <h2 id="ir-hub-heading" className={styles.srOnly}>

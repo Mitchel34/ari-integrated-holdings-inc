@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { Container } from '../components/ui/Container';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
-import { TreasurySnapshot } from '../components/treasury/TreasurySnapshot';
 import styles from './page.module.css';
 
 export default function Home() {
@@ -23,13 +22,13 @@ export default function Home() {
             <p className={styles.heroEyebrow}>Leadership &amp; Strength</p>
             <h1>Building the Strategic Reserve<br />of the Digital Age</h1>
             <p className={styles.heroLead}>
-              Ari Integrated Holdings Inc. aims to bridge traditional equity markets
-              with the high-growth potential of premier digital assets.
+              Ari Integrated Holdings Inc. follows a disciplined long-term treasury strategy centered on
+              BTC, ETH, and SOL with a target allocation of 50% / 30% / 20%.
             </p>
             <ul className={styles.heroBullets}>
-              <li>Long-term buy-and-hold reserve of Bitcoin (BTC), Ethereum (ETH), and Solana (SOL)</li>
-              <li>AI decision support with human oversight for risk analysis and capital allocation</li>
-              <li>Regulated, equity-based exposure — no self-custody or private keys required</li>
+              <li>50% BTC as the monetary core and digital collateral anchor</li>
+              <li>30% ETH for programmable settlement and institutional finance rails</li>
+              <li>20% SOL for high-throughput, AI-adjacent growth optionality</li>
             </ul>
             <div className={styles.heroActions}>
               <Button asChild size="lg">
@@ -42,28 +41,17 @@ export default function Home() {
           </div>
         </Container>
       </section>
-
       <section className={styles.section}>
         <Container>
           <div className={styles.sectionHeader}>
-            <h2>Treasury Snapshot</h2>
-            <p>Core BTC, ETH, and SOL reserve metrics for investor review.</p>
-          </div>
-          <TreasurySnapshot withDisclosureLink />
-        </Container>
-      </section>
-
-      <section className={styles.section}>
-        <Container>
-          <div className={styles.sectionHeader}>
-            <h2>Investment Thesis</h2>
-            <p>Why these assets anchor the long-term strategy.</p>
+            <h2>Allocation Framework</h2>
+            <p>Designed around volatility hierarchy, correlation structure, and asymmetric payoffs.</p>
           </div>
           <div className={styles.textBlock}>
             <ul>
-              <li><strong>Bitcoin (BTC):</strong> Scarcity-driven asset with long-term appreciation potential.</li>
-              <li><strong>Ethereum (ETH):</strong> Utility layer for programmable finance and decentralized applications.</li>
-              <li><strong>Solana (SOL):</strong> High-performance infrastructure for scalable blockchain adoption.</li>
+              <li><strong>BTC:</strong> Monetary asset and digital collateral layer with the strongest liquidity profile.</li>
+              <li><strong>ETH:</strong> Settlement and programmable finance layer with moderate risk and upside.</li>
+              <li><strong>SOL:</strong> High-throughput execution layer with higher beta and growth convexity.</li>
             </ul>
           </div>
         </Container>
@@ -83,10 +71,10 @@ export default function Home() {
                   <defs><linearGradient id="cardGold1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E8C87A"/><stop offset="100%" stopColor="#9E7B36"/></linearGradient></defs>
                 </svg>
               </div>
-              <h3 className={styles.cardTitle}>Digital Treasury</h3>
+              <h3 className={styles.cardTitle}>Disciplined Treasury</h3>
               <p className={styles.cardText}>
-                A buy-and-hold balance-sheet strategy focused on Bitcoin (BTC), Ethereum (ETH), and Solana (SOL),
-                held as long-term treasury assets rather than speculative trading positions.
+                A long-duration balance-sheet approach with explicit BTC/ETH/SOL target weights and
+                ongoing risk monitoring rather than short-term trading.
               </p>
             </Card>
             <Card variant="glass">
@@ -96,10 +84,10 @@ export default function Home() {
                   <defs><linearGradient id="cardGold2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E8C87A"/><stop offset="100%" stopColor="#9E7B36"/></linearGradient></defs>
                 </svg>
               </div>
-              <h3 className={styles.cardTitle}>AI-Driven Decisions</h3>
+              <h3 className={styles.cardTitle}>AI-Assisted Oversight</h3>
               <p className={styles.cardText}>
-                AI serves as a decision-support layer for risk analysis, capital allocation timing,
-                and scenario stress testing. Human oversight remains central to all portfolio decisions.
+                AI supports scenario analysis, volatility mapping, and allocation discipline while
+                human governance remains responsible for final decisions.
               </p>
             </Card>
             <Card variant="glass">
@@ -109,47 +97,14 @@ export default function Home() {
                   <defs><linearGradient id="cardGold3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E8C87A"/><stop offset="100%" stopColor="#9E7B36"/></linearGradient></defs>
                 </svg>
               </div>
-              <h3 className={styles.cardTitle}>Regulated Exposure</h3>
+              <h3 className={styles.cardTitle}>Asymmetric Exposure</h3>
               <p className={styles.cardText}>
-                Aiming to provide investors with secure, equity-based exposure to crypto assets
-                without the complexities of self-custody, with a long-term path toward public-market access.
+                The mix seeks strong upside capture across cycles while avoiding concentration into
+                a single high-beta crypto position.
               </p>
             </Card>
           </div>
-          <p className={styles.sectionNote}>Not a speculative trading firm — all positions are long-term treasury holdings with human oversight.</p>
-        </Container>
-      </section>
-
-      <section className={styles.section}>
-        <Container>
-          <div className={styles.sectionHeader}>
-            <h2>Harmony Trading Subsidiary</h2>
-            <p>Operational support that protects the core treasury.</p>
-          </div>
-          <div className={styles.textBlock}>
-            <p>
-              Harmony Trading operates as a supporting subsidiary intended to generate modest revenue,
-              offset operating costs, and reduce the need to liquidate core treasury assets. It is not
-              a speculative trading business.
-            </p>
-          </div>
-        </Container>
-      </section>
-
-      <section className={styles.section}>
-        <Container>
-          <div className={styles.sectionHeader}>
-            <h2>Objectives</h2>
-            <p>What Ari Integrated Holdings Inc. is built to achieve.</p>
-          </div>
-          <div className={styles.textBlock}>
-            <ul>
-              <li>Build a strategic digital asset reserve.</li>
-              <li>Provide regulated, equity-based exposure to crypto markets.</li>
-              <li>Maintain low operating overhead and long-term focus.</li>
-              <li>Prepare for eventual public-market access through an IPO or SPAC.</li>
-            </ul>
-          </div>
+          <p className={styles.sectionNote}>Digital assets remain volatile; interim drawdowns can be substantial.</p>
         </Container>
       </section>
     </>
