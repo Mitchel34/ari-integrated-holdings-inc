@@ -31,7 +31,7 @@ export default async function InvestorDashboard() {
                         </div>
                         <div className={styles.welcomeText}>
                             <h1>Welcome back, {user?.name?.split(' ')[0] || 'Investor'}</h1>
-                            <p>Access your investment portfolio and upcoming events</p>
+                            <p>Access investor documents and scheduled events</p>
                         </div>
                     </div>
                 </div>
@@ -59,7 +59,7 @@ export default async function InvestorDashboard() {
                         </div>
                         <div className={styles.statContent}>
                             <span className={styles.statLabel}>Upcoming Events</span>
-                            <span className={styles.statValue}>3</span>
+                            <span className={styles.statValue}>See calendar entries below</span>
                         </div>
                     </div>
                     <div className={styles.statCard}>
@@ -73,8 +73,8 @@ export default async function InvestorDashboard() {
                             </svg>
                         </div>
                         <div className={styles.statContent}>
-                            <span className={styles.statLabel}>Reports Available</span>
-                            <span className={styles.statValue}>2</span>
+                            <span className={styles.statLabel}>Reports</span>
+                            <span className={styles.statValue}>Available in Investor Relations</span>
                         </div>
                     </div>
                 </div>

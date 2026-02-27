@@ -1,6 +1,6 @@
 import { Container } from '../../components/ui/Container';
 import { Card } from '../../components/ui/Card';
-import styles from '../page.module.css'; // Reusing home styles for consistency
+import styles from '../page.module.css';
 
 export default function ThesisPage() {
     return (
@@ -9,7 +9,7 @@ export default function ThesisPage() {
             <Container>
                 <div className={styles.sectionHeader}>
                     <h1>Investment Thesis</h1>
-                    <p>Digital Assets as Strategic Long-Term Holdings</p>
+                    <p>A 10-year disciplined treasury approach for long-term digital asset holdings.</p>
                 </div>
             </Container>
         </section>
@@ -18,101 +18,100 @@ export default function ThesisPage() {
             <div className={styles.grid}>
                 <Card variant="glass">
                     <span className={styles.heroEyebrow}>01</span>
-                    <h2>Executive Summary</h2>
+                    <h2>Target Allocation</h2>
+                    <p><strong>50% BTC / 30% ETH / 20% SOL</strong></p>
                     <p>
-                        Ari Integrated Holdings Inc. is a Nevada-based, AI-enabled crypto treasury company
-                        focused on long-term capital appreciation through the accumulation and holding of
-                        Bitcoin (BTC), Ethereum (ETH), and Solana (SOL). The Company operates as a balance-sheet
-                        treasury vehicle, emphasizing disciplined buy-and-hold exposure rather than speculative
-                        trading.
-                    </p>
-                    <p>
-                        Operational trading is intentionally limited to a supporting subsidiary (Harmony Trading App)
-                        intended to generate modest revenue and offset operating costs. AI is used as a decision-support
-                        layer for risk analysis, capital allocation timing, and scenario stress testing, with human
-                        oversight remaining central to all investment decisions.
+                        This target structure is designed for long-duration treasury construction,
+                        emphasizing discipline across market cycles instead of reactive allocation changes.
                     </p>
                 </Card>
 
                 <Card variant="glass">
                     <span className={styles.heroEyebrow}>02</span>
-                    <h2>The Case for Digital Assets</h2>
-                    <p>
-                        Ari Integrated Holdings Inc. is founded on the conviction that Bitcoin, Ethereum, and Solana
-                        are not only high-potential investments but also strategic reserve assets in an increasingly
-                        digital financial system.
-                    </p>
-                    <h3>Scarcity & Long-Term Appreciation</h3>
-                    <p>
-                        Bitcoin&rsquo;s hard-capped supply of 21 million and Ethereum&rsquo;s role in decentralized finance
-                        support a long-term investment thesis. Outcomes are uncertain and dependent on adoption,
-                        regulatory shifts, and market structure.
-                    </p>
-                    <h3>Inflation Hedge & Diversification</h3>
-                    <p>
-                        In a world of monetary expansion, digital assets can serve as a potential hedge against
-                        currency devaluation and provide diversification from traditional asset classes.
-                    </p>
+                    <h2>Why This Mix</h2>
+                    <ul>
+                        <li><strong>BTC:</strong> Monetary core with the lowest protocol risk and deepest liquidity.</li>
+                        <li><strong>ETH:</strong> Programmable settlement layer with institutional finance relevance.</li>
+                        <li><strong>SOL:</strong> High-throughput execution exposure with AI-adjacent optionality.</li>
+                    </ul>
                 </Card>
 
                 <Card variant="glass">
                     <span className={styles.heroEyebrow}>03</span>
-                    <h2>Why These Assets?</h2>
+                    <h2>Portfolio Construction Lens</h2>
+                    <p>
+                        With BTC, ETH, and SOL, allocation is not only about percentage weights. It is about
+                        volatility hierarchy, correlation structure, and asymmetric payoff potential.
+                    </p>
                     <ul>
-                        <li><strong>Bitcoin (BTC):</strong> Scarcity-driven asset with long-term appreciation potential.</li>
-                        <li><strong>Ethereum (ETH):</strong> Utility layer for programmable finance and decentralized applications.</li>
-                        <li><strong>Solana (SOL):</strong> High-performance infrastructure for scalable blockchain adoption.</li>
+                        <li><strong>BTC:</strong> Monetary asset and digital collateral layer.</li>
+                        <li><strong>ETH:</strong> Settlement and programmable finance layer.</li>
+                        <li><strong>SOL:</strong> High-beta, high-volatility execution layer.</li>
                     </ul>
                 </Card>
 
                 <Card variant="glass">
                     <span className={styles.heroEyebrow}>04</span>
-                    <h2>Core Business Model</h2>
+                    <h2>Why It Works</h2>
                     <ul>
-                        <li><strong>Buy-and-hold treasury:</strong> Capital is deployed primarily into BTC, ETH, and SOL holdings.</li>
-                        <li><strong>Lean operations:</strong> A minimal operating footprint keeps overhead low and capital focused.</li>
-                        <li><strong>Investor transparency:</strong> Regular updates on holdings and treasury value.</li>
-                        <li><strong>Regulated exposure:</strong> Equity ownership provides a compliant pathway to crypto markets.</li>
+                        <li>BTC anchors the portfolio and dampens relative protocol risk.</li>
+                        <li>ETH contributes utility exposure and potential staking-driven return support.</li>
+                        <li>SOL offers growth convexity if high-throughput chains win AI, gaming, and consumer rails.</li>
+                        <li>The blend seeks asymmetric upside without becoming a single high-beta bet.</li>
                     </ul>
                 </Card>
 
                 <Card variant="glass">
                     <span className={styles.heroEyebrow}>05</span>
-                    <h2>Role of Artificial Intelligence</h2>
+                    <h2>Risk Profile</h2>
                     <ul>
-                        <li><strong>Decision support:</strong> AI informs, but does not replace, management judgment.</li>
-                        <li><strong>Risk analysis:</strong> Scenario stress testing and volatility forecasting guide posture.</li>
-                        <li><strong>Capital allocation:</strong> Timing and sizing insights for BTC, ETH, and SOL deployments.</li>
-                        <li><strong>Operational visibility:</strong> Consolidated reporting across custodians and exchanges.</li>
+                        <li>Expected drawdowns are moderate-to-high in absolute terms because this is crypto.</li>
+                        <li>Upside capture can be strong during sustained bull cycles.</li>
+                        <li>Volatility is targeted to remain acceptable relative to expected long-term return.</li>
                     </ul>
                 </Card>
 
                 <Card variant="glass">
                     <span className={styles.heroEyebrow}>06</span>
-                    <h2>Harmony Trading App</h2>
+                    <h2>Illustrative 5-Year CAGR Analysis</h2>
+                    <p>
+                        A disciplined illustrative analysis for the 50/30/20 BTC-ETH-SOL basket over approximately
+                        Apr 2020 to Mar 2025, using public historical return estimates:
+                    </p>
                     <ul>
-                        <li><strong>Supporting subsidiary:</strong> Designed to generate modest revenue and offset costs.</li>
-                        <li><strong>Limited scope:</strong> Small allocation with strict risk controls to protect core holdings.</li>
-                        <li><strong>AI sandbox:</strong> Testing ground for analytics that inform treasury decisions.</li>
+                        <li>BTC: ~59% CAGR</li>
+                        <li>ETH: ~55% CAGR</li>
+                        <li>SOL: ~123% CAGR</li>
+                        <li>Blended 50/30/20 basket: roughly ~70% annualized over that period</li>
                     </ul>
+                    <p>
+                        These figures are approximate and for illustrative context only. They are not financial advice.
+                    </p>
                 </Card>
 
                 <Card variant="glass">
                     <span className={styles.heroEyebrow}>07</span>
-                    <h2>Risk Management & Governance</h2>
-                    <p>
-                        The Company prioritizes asset security, compliance, and governance. Custody is intended to
-                        leverage institutional-grade providers, and internal controls are designed to safeguard
-                        shareholder value. Regulatory and legal positioning will be finalized prior to any formal
-                        public offering.
-                    </p>
+                    <h2>Why Not 10-Year CAGR Yet</h2>
+                    <ul>
+                        <li>Bitcoin launched in 2009, Ethereum in 2015, and Solana in 2020.</li>
+                        <li>SOL does not have a full 10-year price history.</li>
+                        <li>Early ETH data is limited versus mature public market datasets.</li>
+                        <li>A uniform 10-year CAGR comparison across all three assets is not statistically robust yet.</li>
+                    </ul>
                 </Card>
             </div>
 
             <div className={styles.disclaimer} role="note">
-                <strong>Disclosure:</strong> This content is for informational purposes only and does not constitute
-                investment advice. Digital assets are volatile and can experience rapid, significant losses.
-                Past performance is not indicative of future results.
+                <strong>Performance &amp; Volatility Disclosure:</strong> Past performance is not indicative of future
+                results. Historical returns, including compounded annual growth rates, reflect specific market
+                conditions, liquidity environments, regulatory frameworks, and adoption phases that may not recur.
+                Digital asset markets remain inherently volatile, and forward returns may differ materially from prior
+                periods. As the asset class matures, institutional participation, infrastructure quality, regulatory
+                clarity, and liquidity depth may reduce volatility over time, but there is no assurance this will occur
+                in a linear or permanent manner. Structural shifts, macroeconomic shocks, technological risks, and
+                regulatory developments may continue to produce significant price fluctuations. Investors should evaluate
+                digital asset allocations in the context of long-term goals, liquidity needs, and tolerance for
+                substantial interim drawdowns.
             </div>
         </Container>
         </>

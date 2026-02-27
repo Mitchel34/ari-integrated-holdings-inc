@@ -26,7 +26,7 @@ export default async function ExecutiveDashboard() {
                         <div className={styles.welcomeText}>
                             <span className={styles.roleBadge}>Executive</span>
                             <h1>Welcome back, {user?.name?.split(' ')[0] || 'Executive'}</h1>
-                            <p>Manage company operations and view analytics</p>
+                            <p>Manage governance workflows and review investor communications</p>
                         </div>
                     </div>
                 </div>
@@ -42,8 +42,8 @@ export default async function ExecutiveDashboard() {
                             </svg>
                         </div>
                         <div className={styles.statContent}>
-                            <span className={styles.statLabel}>Total Investors</span>
-                            <span className={styles.statValue}>12</span>
+                            <span className={styles.statLabel}>Investor Directory</span>
+                            <span className={styles.statValue}>Live data in secure portal</span>
                         </div>
                     </div>
                     <div className={styles.statCard}>
@@ -54,8 +54,8 @@ export default async function ExecutiveDashboard() {
                             </svg>
                         </div>
                         <div className={styles.statContent}>
-                            <span className={styles.statLabel}>Treasury Value</span>
-                            <span className={styles.statValue}>$2.4M</span>
+                            <span className={styles.statLabel}>Treasury Updates</span>
+                            <span className={styles.statValue}>Published via disclosures</span>
                         </div>
                     </div>
                     <div className={styles.statCard}>
@@ -66,8 +66,8 @@ export default async function ExecutiveDashboard() {
                             </svg>
                         </div>
                         <div className={styles.statContent}>
-                            <span className={styles.statLabel}>Performance</span>
-                            <span className={styles.statValue}>+18.2%</span>
+                            <span className={styles.statLabel}>Performance Reporting</span>
+                            <span className={styles.statValue}>Published through disclosures</span>
                         </div>
                     </div>
                 </div>
