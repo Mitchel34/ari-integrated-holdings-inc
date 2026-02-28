@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma';
 import { MeetingTypeSelector } from '../../../components/scheduling/MeetingTypeSelector';
 import { ExecMeetingBooking } from '../../../components/scheduling/ExecMeetingBooking';
 import BroadcastTool from './BroadcastTool';
+import BroadcastHistory from './BroadcastHistory';
 import Link from 'next/link';
 import styles from './page.module.css';
 
@@ -130,12 +131,31 @@ export default async function ExecutiveDashboard() {
                     </div>
                 </div>
 
+                {/* Broadcast history */}
+                <div className={styles.panelSection}>
+                    <div className={styles.sectionHeader}>
+                        <h2>Recent Broadcasts</h2>
+                        <p>History of alerts sent to subscribers</p>
+                    </div>
+                    <div className={styles.panelBody}>
+                        <BroadcastHistory />
+                    </div>
+                </div>
+
                 {/* Recent subscribers */}
                 {recentSubscribers.length > 0 && (
                     <div className={styles.panelSection}>
                         <div className={styles.sectionHeader}>
-                            <h2>Recent Alert Subscribers</h2>
-                            <p>Latest {recentSubscribers.length} signups — {subscriberCount} active total</p>
+                            <div>
+                                <h2>Recent Alert Subscribers</h2>
+                                <p>Latest {recentSubscribers.length} signups — {subscriberCount} active total</p>
+                            </div>
+                            <Link href="/executive/subscribers" className={styles.viewAllLink}>
+                                View All
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                                    <polyline points="9 18 15 12 9 6" />
+                                </svg>
+                            </Link>
                         </div>
                         <div className={styles.subscriberTable}>
                             <div className={styles.tableHeader}>

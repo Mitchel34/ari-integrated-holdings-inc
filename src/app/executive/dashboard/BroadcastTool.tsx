@@ -2,24 +2,24 @@
 
 import { useState, FormEvent } from 'react';
 import { Button } from '../../../components/ui/Button';
+import { useToast } from '../../../components/ui/Toast';
 import styles from './BroadcastTool.module.css';
 
 interface BroadcastToolProps {
     subscriberCount: number;
 }
 
-type SendState = 'idle' | 'preview' | 'sending' | 'sent' | 'error';
+type SendState = 'idle' | 'preview' | 'sending' | 'sent';
 
 export default function BroadcastTool({ subscriberCount }: BroadcastToolProps) {
     const [sendState, setSendState] = useState<SendState>('idle');
     const [subject, setSubject] = useState('');
     const [message, setMessage] = useState('');
     const [sentCount, setSentCount] = useState(0);
-    const [errorMsg, setErrorMsg] = useState('');
+    const { addToast } = useToast();
 
     async function handleSend() {
         setSendState('sending');
-        setErrorMsg('');
         try {
             const res = await fetch('/api/executive/broadcast', {
                 method: 'POST',
@@ -30,9 +30,11 @@ export default function BroadcastTool({ subscriberCount }: BroadcastToolProps) {
             if (!res.ok || !data.ok) throw new Error(data.error || 'Broadcast failed.');
             setSentCount(data.sent ?? 0);
             setSendState('sent');
+            addToast(`Alert sent to ${data.sent ?? 0} subscribers`, 'success');
         } catch (err) {
-            setErrorMsg(err instanceof Error ? err.message : 'Broadcast failed. Try again.');
-            setSendState('error');
+            const errorMessage = err instanceof Error ? err.message : 'Broadcast failed. Try again.';
+            addToast(errorMessage, 'error');
+            setSendState('preview');
         }
     }
 
@@ -80,9 +82,6 @@ export default function BroadcastTool({ subscriberCount }: BroadcastToolProps) {
                     </Button>
                     <Button size="md" variant="outline" onClick={() => setSendState('idle')}>Edit</Button>
                 </div>
-                {sendState === 'error' && errorMsg && (
-                    <p className={styles.errorMsg} role="alert">{errorMsg}</p>
-                )}
             </div>
         );
     }
@@ -126,9 +125,6 @@ export default function BroadcastTool({ subscriberCount }: BroadcastToolProps) {
                     Will send to {subscriberCount} active subscriber{subscriberCount !== 1 ? 's' : ''}
                 </span>
             </div>
-            {sendState === 'error' && errorMsg && (
-                <p className={styles.errorMsg} role="alert">{errorMsg}</p>
-            )}
         </form>
     );
 }

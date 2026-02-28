@@ -56,21 +56,15 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        let isPasswordValid = false;
         const storedPassword = user.password;
 
-        if (storedPassword.startsWith("$2a$") || storedPassword.startsWith("$2b$")) {
-          isPasswordValid = await bcrypt.compare(credentials.password, storedPassword);
-        } else {
-          // Backwards compatibility for legacy plaintext rows; migrate on successful login.
-          isPasswordValid = credentials.password === storedPassword;
-          if (isPasswordValid) {
-            await prisma.user.update({
-              where: { id: user.id },
-              data: { password: await bcrypt.hash(credentials.password, 12) },
-            });
-          }
+        // Only accept bcrypt-hashed passwords (security: no plaintext fallback)
+        if (!storedPassword.startsWith("$2a$") && !storedPassword.startsWith("$2b$")) {
+          console.error(`User ${user.id} has unhashed password - login denied`);
+          return null;
         }
+
+        const isPasswordValid = await bcrypt.compare(credentials.password, storedPassword);
 
         if (!isPasswordValid) {
           return null;

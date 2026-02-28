@@ -35,15 +35,15 @@ export async function PUT(req: Request) {
     );
   }
 
-  let isPasswordValid = false;
-  if (
-    user.password &&
-    (user.password.startsWith("$2a$") || user.password.startsWith("$2b$"))
-  ) {
-    isPasswordValid = await bcrypt.compare(body.currentPassword, user.password);
-  } else if (user.password) {
-    isPasswordValid = body.currentPassword === user.password;
+  // Only accept bcrypt-hashed passwords (security: no plaintext fallback)
+  if (!user.password || (!user.password.startsWith("$2a$") && !user.password.startsWith("$2b$"))) {
+    return NextResponse.json(
+      { error: "Account password not properly configured" },
+      { status: 500 }
+    );
   }
+
+  const isPasswordValid = await bcrypt.compare(body.currentPassword, user.password);
 
   if (!isPasswordValid) {
     return NextResponse.json(

@@ -4,6 +4,7 @@ import { SiteHeader } from "../components/layout/Navbar";
 import { Footer } from "../components/layout/Footer";
 import { AuthSessionProvider } from "../components/auth/AuthSessionProvider";
 import { CryptoBackground } from "../components/auth/CryptoBackground";
+import { ToastProvider } from "../components/ui/Toast";
 import "./globals.css";
 
 const inter = Inter({
@@ -26,12 +27,14 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body suppressHydrationWarning>
         <AuthSessionProvider>
-          <CryptoBackground />
-          <div className="layout-wrapper">
-            <SiteHeader />
-            <main>{children}</main>
-            <Footer />
-          </div>
+          <ToastProvider>
+            <CryptoBackground />
+            <div className="layout-wrapper">
+              <SiteHeader />
+              <main>{children}</main>
+              <Footer />
+            </div>
+          </ToastProvider>
         </AuthSessionProvider>
       </body>
     </html>

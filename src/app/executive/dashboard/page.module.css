@@ -203,6 +203,9 @@
 .schedulingWrapper { padding: 1.5rem 2rem; }
 
 .sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
     padding: 1.5rem 2rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -221,6 +224,23 @@
     color: var(--color-text-muted);
     font-size: 0.875rem;
     margin: 0;
+}
+
+.viewAllLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #E8C87A;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.viewAllLink:hover {
+    background: rgba(232, 200, 122, 0.1);
 }
 
 .settingsLink {
