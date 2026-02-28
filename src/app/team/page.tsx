@@ -11,7 +11,7 @@ const TEAM = [
     {
         name: 'Judith Carson',
         role: 'Chief Marketing Officer',
-        bio: null,
+        bio: 'Co-founder, CMO, and Board Member of Ari Integrated Holdings with a career spanning risk management, actuarial consulting, and entrepreneurship. Judy earned her BBA from the University of Wisconsin, double-majoring in Risk Management & Insurance and Personnel Management. She began at The Wyatt Company (now Willis Towers Watson), advising Fortune 500 corporations and public entities on alternative risk-financing strategies. After senior risk management roles at a major hospital group and a Fortune 100 company, she founded and led a loss control and risk consulting firm for 24 years. At Ari, she brings analytical rigor and entrepreneurial experience to marketing strategy and AI-driven growth.',
     },
     {
         name: 'Mitchel Carson',
