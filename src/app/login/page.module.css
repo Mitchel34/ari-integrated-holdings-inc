@@ -75,29 +75,6 @@
   line-height: 1.5;
 }
 
-.divider {
-  display: flex;
-  align-items: center;
-  margin: 1.75rem 0;
-  gap: 1rem;
-}
-
-.divider::before,
-.divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-}
-
-.divider span {
-  color: var(--color-text-muted);
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-}
-
 .portalInfo {
   text-align: center;
   padding: 1.5rem 2rem;
