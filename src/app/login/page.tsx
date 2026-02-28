@@ -3,22 +3,11 @@
 import { Suspense } from "react";
 import Image from "next/image";
 import { Container } from "../../components/ui/Container";
-import { OAuthButtons } from "../../components/auth/OAuthButtons";
 import { LoginForm } from "../../components/auth/LoginForm";
 import styles from "./page.module.css";
 
 function LoginContent() {
-  return (
-    <>
-      <OAuthButtons />
-
-      <div className={styles.divider}>
-        <span>or continue with email</span>
-      </div>
-
-      <LoginForm />
-    </>
-  );
+  return <LoginForm />;
 }
 
 export default function LoginPage() {
