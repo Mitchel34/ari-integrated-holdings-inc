@@ -9,17 +9,18 @@ interface BroadcastToolProps {
     subscriberCount: number;
 }
 
-type SendState = 'idle' | 'preview' | 'sending' | 'sent';
+type SendState = 'idle' | 'preview' | 'sent';
 
 export default function BroadcastTool({ subscriberCount }: BroadcastToolProps) {
     const [sendState, setSendState] = useState<SendState>('idle');
+    const [isSending, setIsSending] = useState(false);
     const [subject, setSubject] = useState('');
     const [message, setMessage] = useState('');
     const [sentCount, setSentCount] = useState(0);
     const { addToast } = useToast();
 
     async function handleSend() {
-        setSendState('sending');
+        setIsSending(true);
         try {
             const res = await fetch('/api/executive/broadcast', {
                 method: 'POST',
@@ -34,7 +35,8 @@ export default function BroadcastTool({ subscriberCount }: BroadcastToolProps) {
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Broadcast failed. Try again.';
             addToast(errorMessage, 'error');
-            setSendState('preview');
+        } finally {
+            setIsSending(false);
         }
     }
 
@@ -77,10 +79,10 @@ export default function BroadcastTool({ subscriberCount }: BroadcastToolProps) {
                 </div>
                 <div className={styles.previewBody}>{message}</div>
                 <div className={styles.previewActions}>
-                    <Button size="md" onClick={handleSend} disabled={sendState === 'sending'}>
-                        {sendState === 'sending' ? 'Sending…' : `Send to ${subscriberCount} subscriber${subscriberCount !== 1 ? 's' : ''}`}
+                    <Button size="md" onClick={handleSend} disabled={isSending}>
+                        {isSending ? 'Sending…' : `Send to ${subscriberCount} subscriber${subscriberCount !== 1 ? 's' : ''}`}
                     </Button>
-                    <Button size="md" variant="outline" onClick={() => setSendState('idle')}>Edit</Button>
+                    <Button size="md" variant="outline" onClick={() => setSendState('idle')} disabled={isSending}>Edit</Button>
                 </div>
             </div>
         );
