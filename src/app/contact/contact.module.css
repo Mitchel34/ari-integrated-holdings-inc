@@ -1,0 +1,97 @@
+.scheduleSection {
+    margin-bottom: 3rem;
+}
+
+.scheduleSectionHeader {
+    margin-bottom: 1.5rem;
+}
+
+.scheduleSectionHeader h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--color-accent-gold) 0%, #f5d76e 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0 0 0.5rem;
+}
+
+.scheduleSectionHeader p {
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 2.5rem 0;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.divider span {
+    color: var(--color-text-muted);
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+}
+
+.formSection {
+    margin-bottom: 3rem;
+}
+
+.formHeader {
+    margin-bottom: 1.5rem;
+}
+
+.formHeader h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--color-accent-gold) 0%, #f5d76e 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0 0 0.5rem;
+}
+
+.formHeader p {
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.fallbackPanel {
+    padding: 1.25rem 1.5rem;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.fallbackPanel p {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.emailLink {
+    color: var(--color-accent-gold-bright);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.emailLink:hover {
+    text-decoration: underline;
+}

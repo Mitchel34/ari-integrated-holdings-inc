@@ -1,7 +1,10 @@
 import { Container } from '../../../components/ui/Container';
-import CalendarView from '../../../components/CalendarView';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { getTreasurySnapshot } from '@/lib/treasury/snapshot';
+import { prisma } from '@/lib/prisma';
+import { MeetingTypeSelector } from '../../../components/scheduling/MeetingTypeSelector';
+import BroadcastTool from './BroadcastTool';
 import styles from './page.module.css';
 
 interface ExtendedUser {
@@ -11,13 +14,42 @@ interface ExtendedUser {
     role?: string;
 }
 
+function formatUsd(n: number) {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
+}
+
+function formatDate(iso: string) {
+    return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(iso));
+}
+
 export default async function ExecutiveDashboard() {
     const session = await getServerSession(authOptions);
     const user = session?.user as ExtendedUser | undefined;
 
+    const snapshot = getTreasurySnapshot();
+
+    let subscriberCount = 0;
+    let investorCount = 0;
+    let recentSubscribers: { email: string; subscribedAt: Date; source: string | null }[] = [];
+
+    try {
+        [subscriberCount, investorCount, recentSubscribers] = await Promise.all([
+            prisma.investorAlert.count({ where: { isActive: true } }),
+            prisma.user.count({ where: { role: 'INVESTOR' } }),
+            prisma.investorAlert.findMany({
+                orderBy: { subscribedAt: 'desc' },
+                take: 20,
+            }),
+        ]);
+    } catch {
+        // DB not available in dev/demo — show zeros
+    }
+
     return (
         <div className={styles.dashboardPage}>
             <Container className={styles.dashboardContainer}>
+
+                {/* Welcome */}
                 <div className={styles.welcomeCard}>
                     <div className={styles.welcomeHeader}>
                         <div className={styles.avatarLarge}>
@@ -26,11 +58,12 @@ export default async function ExecutiveDashboard() {
                         <div className={styles.welcomeText}>
                             <span className={styles.roleBadge}>Executive</span>
                             <h1>Welcome back, {user?.name?.split(' ')[0] || 'Executive'}</h1>
-                            <p>Manage governance workflows and review investor communications</p>
+                            <p>Manage investor communications and review treasury operations</p>
                         </div>
                     </div>
                 </div>
 
+                {/* Live stat cards */}
                 <div className={styles.statsGrid}>
                     <div className={styles.statCard}>
                         <div className={styles.statIcon}>
@@ -42,8 +75,9 @@ export default async function ExecutiveDashboard() {
                             </svg>
                         </div>
                         <div className={styles.statContent}>
-                            <span className={styles.statLabel}>Investor Directory</span>
-                            <span className={styles.statValue}>Live data in secure portal</span>
+                            <span className={styles.statLabel}>Alert Subscribers</span>
+                            <span className={styles.statValue}>{subscriberCount.toLocaleString()}</span>
+                            <span className={styles.statSub}>{investorCount} registered investors</span>
                         </div>
                     </div>
                     <div className={styles.statCard}>
@@ -54,8 +88,9 @@ export default async function ExecutiveDashboard() {
                             </svg>
                         </div>
                         <div className={styles.statContent}>
-                            <span className={styles.statLabel}>Treasury Updates</span>
-                            <span className={styles.statValue}>Published via disclosures</span>
+                            <span className={styles.statLabel}>Treasury NAV</span>
+                            <span className={styles.statValue}>{formatUsd(snapshot.totals.netAssetValueUsd)}</span>
+                            <span className={styles.statSub}>mNAV {snapshot.totals.mnavRatio.toFixed(2)}x</span>
                         </div>
                     </div>
                     <div className={styles.statCard}>
@@ -66,21 +101,61 @@ export default async function ExecutiveDashboard() {
                             </svg>
                         </div>
                         <div className={styles.statContent}>
-                            <span className={styles.statLabel}>Performance Reporting</span>
-                            <span className={styles.statValue}>Published through disclosures</span>
+                            <span className={styles.statLabel}>Unrealized P&L</span>
+                            <span className={styles.statValue} style={{ color: '#4ade80' }}>
+                                {formatUsd(snapshot.totals.unrealizedPnlUsd)}
+                            </span>
+                            <span className={styles.statSub}>across BTC, ETH, SOL</span>
                         </div>
                     </div>
                 </div>
 
-                <div className={styles.calendarSection}>
+                {/* Broadcast tool */}
+                <div className={styles.panelSection}>
                     <div className={styles.sectionHeader}>
-                        <h2>Executive Calendar</h2>
-                        <p>Meetings, earnings calls, and strategic events</p>
+                        <h2>Send Investor Alert</h2>
+                        <p>Broadcast a treasury update or announcement to all active alert subscribers</p>
                     </div>
-                    <div className={styles.calendarWrapper}>
-                        <CalendarView />
+                    <div className={styles.panelBody}>
+                        <BroadcastTool subscriberCount={subscriberCount} />
                     </div>
                 </div>
+
+                {/* Recent subscribers */}
+                {recentSubscribers.length > 0 && (
+                    <div className={styles.panelSection}>
+                        <div className={styles.sectionHeader}>
+                            <h2>Recent Alert Subscribers</h2>
+                            <p>Latest {recentSubscribers.length} signups — {subscriberCount} active total</p>
+                        </div>
+                        <div className={styles.subscriberTable}>
+                            <div className={styles.tableHeader}>
+                                <span>Email</span>
+                                <span>Source</span>
+                                <span>Date</span>
+                            </div>
+                            {recentSubscribers.map((sub) => (
+                                <div key={sub.email} className={styles.tableRow}>
+                                    <span className={styles.subEmail}>{sub.email}</span>
+                                    <span className={styles.subSource}>{sub.source ?? '—'}</span>
+                                    <span className={styles.subDate}>{formatDate(sub.subscribedAt.toISOString())}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Schedule meetings */}
+                <div className={styles.panelSection}>
+                    <div className={styles.sectionHeader}>
+                        <h2>Schedule a Meeting</h2>
+                        <p>Book investor meetings and partnership calls</p>
+                    </div>
+                    <div className={styles.schedulingWrapper}>
+                        <MeetingTypeSelector />
+                    </div>
+                </div>
+
             </Container>
         </div>
     );

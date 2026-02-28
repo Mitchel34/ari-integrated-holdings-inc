@@ -1,5 +1,6 @@
 'use server';
 
+import { prisma } from '@/lib/prisma';
 import { emailService } from '@/lib/email';
 
 export interface AlertSignupState {
@@ -19,6 +20,7 @@ function isValidEmailAddress(email: string) {
 export async function subscribeInvestorAlertsAction(
     _prevState: AlertSignupState,
     formData: FormData,
+    source?: string,
 ): Promise<AlertSignupState> {
     const email = String(formData.get('email') ?? '').trim().toLowerCase();
 
@@ -30,15 +32,17 @@ export async function subscribeInvestorAlertsAction(
     }
 
     try {
-        await emailService.sendEmail(
-            'investor-relations@ari-integrated.com',
-            'Investor Alerts Signup Request',
-            `New investor alert signup requested for: ${email}`,
-        );
+        await prisma.investorAlert.upsert({
+            where: { email },
+            update: { isActive: true },
+            create: { email, source: source ?? 'investors-page', isActive: true },
+        });
+
+        await emailService.sendAlertConfirmation(email);
 
         return {
             status: 'success',
-            message: 'Signup received. Investor Relations will include this email in update notifications.',
+            message: 'Confirmed. You\'ll receive treasury updates, disclosures, and investor event announcements.',
         };
     } catch {
         return {
