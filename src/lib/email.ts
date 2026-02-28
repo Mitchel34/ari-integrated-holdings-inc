@@ -153,6 +153,10 @@ export const emailService = {
         return send(to, subject, html);
     },
 
+    async sendMeetingNotification(to: string[], subject: string, html: string): Promise<boolean> {
+        return send(to, subject, html);
+    },
+
     async sendContactInquiry(opts: {
         name: string;
         email: string;
