@@ -61,7 +61,7 @@ export default function BroadcastTool({ subscriberCount }: BroadcastToolProps) {
         );
     }
 
-    if (sendState === 'preview') {
+    if (sendState === 'preview' || sendState === 'sending' || sendState === 'error') {
         return (
             <div className={styles.preview}>
                 <h3 className={styles.previewTitle}>Preview</h3>
@@ -126,9 +126,6 @@ export default function BroadcastTool({ subscriberCount }: BroadcastToolProps) {
                     Will send to {subscriberCount} active subscriber{subscriberCount !== 1 ? 's' : ''}
                 </span>
             </div>
-            {sendState === 'error' && errorMsg && (
-                <p className={styles.errorMsg} role="alert">{errorMsg}</p>
-            )}
         </form>
     );
 }

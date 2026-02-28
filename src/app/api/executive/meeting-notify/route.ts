@@ -2,13 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { emailService } from "@/lib/email";
-
-// All executive emails — notifications go to every executive
-const EXECUTIVE_EMAILS = [
-  "Mitchel.carson@gmail.com",
-  "Judy.carson@ecalwest.com",
-  "Curtis.carson@ecalwest.com",
-];
+import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
@@ -18,6 +12,14 @@ export async function POST(req: Request) {
   ) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
+
+  const executives = await prisma.user.findMany({
+    where: { role: "EXECUTIVE" },
+    select: { email: true },
+  });
+  const executiveEmails = executives
+    .map((u) => u.email)
+    .filter((e): e is string => !!e);
 
   const body = (await req.json()) as {
     meetingType?: string;
@@ -76,7 +78,7 @@ export async function POST(req: Request) {
 </html>`;
 
   const success = await emailService.sendMeetingNotification(
-    EXECUTIVE_EMAILS,
+    executiveEmails,
     subject,
     html
   );
@@ -90,7 +92,7 @@ export async function POST(req: Request) {
 
   return NextResponse.json({
     ok: true,
-    sent: EXECUTIVE_EMAILS.length,
-    recipients: EXECUTIVE_EMAILS,
+    sent: executiveEmails.length,
+    recipients: executiveEmails,
   });
 }
