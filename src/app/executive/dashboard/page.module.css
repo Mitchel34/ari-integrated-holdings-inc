@@ -143,14 +143,64 @@
     color: var(--color-text-main);
 }
 
-.calendarSection {
+.statSub {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin-top: 0.1rem;
+}
+
+.panelSection {
     background: rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
     overflow: hidden;
+    margin-bottom: 2rem;
 }
+
+.panelBody {
+    padding: 1.5rem 2rem;
+}
+
+.subscriberTable {
+    display: flex;
+    flex-direction: column;
+}
+
+.tableHeader {
+    display: grid;
+    grid-template-columns: 1fr 140px 120px;
+    gap: 1rem;
+    padding: 0.625rem 2rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.tableRow {
+    display: grid;
+    grid-template-columns: 1fr 140px 120px;
+    gap: 1rem;
+    padding: 0.875rem 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    align-items: center;
+    font-size: 0.875rem;
+    transition: background 0.15s ease;
+}
+
+.tableRow:last-child { border-bottom: none; }
+.tableRow:hover { background: rgba(255, 255, 255, 0.03); }
+
+.subEmail { color: var(--color-text-main); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.subSource { color: var(--color-text-muted); font-size: 0.8125rem; }
+.subDate { color: var(--color-text-muted); font-size: 0.8125rem; white-space: nowrap; }
+
+.schedulingWrapper { padding: 1.5rem 2rem; }
 
 .sectionHeader {
     padding: 1.5rem 2rem;

@@ -63,6 +63,14 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model InvestorAlert {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  subscribedAt DateTime @default(now())
+  isActive     Boolean  @default(true)
+  source       String?
+}
+
 // Application-specific enums
 enum Role {
   INVESTOR

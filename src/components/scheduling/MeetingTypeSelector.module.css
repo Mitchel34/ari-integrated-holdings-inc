@@ -1,0 +1,107 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.typeGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.typeCard {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+    color: inherit;
+    font-family: inherit;
+}
+
+.typeCard:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(232, 200, 122, 0.4);
+}
+
+.typeCardActive {
+    background: rgba(232, 200, 122, 0.08);
+    border-color: rgba(232, 200, 122, 0.6);
+    box-shadow: 0 0 0 1px rgba(232, 200, 122, 0.2);
+}
+
+.typeHeader {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.typeLabel {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text-main);
+}
+
+.typeDuration {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-accent-gold-bright);
+    white-space: nowrap;
+    padding: 0.2rem 0.5rem;
+    background: rgba(232, 200, 122, 0.12);
+    border-radius: 100px;
+}
+
+.typeDesc {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.embedWrapper {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    min-height: 660px;
+}
+
+.noUrl {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    padding: 2rem;
+    text-align: center;
+}
+
+.noUrl p {
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.fallbackLink {
+    color: var(--color-accent-gold-bright);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.fallbackLink:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .typeGrid {
+        grid-template-columns: 1fr;
+    }
+}
