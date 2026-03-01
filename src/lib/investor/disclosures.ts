@@ -26,12 +26,20 @@ export interface InvestorEvent {
 
 const DISCLOSURES: DisclosureItem[] = [
     {
+        id: 'treasury-update-mar-2026',
+        publishedAtIso: '2026-03-01T14:00:00.000Z',
+        category: 'Treasury Update',
+        title: 'March 2026 Treasury Update',
+        summary:
+            'Updated ETF holdings (ARKB, FSOL, FETH), cash positions, and share valuation as of March 1, 2026. Total assets: $4,671.14.',
+    },
+    {
         id: 'treasury-allocation-q1-2026',
         publishedAtIso: '2026-02-06T14:00:00.000Z',
         category: 'Treasury Update',
         title: 'Q1 2026 Treasury Allocation Update',
         summary:
-            'Updated BTC, ETH, and SOL treasury allocations, cost basis progression, and reserve management activity through January 2026.',
+            'Initial ETF portfolio construction with ARKB, FSOL, and FETH positions. Cost basis and reserve management activity through February 2026.',
     },
     {
         id: 'operations-harmony-briefing',
@@ -61,6 +69,13 @@ const DISCLOSURES: DisclosureItem[] = [
 
 const INVESTOR_DOCUMENTS: InvestorDocument[] = [
     {
+        id: 'treasury-update-mar',
+        title: 'Treasury Update - March 2026',
+        dateIso: '2026-03-01T00:00:00.000Z',
+        type: 'Treasury Update',
+        href: '/disclosures#treasury-update-mar-2026',
+    },
+    {
         id: 'prospectus',
         title: 'Company Prospectus',
         dateIso: '2026-01-25T00:00:00.000Z',
@@ -68,8 +83,8 @@ const INVESTOR_DOCUMENTS: InvestorDocument[] = [
         href: '/thesis',
     },
     {
-        id: 'treasury-update',
-        title: 'Treasury Update - January 2026',
+        id: 'treasury-update-feb',
+        title: 'Treasury Update - February 2026',
         dateIso: '2026-02-06T00:00:00.000Z',
         type: 'Treasury Update',
         href: '/disclosures#treasury-allocation-q1-2026',
@@ -109,7 +124,7 @@ const INVESTOR_EVENTS: InvestorEvent[] = [
         id: 'may-strategy-session',
         startsAtIso: '2026-05-14T16:00:00.000Z',
         title: 'Treasury Strategy Session',
-        description: 'Review of BTC, ETH, SOL positioning and long-term reserve management framework.',
+        description: 'Review of ARKB, FSOL, FETH ETF positioning and long-term reserve management framework.',
         location: 'Investor portal',
     },
 ];

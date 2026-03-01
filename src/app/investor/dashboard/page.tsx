@@ -15,8 +15,13 @@ interface ExtendedUser {
     createdAt?: string;
 }
 
-function formatUsd(n: number) {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
+function formatUsd(n: number, decimals = 0) {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+    }).format(n);
 }
 
 function formatDate(iso: string) {
@@ -42,8 +47,7 @@ export default async function InvestorDashboard() {
     const events = getInvestorEvents();
     const nextEvent = events[0];
 
-    const navPct = snapshot.totals.mnavPremiumPct;
-    const navColor = navPct >= 0 ? '#4ade80' : '#f87171';
+    const pnlColor = snapshot.totals.unrealizedPnlUsd >= 0 ? '#4ade80' : '#f87171';
 
     return (
         <div className={styles.dashboardPage}>
@@ -71,10 +75,10 @@ export default async function InvestorDashboard() {
                             </svg>
                         </div>
                         <div className={styles.statContent}>
-                            <span className={styles.statLabel}>Treasury NAV</span>
-                            <span className={styles.statValue}>{formatUsd(snapshot.totals.netAssetValueUsd)}</span>
-                            <span className={styles.statSub} style={{ color: navColor }}>
-                                mNAV {snapshot.totals.mnavRatio.toFixed(2)}x ({navPct >= 0 ? '+' : ''}{navPct.toFixed(1)}%)
+                            <span className={styles.statLabel}>Total Assets</span>
+                            <span className={styles.statValue}>{formatUsd(snapshot.totals.totalAssets, 2)}</span>
+                            <span className={styles.statSub} style={{ color: pnlColor }}>
+                                P&L: {snapshot.totals.unrealizedPnlUsd >= 0 ? '+' : ''}{formatUsd(snapshot.totals.unrealizedPnlUsd, 2)}
                             </span>
                         </div>
                     </div>
@@ -88,7 +92,7 @@ export default async function InvestorDashboard() {
                         </div>
                         <div className={styles.statContent}>
                             <span className={styles.statLabel}>NAV per Share</span>
-                            <span className={styles.statValue}>{formatUsd(snapshot.totals.navPerShareUsd)}</span>
+                            <span className={styles.statValue}>{formatUsd(snapshot.totals.navPerShareUsd, 4)}</span>
                             <span className={styles.statSub}>{snapshot.sharesOutstanding.toLocaleString()} shares outstanding</span>
                         </div>
                     </div>
@@ -118,33 +122,70 @@ export default async function InvestorDashboard() {
                     </div>
                 </div>
 
-                {/* Holdings breakdown */}
+                {/* Cash Positions */}
                 <div className={styles.panelSection}>
                     <div className={styles.sectionHeader}>
-                        <h2>Treasury Holdings</h2>
-                        <p>As of {formatDate(snapshot.asOfIso)} · Target allocation 50% BTC / 30% ETH / 20% SOL</p>
+                        <h2>Cash Positions</h2>
+                        <p>As of {snapshot.asOfDate}</p>
                     </div>
                     <div className={styles.holdingsGrid}>
-                        {snapshot.assets.map((asset) => (
-                            <div key={asset.symbol} className={styles.holdingCard}>
-                                <div className={styles.holdingSymbol}>{asset.symbol}</div>
+                        <div className={styles.holdingCard}>
+                            <div className={styles.holdingSymbol}>CHK</div>
+                            <div className={styles.holdingDetails}>
+                                <div className={styles.holdingRow}>
+                                    <span>Checking Account</span>
+                                    <strong>{formatUsd(snapshot.cash.checking, 2)}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div className={styles.holdingCard}>
+                            <div className={styles.holdingSymbol}>BRK</div>
+                            <div className={styles.holdingDetails}>
+                                <div className={styles.holdingRow}>
+                                    <span>Brokerage Cash</span>
+                                    <strong>{formatUsd(snapshot.cash.brokerage, 2)}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div className={styles.holdingCard}>
+                            <div className={styles.holdingSymbol}>$</div>
+                            <div className={styles.holdingDetails}>
+                                <div className={styles.holdingRow}>
+                                    <span>Total Cash</span>
+                                    <strong>{formatUsd(snapshot.cash.total, 2)}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* ETF Holdings */}
+                <div className={styles.panelSection}>
+                    <div className={styles.sectionHeader}>
+                        <h2>Capital Investments</h2>
+                        <p>As of {snapshot.asOfDate} · ETF Holdings</p>
+                    </div>
+                    <div className={styles.holdingsGrid}>
+                        {snapshot.holdings.map((holding) => (
+                            <div key={holding.symbol} className={styles.holdingCard}>
+                                <div className={styles.holdingSymbol}>{holding.symbol}</div>
                                 <div className={styles.holdingDetails}>
                                     <div className={styles.holdingRow}>
-                                        <span>Units</span>
-                                        <strong>{asset.units.toLocaleString()}</strong>
+                                        <span>Shares</span>
+                                        <strong>{holding.shares.toLocaleString()}</strong>
                                     </div>
                                     <div className={styles.holdingRow}>
-                                        <span>Spot price</span>
-                                        <strong>{formatUsd(asset.spotPriceUsd)}</strong>
+                                        <span>Price/Share</span>
+                                        <strong>{formatUsd(holding.currentPricePerShare, 2)}</strong>
                                     </div>
                                     <div className={styles.holdingRow}>
-                                        <span>Market value</span>
-                                        <strong>{formatUsd(asset.marketValueUsd)}</strong>
+                                        <span>Market Value</span>
+                                        <strong>{formatUsd(holding.marketValueUsd, 2)}</strong>
                                     </div>
                                     <div className={styles.holdingRow}>
                                         <span>Unrealized P&L</span>
-                                        <strong style={{ color: asset.unrealizedPnlUsd >= 0 ? '#4ade80' : '#f87171' }}>
-                                            {asset.unrealizedPnlUsd >= 0 ? '+' : ''}{formatUsd(asset.unrealizedPnlUsd)}
+                                        <strong style={{ color: holding.unrealizedPnlUsd >= 0 ? '#4ade80' : '#f87171' }}>
+                                            {holding.unrealizedPnlUsd >= 0 ? '+' : ''}{formatUsd(holding.unrealizedPnlUsd, 2)}
                                         </strong>
                                     </div>
                                 </div>

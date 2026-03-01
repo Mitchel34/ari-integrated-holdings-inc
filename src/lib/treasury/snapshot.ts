@@ -1,88 +1,143 @@
-import { fetchSpotPrices } from './prices';
+// Treasury Snapshot - ETF Holdings Model
+// Data source: CFO Report (Mar 1, 2026)
+// Prices updated manually from CFO reports
 
-export interface TreasuryAssetPosition {
-    symbol: 'BTC' | 'ETH' | 'SOL';
+export type ETFSymbol = 'ARKB' | 'FSOL' | 'FETH';
+
+export interface ETFPosition {
+    symbol: ETFSymbol;
     name: string;
-    units: number;
-    averageCostUsd: number;
-    spotPriceUsd: number;
+    shares: number;
+    costBasisPerShare: number;
+    currentPricePerShare: number;
 }
 
-export interface TreasuryAssetMetrics extends TreasuryAssetPosition {
+export interface ETFPositionMetrics extends ETFPosition {
     marketValueUsd: number;
     costBasisUsd: number;
     unrealizedPnlUsd: number;
 }
 
+export interface CashPositions {
+    checking: number;
+    brokerage: number;
+    total: number;
+}
+
 export interface TreasurySnapshot {
     asOfIso: string;
-    marketCapUsd: number;
+    asOfDate: string; // Human-readable date
     sharesOutstanding: number;
-    priceSource: 'live' | 'fallback';
-    assets: TreasuryAssetMetrics[];
+    authorizedShares: number;
+    remainingShares: number;
+    cash: CashPositions;
+    holdings: ETFPositionMetrics[];
     totals: {
-        marketValueUsd: number;
-        costBasisUsd: number;
-        netAssetValueUsd: number;
-        navPerShareUsd: number;
-        mnavRatio: number;
-        mnavPremiumPct: number;
+        capitalInvestments: number;
+        totalAssets: number;
+        totalCostBasis: number;
         unrealizedPnlUsd: number;
+        shareholderEquity: number;
+        navPerShareUsd: number;
     };
 }
 
-// Company acquisition records — update these as treasury changes
-const HOLDINGS = [
-    { symbol: 'BTC' as const, name: 'Bitcoin',  units: 188.42,  averageCostUsd: 61750 },
-    { symbol: 'ETH' as const, name: 'Ethereum', units: 2810.25, averageCostUsd: 2280  },
-    { symbol: 'SOL' as const, name: 'Solana',   units: 22450,   averageCostUsd: 122   },
+// ============================================================
+// CFO REPORT DATA - Update these values when new reports arrive
+// Last updated: March 1, 2026
+// ============================================================
+
+const REPORT_DATE = '2026-03-01';
+
+// ETF Holdings (from CFO Balance Sheet)
+const HOLDINGS: ETFPosition[] = [
+    {
+        symbol: 'ARKB',
+        name: 'ARK 21Shares Bitcoin ETF',
+        shares: 120,
+        costBasisPerShare: 27.80,      // From Feb 1 valuation: $3,336 / 120 shares
+        currentPricePerShare: 21.78,   // $2,613.60 / 120 shares
+    },
+    {
+        symbol: 'FSOL',
+        name: 'Franklin Solana ETF',
+        shares: 125,
+        costBasisPerShare: 11.458,     // Weighted avg: ($927 + $243.50 + $261.75) / 125
+        currentPricePerShare: 9.59,    // $1,198.75 / 125 shares
+    },
+    {
+        symbol: 'FETH',
+        name: 'Fidelity Ethereum ETF',
+        shares: 25,
+        costBasisPerShare: 23.66,      // Single purchase @ $23.66
+        currentPricePerShare: 19.175,  // $479.38 / 25 shares
+    },
 ];
 
-const MARKET_CAP_USD = 34250000;
-const SHARES_OUTSTANDING = 12750000;
+// Cash Positions (from CFO Balance Sheet)
+const CASH: CashPositions = {
+    checking: 54.00,
+    brokerage: 325.41,
+    total: 379.41,
+};
 
-function buildSnapshot(
-    spotBtc: number,
-    spotEth: number,
-    spotSol: number,
-    asOfIso: string,
-    priceSource: 'live' | 'fallback',
-): TreasurySnapshot {
-    const spotMap = { BTC: spotBtc, ETH: spotEth, SOL: spotSol };
+// Share Structure (from CFO Share Valuation)
+const SHARES_OUTSTANDING = 300008.7;
+const AUTHORIZED_SHARES = 25000000;
 
-    const assets = HOLDINGS.map((h) => {
-        const spotPriceUsd    = spotMap[h.symbol];
-        const marketValueUsd  = h.units * spotPriceUsd;
-        const costBasisUsd    = h.units * h.averageCostUsd;
+// ============================================================
+// Snapshot Builder
+// ============================================================
+
+function buildSnapshot(): TreasurySnapshot {
+    // Calculate metrics for each holding
+    const holdings: ETFPositionMetrics[] = HOLDINGS.map((h) => {
+        const marketValueUsd = h.shares * h.currentPricePerShare;
+        const costBasisUsd = h.shares * h.costBasisPerShare;
         const unrealizedPnlUsd = marketValueUsd - costBasisUsd;
-        return { ...h, spotPriceUsd, marketValueUsd, costBasisUsd, unrealizedPnlUsd };
+        return { ...h, marketValueUsd, costBasisUsd, unrealizedPnlUsd };
     });
 
-    const marketValueUsd   = assets.reduce((s, a) => s + a.marketValueUsd, 0);
-    const costBasisUsd     = assets.reduce((s, a) => s + a.costBasisUsd, 0);
-    const netAssetValueUsd = marketValueUsd;
-    const navPerShareUsd   = netAssetValueUsd / SHARES_OUTSTANDING;
-    const mnavRatio        = MARKET_CAP_USD / netAssetValueUsd;
-    const mnavPremiumPct   = (mnavRatio - 1) * 100;
-    const unrealizedPnlUsd = marketValueUsd - costBasisUsd;
+    // Calculate totals
+    const capitalInvestments = holdings.reduce((sum, h) => sum + h.marketValueUsd, 0);
+    const totalAssets = capitalInvestments + CASH.total;
+    const totalCostBasis = holdings.reduce((sum, h) => sum + h.costBasisUsd, 0);
+    const unrealizedPnlUsd = capitalInvestments - totalCostBasis;
+    const shareholderEquity = totalAssets; // No liabilities
+    const navPerShareUsd = shareholderEquity / SHARES_OUTSTANDING;
+    const remainingShares = AUTHORIZED_SHARES - SHARES_OUTSTANDING;
 
     return {
-        asOfIso,
-        marketCapUsd: MARKET_CAP_USD,
+        asOfIso: new Date(REPORT_DATE).toISOString(),
+        asOfDate: 'March 1, 2026',
         sharesOutstanding: SHARES_OUTSTANDING,
-        priceSource,
-        assets,
-        totals: { marketValueUsd, costBasisUsd, netAssetValueUsd, navPerShareUsd, mnavRatio, mnavPremiumPct, unrealizedPnlUsd },
+        authorizedShares: AUTHORIZED_SHARES,
+        remainingShares,
+        cash: CASH,
+        holdings,
+        totals: {
+            capitalInvestments,
+            totalAssets,
+            totalCostBasis,
+            unrealizedPnlUsd,
+            shareholderEquity,
+            navPerShareUsd,
+        },
     };
 }
 
-/** Synchronous snapshot with last-known fallback prices — for server components that can't be async */
+// Cached snapshot (static data, no need for live fetching)
+let _cachedSnapshot: TreasurySnapshot | null = null;
+
+/** Get treasury snapshot (synchronous - data is static from CFO reports) */
 export function getTreasurySnapshot(): TreasurySnapshot {
-    return buildSnapshot(96200, 3290, 188, new Date().toISOString(), 'fallback');
+    if (!_cachedSnapshot) {
+        _cachedSnapshot = buildSnapshot();
+    }
+    return _cachedSnapshot;
 }
 
-/** Async snapshot fetching live CoinGecko prices */
+/** Alias for compatibility - async version (data is still static) */
 export async function getTreasurySnapshotLive(): Promise<TreasurySnapshot> {
-    const prices = await fetchSpotPrices();
-    return buildSnapshot(prices.btc, prices.eth, prices.sol, prices.asOfIso, prices.source);
+    return getTreasurySnapshot();
 }

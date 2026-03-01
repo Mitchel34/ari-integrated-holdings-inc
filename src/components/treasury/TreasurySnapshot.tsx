@@ -9,98 +9,87 @@ interface TreasurySnapshotProps {
 const currencyFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    maximumFractionDigits: 0,
-});
-
-const percentFormatter = new Intl.NumberFormat('en-US', {
-    maximumFractionDigits: 2,
-    signDisplay: 'always',
-});
-
-const unitFormatter = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
     maximumFractionDigits: 2,
 });
 
-function formatAsOf(asOfIso: string) {
-    return new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        timeZoneName: 'short',
-    }).format(new Date(asOfIso));
-}
+const sharesFormatter = new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 1,
+});
 
 export function TreasurySnapshot({ withDisclosureLink = false }: TreasurySnapshotProps) {
     const snapshot = getTreasurySnapshot();
-    const premiumClassName = snapshot.totals.mnavPremiumPct >= 0 ? styles.metricValuePositive : styles.metricValueNegative;
+    const pnlClassName = snapshot.totals.unrealizedPnlUsd >= 0 ? styles.metricValuePositive : styles.metricValueNegative;
 
     return (
         <article className={styles.wrapper} aria-label="Treasury snapshot">
             <div className={styles.header}>
                 <div>
-                    <p className={styles.headerLabel}>Last Updated</p>
-                    <p className={styles.headerValue}>{formatAsOf(snapshot.asOfIso)}</p>
+                    <p className={styles.headerLabel}>As Of</p>
+                    <p className={styles.headerValue}>{snapshot.asOfDate}</p>
                 </div>
                 <div>
                     <p className={styles.headerLabel}>Shares Outstanding</p>
-                    <p className={styles.headerValue}>{unitFormatter.format(snapshot.sharesOutstanding)}</p>
+                    <p className={styles.headerValue}>{sharesFormatter.format(snapshot.sharesOutstanding)}</p>
                 </div>
             </div>
 
             <div className={styles.metrics}>
                 <div className={styles.metric}>
-                    <p className={styles.metricLabel}>Market Value</p>
-                    <p className={styles.metricValue}>{currencyFormatter.format(snapshot.totals.marketValueUsd)}</p>
+                    <p className={styles.metricLabel}>Total Assets</p>
+                    <p className={styles.metricValue}>{currencyFormatter.format(snapshot.totals.totalAssets)}</p>
                 </div>
                 <div className={styles.metric}>
-                    <p className={styles.metricLabel}>Cost Basis</p>
-                    <p className={styles.metricValue}>{currencyFormatter.format(snapshot.totals.costBasisUsd)}</p>
+                    <p className={styles.metricLabel}>Capital Investments</p>
+                    <p className={styles.metricValue}>{currencyFormatter.format(snapshot.totals.capitalInvestments)}</p>
                 </div>
                 <div className={styles.metric}>
-                    <p className={styles.metricLabel}>Net Asset Value</p>
-                    <p className={styles.metricValue}>{currencyFormatter.format(snapshot.totals.netAssetValueUsd)}</p>
+                    <p className={styles.metricLabel}>Cash Positions</p>
+                    <p className={styles.metricValue}>{currencyFormatter.format(snapshot.cash.total)}</p>
                 </div>
                 <div className={styles.metric}>
-                    <p className={styles.metricLabel}>mNAV Premium / Discount</p>
-                    <p className={`${styles.metricValue} ${premiumClassName}`.trim()}>
-                        {percentFormatter.format(snapshot.totals.mnavPremiumPct)}%
+                    <p className={styles.metricLabel}>Unrealized P&L</p>
+                    <p className={`${styles.metricValue} ${pnlClassName}`.trim()}>
+                        {snapshot.totals.unrealizedPnlUsd >= 0 ? '+' : ''}{currencyFormatter.format(snapshot.totals.unrealizedPnlUsd)}
                     </p>
                 </div>
                 <div className={styles.metric}>
-                    <p className={styles.metricLabel}>Implied Market Cap</p>
-                    <p className={styles.metricValue}>{currencyFormatter.format(snapshot.marketCapUsd)}</p>
+                    <p className={styles.metricLabel}>NAV / Share</p>
+                    <p className={styles.metricValue}>${snapshot.totals.navPerShareUsd.toFixed(4)}</p>
                 </div>
                 <div className={styles.metric}>
-                    <p className={styles.metricLabel}>NAV / Share</p>
-                    <p className={styles.metricValue}>{currencyFormatter.format(snapshot.totals.navPerShareUsd)}</p>
+                    <p className={styles.metricLabel}>Shareholder Equity</p>
+                    <p className={styles.metricValue}>{currencyFormatter.format(snapshot.totals.shareholderEquity)}</p>
                 </div>
             </div>
 
             <div className={styles.tableWrap}>
                 <table className={styles.table}>
-                    <caption className={styles.caption}>Treasury holdings — {formatAsOf(snapshot.asOfIso)}</caption>
+                    <caption className={styles.caption}>ETF Holdings — {snapshot.asOfDate}</caption>
                     <thead>
                         <tr>
-                            <th scope="col">Asset</th>
-                            <th scope="col">Units</th>
-                            <th scope="col">Spot Price</th>
+                            <th scope="col">ETF</th>
+                            <th scope="col">Shares</th>
+                            <th scope="col">Price</th>
                             <th scope="col">Market Value</th>
                             <th scope="col">Cost Basis</th>
+                            <th scope="col">P&L</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {snapshot.assets.map((asset) => (
-                            <tr key={asset.symbol}>
-                                <td data-label="Asset">
-                                    <span className={styles.assetSymbol}>{asset.symbol}</span>
-                                    <span className={styles.assetName}>{asset.name}</span>
+                        {snapshot.holdings.map((holding) => (
+                            <tr key={holding.symbol}>
+                                <td data-label="ETF">
+                                    <span className={styles.assetSymbol}>{holding.symbol}</span>
+                                    <span className={styles.assetName}>{holding.name}</span>
                                 </td>
-                                <td data-label="Units">{unitFormatter.format(asset.units)}</td>
-                                <td data-label="Spot Price">{currencyFormatter.format(asset.spotPriceUsd)}</td>
-                                <td data-label="Market Value">{currencyFormatter.format(asset.marketValueUsd)}</td>
-                                <td data-label="Cost Basis">{currencyFormatter.format(asset.costBasisUsd)}</td>
+                                <td data-label="Shares">{holding.shares}</td>
+                                <td data-label="Price">{currencyFormatter.format(holding.currentPricePerShare)}</td>
+                                <td data-label="Market Value">{currencyFormatter.format(holding.marketValueUsd)}</td>
+                                <td data-label="Cost Basis">{currencyFormatter.format(holding.costBasisUsd)}</td>
+                                <td data-label="P&L" className={holding.unrealizedPnlUsd >= 0 ? styles.metricValuePositive : styles.metricValueNegative}>
+                                    {holding.unrealizedPnlUsd >= 0 ? '+' : ''}{currencyFormatter.format(holding.unrealizedPnlUsd)}
+                                </td>
                             </tr>
                         ))}
                     </tbody>
@@ -109,7 +98,7 @@ export function TreasurySnapshot({ withDisclosureLink = false }: TreasurySnapsho
 
             <div className={styles.footer}>
                 <p className={styles.note}>
-                    Treasury values are updated for investor communications and subject to change with market conditions.
+                    Treasury values are updated from CFO financial reports. Data as of {snapshot.asOfDate}.
                 </p>
                 {withDisclosureLink ? (
                     <Link href="/disclosures" className={styles.link}>

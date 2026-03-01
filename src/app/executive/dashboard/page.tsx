@@ -17,8 +17,13 @@ interface ExtendedUser {
     role?: string;
 }
 
-function formatUsd(n: number) {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
+function formatUsd(n: number, decimals = 0) {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+    }).format(n);
 }
 
 function formatDate(iso: string) {
@@ -98,9 +103,9 @@ export default async function ExecutiveDashboard() {
                             </svg>
                         </div>
                         <div className={styles.statContent}>
-                            <span className={styles.statLabel}>Treasury NAV</span>
-                            <span className={styles.statValue}>{formatUsd(snapshot.totals.netAssetValueUsd)}</span>
-                            <span className={styles.statSub}>mNAV {snapshot.totals.mnavRatio.toFixed(2)}x</span>
+                            <span className={styles.statLabel}>Total Assets</span>
+                            <span className={styles.statValue}>{formatUsd(snapshot.totals.totalAssets, 2)}</span>
+                            <span className={styles.statSub}>{formatUsd(snapshot.totals.navPerShareUsd, 4)}/share</span>
                         </div>
                     </div>
                     <div className={styles.statCard}>
@@ -112,10 +117,10 @@ export default async function ExecutiveDashboard() {
                         </div>
                         <div className={styles.statContent}>
                             <span className={styles.statLabel}>Unrealized P&L</span>
-                            <span className={styles.statValue} style={{ color: '#4ade80' }}>
-                                {formatUsd(snapshot.totals.unrealizedPnlUsd)}
+                            <span className={styles.statValue} style={{ color: snapshot.totals.unrealizedPnlUsd >= 0 ? '#4ade80' : '#f87171' }}>
+                                {snapshot.totals.unrealizedPnlUsd >= 0 ? '+' : ''}{formatUsd(snapshot.totals.unrealizedPnlUsd, 2)}
                             </span>
-                            <span className={styles.statSub}>across BTC, ETH, SOL</span>
+                            <span className={styles.statSub}>across ARKB, FSOL, FETH</span>
                         </div>
                     </div>
                 </div>
