@@ -9,7 +9,7 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    // Provide a dummy URL for build time if DATABASE_URL is not set
-    url: process.env["DATABASE_URL"] || "postgresql://placeholder:placeholder@localhost:5432/placeholder",
+    // Use unpooled URL for migrations (Prisma requires direct connection)
+    url: process.env["DATABASE_URL_UNPOOLED"] || process.env["DATABASE_URL"] || "postgresql://placeholder:placeholder@localhost:5432/placeholder",
   },
 });
