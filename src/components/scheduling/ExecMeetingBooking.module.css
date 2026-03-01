@@ -113,6 +113,12 @@
     font-size: 0.875rem;
 }
 
+@media (max-width: 768px) {
+    .embedContainer {
+        min-height: 450px;
+    }
+}
+
 @media (max-width: 600px) {
     .infoCard {
         flex-direction: column;
@@ -122,5 +128,9 @@
 
     .actions {
         flex-direction: column;
+    }
+
+    .embedContainer {
+        min-height: clamp(300px, 55vh, 450px);
     }
 }

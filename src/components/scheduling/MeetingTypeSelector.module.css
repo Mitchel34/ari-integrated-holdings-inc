@@ -104,4 +104,14 @@
     .typeGrid {
         grid-template-columns: 1fr;
     }
+
+    .embedWrapper {
+        min-height: 500px;
+    }
+}
+
+@media (max-width: 600px) {
+    .embedWrapper {
+        min-height: clamp(350px, 60vh, 500px);
+    }
 }

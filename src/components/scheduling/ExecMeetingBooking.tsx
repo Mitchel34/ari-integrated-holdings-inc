@@ -79,7 +79,7 @@ export function ExecMeetingBooking() {
             {showCalendly && (
                 <div className={styles.embedContainer}>
                     {CALENDLY_EXEC_ZOOM_URL ? (
-                        <CalendlyEmbed url={CALENDLY_EXEC_ZOOM_URL} minHeight="700px" />
+                        <CalendlyEmbed url={CALENDLY_EXEC_ZOOM_URL} />
                     ) : (
                         <div className={styles.placeholder}>
                             <div className={styles.placeholderIcon}>
