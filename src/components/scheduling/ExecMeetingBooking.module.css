@@ -50,7 +50,7 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
     overflow: hidden;
-    min-height: 300px;
+    min-height: 600px;
 }
 
 .placeholder {
