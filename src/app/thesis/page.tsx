@@ -1,6 +1,5 @@
 import { Container } from '../../components/ui/Container';
 import { Card } from '../../components/ui/Card';
-import { ThesisGate } from '../../components/thesis/ThesisGate';
 import styles from '../page.module.css';
 
 export default function ThesisPage() {
@@ -16,7 +15,6 @@ export default function ThesisPage() {
         </section>
 
         <Container className={styles.section}>
-        <ThesisGate>
             <div className={styles.grid}>
                 <Card variant="glass">
                     <span className={styles.heroEyebrow}>01</span>
@@ -116,7 +114,6 @@ export default function ThesisPage() {
                 digital asset allocations in the context of long-term goals, liquidity needs, and tolerance for
                 substantial interim drawdowns.
             </div>
-        </ThesisGate>
         </Container>
         </>
     );

@@ -8,7 +8,6 @@ import styles from './ExecMeetingBooking.module.css';
 const CALENDLY_EXEC_ZOOM_URL = process.env.NEXT_PUBLIC_CALENDLY_EXEC_ZOOM_URL ?? '';
 
 export function ExecMeetingBooking() {
-    const [showCalendly, setShowCalendly] = useState(false);
     const [notifyStatus, setNotifyStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
 
     async function handleNotifyAll() {
@@ -49,9 +48,6 @@ export function ExecMeetingBooking() {
 
             {/* Calendly booking embed */}
             <div className={styles.actions}>
-                <Button onClick={() => setShowCalendly(!showCalendly)}>
-                    {showCalendly ? 'Hide Scheduler' : 'Open Calendly Scheduler'}
-                </Button>
                 <Button
                     variant="outline"
                     onClick={handleNotifyAll}
@@ -76,32 +72,30 @@ export function ExecMeetingBooking() {
                 </div>
             )}
 
-            {showCalendly && (
-                <div className={styles.embedContainer}>
-                    {CALENDLY_EXEC_ZOOM_URL ? (
-                        <CalendlyEmbed url={CALENDLY_EXEC_ZOOM_URL} />
-                    ) : (
-                        <div className={styles.placeholder}>
-                            <div className={styles.placeholderIcon}>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="48" height="48">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                    <line x1="16" y1="2" x2="16" y2="6" />
-                                    <line x1="8" y1="2" x2="8" y2="6" />
-                                    <line x1="3" y1="10" x2="21" y2="10" />
-                                </svg>
-                            </div>
-                            <h4>Calendly Not Yet Configured</h4>
-                            <p>
-                                Set the <code>NEXT_PUBLIC_CALENDLY_EXEC_ZOOM_URL</code> environment variable
-                                to your Calendly event link with Zoom integration enabled.
-                            </p>
-                            <p className={styles.placeholderHint}>
-                                Example: <code>https://calendly.com/your-org/executive-zoom</code>
-                            </p>
+            <div className={styles.embedContainer}>
+                {CALENDLY_EXEC_ZOOM_URL ? (
+                    <CalendlyEmbed url={CALENDLY_EXEC_ZOOM_URL} />
+                ) : (
+                    <div className={styles.placeholder}>
+                        <div className={styles.placeholderIcon}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="48" height="48">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                <line x1="16" y1="2" x2="16" y2="6" />
+                                <line x1="8" y1="2" x2="8" y2="6" />
+                                <line x1="3" y1="10" x2="21" y2="10" />
+                            </svg>
                         </div>
-                    )}
-                </div>
-            )}
+                        <h4>Calendly Not Yet Configured</h4>
+                        <p>
+                            Set the <code>NEXT_PUBLIC_CALENDLY_EXEC_ZOOM_URL</code> environment variable
+                            to your Calendly event link with Zoom integration enabled.
+                        </p>
+                        <p className={styles.placeholderHint}>
+                            Example: <code>https://calendly.com/your-org/executive-zoom</code>
+                        </p>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
