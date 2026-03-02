@@ -8,7 +8,7 @@ interface CalendlyEmbedProps {
 }
 
 export function CalendlyEmbed({ url, minHeight }: CalendlyEmbedProps) {
-    const responsiveHeight = minHeight || 'clamp(500px, 75vh, 800px)';
+    const height = minHeight || '100%';
     useEffect(() => {
         const existing = document.getElementById('calendly-widget-script');
         if (!existing) {
@@ -24,7 +24,7 @@ export function CalendlyEmbed({ url, minHeight }: CalendlyEmbedProps) {
         <div
             className="calendly-inline-widget"
             data-url={`${url}?hide_gdpr_banner=1&background_color=0A1324&text_color=e2e8f0&primary_color=E8C87A`}
-            style={{ minWidth: '100%', minHeight: responsiveHeight, width: '100%' }}
+            style={{ width: '100%', height }}
         />
     );
 }
