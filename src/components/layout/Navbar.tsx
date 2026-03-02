@@ -54,87 +54,89 @@ export function SiteHeader() {
     }, [pathname]);
 
     return (
-        <header className={styles.navbar}>
-            <Container className={styles.container}>
-                <div className={styles.mobileBar}>
-                    <button
-                        className={styles.menuButton}
-                        type="button"
-                        aria-label="Open navigation menu"
-                        aria-expanded={mobileMenuOpen}
-                        aria-controls="mobile-nav"
-                        onClick={() => setMobileMenuOpen(true)}
-                    >
-                        <MenuIcon />
-                    </button>
-                    <Link href="/" className={styles.mobileBrand}>
-                        <Image src="/logo.jpeg" alt="Ari Integrated Holdings Inc. Logo" width={110} height={50} className={styles.navLogo} />
-                    </Link>
-                    <span className={styles.mobileSpacer} aria-hidden="true" />
-                </div>
-
-                <div className={styles.desktopBar}>
-                    <Link href="/" className={styles.logo}>
-                        <Image src="/logo.jpeg" alt="Ari Integrated Holdings Inc. Logo" width={140} height={60} className={styles.navLogo} />
-                    </Link>
-
-                    <nav className={styles.links} aria-label="Primary">
-                        {NAV_ITEMS.map((item) => {
-                            const isActive = isActivePath(pathname, item.href);
-                            return (
-                                <Link
-                                    key={item.href}
-                                    href={item.href}
-                                    className={`${styles.link} ${isActive ? styles.linkActive : ''}`.trim()}
-                                    aria-current={isActive ? 'page' : undefined}
-                                >
-                                    {item.gated ? (
-                                        <span className={styles.gatedLabel}>
-                                            <LockIcon />
-                                            {item.label}
-                                        </span>
-                                    ) : (
-                                        item.label
-                                    )}
-                                </Link>
-                            );
-                        })}
-                    </nav>
-
-                    <div className={styles.actions}>
-                        {status === 'loading' ? (
-                            <div className={styles.loadingPill}>Loading...</div>
-                        ) : session ? (
-                            <div className={styles.userMenu}>
-                                <Link
-                                    href={isExecutive ? '/executive/dashboard' : '/investor/dashboard'}
-                                    className={styles.dashboardLink}
-                                >
-                                    <span className={styles.userAvatar}>
-                                        {user?.name?.charAt(0) || 'U'}
-                                    </span>
-                                    <span className={styles.userName}>
-                                        {user?.name?.split(' ')[0] || 'Dashboard'}
-                                    </span>
-                                </Link>
-                                <button
-                                    onClick={() => signOut({ callbackUrl: '/' })}
-                                    className={styles.signOutBtn}
-                                    aria-label="Sign out"
-                                >
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                                        <polyline points="16,17 21,12 16,7" />
-                                        <line x1="21" y1="12" x2="9" y2="12" />
-                                    </svg>
-                                </button>
-                            </div>
-                        ) : (
-                            <Link href="/login" className={styles.loginBtn}>Investor Portal</Link>
-                        )}
+        <>
+            <header className={styles.navbar}>
+                <Container className={styles.container}>
+                    <div className={styles.mobileBar}>
+                        <button
+                            className={styles.menuButton}
+                            type="button"
+                            aria-label="Open navigation menu"
+                            aria-expanded={mobileMenuOpen}
+                            aria-controls="mobile-nav"
+                            onClick={() => setMobileMenuOpen(true)}
+                        >
+                            <MenuIcon />
+                        </button>
+                        <Link href="/" className={styles.mobileBrand}>
+                            <Image src="/logo.jpeg" alt="Ari Integrated Holdings Inc. Logo" width={110} height={50} className={styles.navLogo} />
+                        </Link>
+                        <span className={styles.mobileSpacer} aria-hidden="true" />
                     </div>
-                </div>
-            </Container>
+
+                    <div className={styles.desktopBar}>
+                        <Link href="/" className={styles.logo}>
+                            <Image src="/logo.jpeg" alt="Ari Integrated Holdings Inc. Logo" width={140} height={60} className={styles.navLogo} />
+                        </Link>
+
+                        <nav className={styles.links} aria-label="Primary">
+                            {NAV_ITEMS.map((item) => {
+                                const isActive = isActivePath(pathname, item.href);
+                                return (
+                                    <Link
+                                        key={item.href}
+                                        href={item.href}
+                                        className={`${styles.link} ${isActive ? styles.linkActive : ''}`.trim()}
+                                        aria-current={isActive ? 'page' : undefined}
+                                    >
+                                        {item.gated ? (
+                                            <span className={styles.gatedLabel}>
+                                                <LockIcon />
+                                                {item.label}
+                                            </span>
+                                        ) : (
+                                            item.label
+                                        )}
+                                    </Link>
+                                );
+                            })}
+                        </nav>
+
+                        <div className={styles.actions}>
+                            {status === 'loading' ? (
+                                <div className={styles.loadingPill}>Loading...</div>
+                            ) : session ? (
+                                <div className={styles.userMenu}>
+                                    <Link
+                                        href={isExecutive ? '/executive/dashboard' : '/investor/dashboard'}
+                                        className={styles.dashboardLink}
+                                    >
+                                        <span className={styles.userAvatar}>
+                                            {user?.name?.charAt(0) || 'U'}
+                                        </span>
+                                        <span className={styles.userName}>
+                                            {user?.name?.split(' ')[0] || 'Dashboard'}
+                                        </span>
+                                    </Link>
+                                    <button
+                                        onClick={() => signOut({ callbackUrl: '/' })}
+                                        className={styles.signOutBtn}
+                                        aria-label="Sign out"
+                                    >
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                                            <polyline points="16,17 21,12 16,7" />
+                                            <line x1="21" y1="12" x2="9" y2="12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            ) : (
+                                <Link href="/login" className={styles.loginBtn}>Investor Portal</Link>
+                            )}
+                        </div>
+                    </div>
+                </Container>
+            </header>
 
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} title="Primary navigation">
                 <div id="mobile-nav" className={styles.sheetContent}>
@@ -216,7 +218,7 @@ export function SiteHeader() {
                     )}
                 </div>
             </Sheet>
-        </header>
+        </>
     );
 }
 
