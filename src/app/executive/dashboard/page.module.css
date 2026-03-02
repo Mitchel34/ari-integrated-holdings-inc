@@ -155,7 +155,6 @@
     -webkit-backdrop-filter: blur(24px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
-    overflow: hidden;
     margin-bottom: 2rem;
 }
 
@@ -200,7 +199,10 @@
 .subSource { color: var(--color-text-muted); font-size: 0.8125rem; }
 .subDate { color: var(--color-text-muted); font-size: 0.8125rem; white-space: nowrap; }
 
-.schedulingWrapper { padding: 1.5rem 2rem; }
+.schedulingWrapper {
+    padding: 1.5rem 2rem;
+    overflow: visible;
+}
 
 .sectionHeader {
     display: flex;

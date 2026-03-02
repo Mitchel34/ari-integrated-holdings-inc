@@ -8,7 +8,7 @@ interface CalendlyEmbedProps {
 }
 
 export function CalendlyEmbed({ url, minHeight }: CalendlyEmbedProps) {
-    const responsiveHeight = minHeight || 'clamp(400px, 65vh, 700px)';
+    const responsiveHeight = minHeight || 'clamp(500px, 75vh, 800px)';
     useEffect(() => {
         const existing = document.getElementById('calendly-widget-script');
         if (!existing) {
