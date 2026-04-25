@@ -27,6 +27,7 @@ export interface CashPositions {
 export interface TreasurySnapshot {
     asOfIso: string;
     asOfDate: string; // Human-readable date
+    sourceLabel: string;
     sharesOutstanding: number;
     authorizedShares: number;
     remainingShares: number;
@@ -42,12 +43,20 @@ export interface TreasurySnapshot {
     };
 }
 
+export interface TreasuryFreshness {
+    status: 'current' | 'stale';
+    label: string;
+    ageDays: number;
+}
+
 // ============================================================
 // CFO REPORT DATA - Update these values when new reports arrive
 // Last updated: March 1, 2026
 // ============================================================
 
 const REPORT_DATE = '2026-03-01';
+const SOURCE_LABEL = 'Manual CFO report';
+const STALE_AFTER_DAYS = 14;
 
 // ETF Holdings (from CFO Balance Sheet)
 const HOLDINGS: ETFPosition[] = [
@@ -110,6 +119,7 @@ function buildSnapshot(): TreasurySnapshot {
     return {
         asOfIso: new Date(REPORT_DATE).toISOString(),
         asOfDate: 'March 1, 2026',
+        sourceLabel: SOURCE_LABEL,
         sharesOutstanding: SHARES_OUTSTANDING,
         authorizedShares: AUTHORIZED_SHARES,
         remainingShares,
@@ -140,4 +150,17 @@ export function getTreasurySnapshot(): TreasurySnapshot {
 /** Alias for compatibility - async version (data is still static) */
 export async function getTreasurySnapshotLive(): Promise<TreasurySnapshot> {
     return getTreasurySnapshot();
+}
+
+export function getTreasuryFreshness(snapshot: TreasurySnapshot, now = new Date()): TreasuryFreshness {
+    const asOf = new Date(snapshot.asOfIso);
+    const ageMs = now.getTime() - asOf.getTime();
+    const ageDays = Math.max(0, Math.floor(ageMs / (1000 * 60 * 60 * 24)));
+    const status = ageDays > STALE_AFTER_DAYS ? 'stale' : 'current';
+
+    return {
+        status,
+        ageDays,
+        label: status === 'stale' ? `Stale: ${ageDays} days old` : `Current: ${ageDays} days old`,
+    };
 }

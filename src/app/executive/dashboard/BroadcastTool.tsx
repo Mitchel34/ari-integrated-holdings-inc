@@ -1,17 +1,21 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
+import { Check } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
 import { useToast } from '../../../components/ui/Toast';
 import styles from './BroadcastTool.module.css';
 
 interface BroadcastToolProps {
     subscriberCount: number;
+    onSent?: () => void;
 }
 
 type SendState = 'idle' | 'preview' | 'sent';
+const SUBJECT_MAX = 120;
+const MESSAGE_MAX = 4000;
 
-export default function BroadcastTool({ subscriberCount }: BroadcastToolProps) {
+export default function BroadcastTool({ subscriberCount, onSent }: BroadcastToolProps) {
     const [sendState, setSendState] = useState<SendState>('idle');
     const [isSending, setIsSending] = useState(false);
     const [subject, setSubject] = useState('');
@@ -31,6 +35,7 @@ export default function BroadcastTool({ subscriberCount }: BroadcastToolProps) {
             if (!res.ok || !data.ok) throw new Error(data.error || 'Broadcast failed.');
             setSentCount(data.sent ?? 0);
             setSendState('sent');
+            onSent?.();
             addToast(`Alert sent to ${data.sent ?? 0} subscribers`, 'success');
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Broadcast failed. Try again.';
@@ -42,7 +47,15 @@ export default function BroadcastTool({ subscriberCount }: BroadcastToolProps) {
 
     function handleSubmit(e: FormEvent) {
         e.preventDefault();
+        if (subscriberCount === 0) {
+            addToast('No active subscribers are available for this broadcast.', 'warning');
+            return;
+        }
         if (!subject.trim() || !message.trim()) return;
+        if (subject.trim().length > SUBJECT_MAX || message.trim().length > MESSAGE_MAX) {
+            addToast('Subject or message exceeds the allowed length.', 'error');
+            return;
+        }
         setSendState('preview');
     }
 
@@ -50,9 +63,7 @@ export default function BroadcastTool({ subscriberCount }: BroadcastToolProps) {
         return (
             <div className={styles.successBox} role="status">
                 <div className={styles.successIcon}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <polyline points="20 6 9 17 4 12" />
-                    </svg>
+                    <Check aria-hidden="true" />
                 </div>
                 <div>
                     <h3>Alert Sent</h3>
@@ -104,8 +115,10 @@ export default function BroadcastTool({ subscriberCount }: BroadcastToolProps) {
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
                     placeholder="Q1 2026 Treasury Update — ARI Integrated Holdings"
+                    maxLength={SUBJECT_MAX}
                     required
                 />
+                <span className={styles.charCount}>{subject.length}/{SUBJECT_MAX}</span>
             </div>
             <div className={styles.fieldGroup}>
                 <label className={styles.label} htmlFor="broadcast-message">Message</label>
@@ -116,11 +129,13 @@ export default function BroadcastTool({ subscriberCount }: BroadcastToolProps) {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Treasury NAV as of today stands at...&#10;&#10;Key highlights for this period...&#10;&#10;Next steps..."
+                    maxLength={MESSAGE_MAX}
                     required
                 />
+                <span className={styles.charCount}>{message.length}/{MESSAGE_MAX}</span>
             </div>
             <div className={styles.footer}>
-                <Button type="submit" size="md" disabled={!subject.trim() || !message.trim()}>
+                <Button type="submit" size="md" disabled={subscriberCount === 0 || !subject.trim() || !message.trim()}>
                     Preview Alert
                 </Button>
                 <span className={styles.footerNote}>

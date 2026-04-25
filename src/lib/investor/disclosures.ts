@@ -148,3 +148,8 @@ export function getInvestorEvents(): InvestorEvent[] {
         return new Date(left.startsAtIso).getTime() - new Date(right.startsAtIso).getTime();
     });
 }
+
+export function getNextInvestorEvent(now = new Date()): InvestorEvent | null {
+    const nowMs = now.getTime();
+    return getInvestorEvents().find((event) => new Date(event.startsAtIso).getTime() > nowMs) ?? null;
+}

@@ -1,13 +1,28 @@
-import { Container } from '../../../components/ui/Container';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { getServerSession } from "next-auth/next";
+import { Bell, DollarSign, Settings, TrendingUp, Users } from 'lucide-react';
 import { authOptions } from "@/lib/auth";
-import { getTreasurySnapshot } from '@/lib/treasury/snapshot';
+import { getTreasuryFreshness, getTreasurySnapshot } from '@/lib/treasury/snapshot';
 import { prisma } from '@/lib/prisma';
+import { Container } from '../../../components/ui/Container';
 import { MeetingTypeSelector } from '../../../components/scheduling/MeetingTypeSelector';
 import { ExecMeetingBooking } from '../../../components/scheduling/ExecMeetingBooking';
-import BroadcastTool from './BroadcastTool';
-import BroadcastHistory from './BroadcastHistory';
-import Link from 'next/link';
+import {
+    DataTable,
+    DashboardHeader,
+    DashboardPanel,
+    DashboardShell,
+    ErrorState,
+    FreshnessBadge,
+    MetricCard,
+    MetricGrid,
+    StatusBadge,
+    dashboardStyles,
+} from '../../../components/dashboard/Dashboard';
+import { ValueBarChart } from '../../../components/dashboard/DashboardCharts';
+import BroadcastCenter from './BroadcastCenter';
+import { TradingSystemStatus } from './TradingSystemStatus';
 import styles from './page.module.css';
 
 interface ExtendedUser {
@@ -32,13 +47,18 @@ function formatDate(iso: string) {
 
 export default async function ExecutiveDashboard() {
     const session = await getServerSession(authOptions);
-    const user = session?.user as ExtendedUser | undefined;
+    if (!session) {
+        redirect('/login?callbackUrl=/executive/dashboard');
+    }
 
+    const user = session.user as ExtendedUser;
     const snapshot = getTreasurySnapshot();
+    const freshness = getTreasuryFreshness(snapshot);
 
     let subscriberCount = 0;
     let investorCount = 0;
     let recentSubscribers: { email: string; subscribedAt: Date; source: string | null }[] = [];
+    let dbError: string | null = null;
 
     try {
         [subscriberCount, investorCount, recentSubscribers] = await Promise.all([
@@ -49,158 +69,122 @@ export default async function ExecutiveDashboard() {
                 take: 20,
             }),
         ]);
-    } catch {
-        // DB not available in dev/demo — show zeros
+    } catch (error) {
+        dbError = error instanceof Error ? error.message : 'Database is unavailable.';
     }
+
+    const valueData = [
+        { name: 'Assets', value: snapshot.totals.totalAssets, color: '#E8C87A' },
+        { name: 'Cost', value: snapshot.totals.totalCostBasis, color: '#84b8ff' },
+        { name: 'P&L', value: Math.abs(snapshot.totals.unrealizedPnlUsd), color: snapshot.totals.unrealizedPnlUsd >= 0 ? '#86efac' : '#fca5a5' },
+    ];
 
     return (
         <div className={styles.dashboardPage}>
             <Container className={styles.dashboardContainer}>
+                <DashboardShell>
+                    <DashboardHeader
+                        eyebrow="Executive Dashboard"
+                        title={`Welcome back, ${user?.name?.split(' ')[0] || 'Executive'}`}
+                        description="Manage investor communications, review treasury freshness, and monitor readiness for future trading-system integration."
+                        aside={(
+                            <>
+                                <FreshnessBadge status={freshness.status} label={freshness.label} />
+                                <Link href="/executive/settings" className={styles.settingsLink}>
+                                    <Settings aria-hidden="true" size={16} />
+                                    Account Settings
+                                </Link>
+                            </>
+                        )}
+                    />
 
-                {/* Welcome */}
-                <div className={styles.welcomeCard}>
-                    <div className={styles.welcomeHeader}>
-                        <div className={styles.avatarLarge}>
-                            {user?.name?.charAt(0) || 'E'}
-                        </div>
-                        <div className={styles.welcomeText}>
-                            <span className={styles.roleBadge}>Executive</span>
-                            <h1>Welcome back, {user?.name?.split(' ')[0] || 'Executive'}</h1>
-                            <p>Manage investor communications and review treasury operations</p>
-                        </div>
-                        <Link href="/executive/settings" className={styles.settingsLink}>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
-                                <circle cx="12" cy="12" r="3" />
-                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                            </svg>
-                            Account Settings
-                        </Link>
-                    </div>
-                </div>
+                    {dbError ? (
+                        <ErrorState
+                            title="Database data unavailable"
+                            copy="Investor and broadcast counts could not be loaded. This dashboard is showing fallback values until the database connection is restored."
+                        />
+                    ) : null}
 
-                {/* Live stat cards */}
-                <div className={styles.statsGrid}>
-                    <div className={styles.statCard}>
-                        <div className={styles.statIcon}>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                <circle cx="9" cy="7" r="4" />
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                            </svg>
-                        </div>
-                        <div className={styles.statContent}>
-                            <span className={styles.statLabel}>Alert Subscribers</span>
-                            <span className={styles.statValue}>{subscriberCount.toLocaleString()}</span>
-                            <span className={styles.statSub}>{investorCount} registered investors</span>
-                        </div>
-                    </div>
-                    <div className={styles.statCard}>
-                        <div className={styles.statIcon}>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <line x1="12" y1="1" x2="12" y2="23" />
-                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                            </svg>
-                        </div>
-                        <div className={styles.statContent}>
-                            <span className={styles.statLabel}>Total Assets</span>
-                            <span className={styles.statValue}>{formatUsd(snapshot.totals.totalAssets, 2)}</span>
-                            <span className={styles.statSub}>{formatUsd(snapshot.totals.navPerShareUsd, 4)}/share</span>
-                        </div>
-                    </div>
-                    <div className={styles.statCard}>
-                        <div className={styles.statIcon}>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <polyline points="23,6 13.5,15.5 8.5,10.5 1,18" />
-                                <polyline points="17,6 23,6 23,12" />
-                            </svg>
-                        </div>
-                        <div className={styles.statContent}>
-                            <span className={styles.statLabel}>Unrealized P&L</span>
-                            <span className={styles.statValue} style={{ color: snapshot.totals.unrealizedPnlUsd >= 0 ? '#4ade80' : '#f87171' }}>
-                                {snapshot.totals.unrealizedPnlUsd >= 0 ? '+' : ''}{formatUsd(snapshot.totals.unrealizedPnlUsd, 2)}
-                            </span>
-                            <span className={styles.statSub}>across ARKB, FSOL, FETH</span>
-                        </div>
-                    </div>
-                </div>
+                    <MetricGrid>
+                        <MetricCard
+                            icon={<Users aria-hidden="true" />}
+                            label="Alert Subscribers"
+                            value={dbError ? 'Unavailable' : subscriberCount.toLocaleString()}
+                            sub={dbError ? 'Database connection failed' : `${investorCount} registered investors`}
+                        />
+                        <MetricCard
+                            icon={<DollarSign aria-hidden="true" />}
+                            label="Total Assets"
+                            value={formatUsd(snapshot.totals.totalAssets, 2)}
+                            sub={`${formatUsd(snapshot.totals.navPerShareUsd, 4)}/share`}
+                        />
+                        <MetricCard
+                            icon={<TrendingUp aria-hidden="true" />}
+                            label="Unrealized P&L"
+                            value={<span className={snapshot.totals.unrealizedPnlUsd >= 0 ? styles.success : styles.danger}>{snapshot.totals.unrealizedPnlUsd >= 0 ? '+' : ''}{formatUsd(snapshot.totals.unrealizedPnlUsd, 2)}</span>}
+                            sub="Across ARKB, FSOL, FETH"
+                        />
+                    </MetricGrid>
 
-                {/* Broadcast tool */}
-                <div className={styles.panelSection}>
-                    <div className={styles.sectionHeader}>
-                        <h2>Send Investor Alert</h2>
-                        <p>Broadcast a treasury update or announcement to all active alert subscribers</p>
-                    </div>
-                    <div className={styles.panelBody}>
-                        <BroadcastTool subscriberCount={subscriberCount} />
-                    </div>
-                </div>
+                    <div className={dashboardStyles.dashboardGrid}>
+                        <DashboardPanel
+                            title="Treasury Operations"
+                            description={`Manual snapshot as of ${snapshot.asOfDate}; source: ${snapshot.sourceLabel}.`}
+                            action={<FreshnessBadge status={freshness.status} label={freshness.status === 'stale' ? 'Needs update' : 'Current'} />}
+                        >
+                            <ValueBarChart data={valueData} />
+                        </DashboardPanel>
 
-                {/* Broadcast history */}
-                <div className={styles.panelSection}>
-                    <div className={styles.sectionHeader}>
-                        <h2>Recent Broadcasts</h2>
-                        <p>History of alerts sent to subscribers</p>
+                        <DashboardPanel
+                            title="Investor Activity"
+                            description="Subscriber readiness and recent signup activity."
+                            action={<Bell aria-hidden="true" size={18} />}
+                        >
+                            <MetricGrid>
+                                <MetricCard label="Active Alerts" value={dbError ? 'N/A' : subscriberCount.toLocaleString()} sub="Subscribed to investor updates" />
+                                <MetricCard label="Portal Investors" value={dbError ? 'N/A' : investorCount.toLocaleString()} sub="Registered investor accounts" />
+                                <MetricCard label="Recent Signups" value={dbError ? 'N/A' : recentSubscribers.length.toLocaleString()} sub="Latest records loaded" />
+                            </MetricGrid>
+                        </DashboardPanel>
                     </div>
-                    <div className={styles.panelBody}>
-                        <BroadcastHistory />
-                    </div>
-                </div>
 
-                {/* Recent subscribers */}
-                {recentSubscribers.length > 0 && (
-                    <div className={styles.panelSection}>
-                        <div className={styles.sectionHeader}>
-                            <div>
-                                <h2>Recent Alert Subscribers</h2>
-                                <p>Latest {recentSubscribers.length} signups — {subscriberCount} active total</p>
-                            </div>
-                            <Link href="/executive/subscribers" className={styles.viewAllLink}>
-                                View All
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                                    <polyline points="9 18 15 12 9 6" />
-                                </svg>
-                            </Link>
-                        </div>
-                        <div className={styles.subscriberTable}>
-                            <div className={styles.tableHeader}>
-                                <span>Email</span>
-                                <span>Source</span>
-                                <span>Date</span>
-                            </div>
-                            {recentSubscribers.map((sub) => (
-                                <div key={sub.email} className={styles.tableRow}>
-                                    <span className={styles.subEmail}>{sub.email}</span>
-                                    <span className={styles.subSource}>{sub.source ?? '—'}</span>
-                                    <span className={styles.subDate}>{formatDate(sub.subscribedAt.toISOString())}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
+                    <BroadcastCenter subscriberCount={dbError ? 0 : subscriberCount} />
 
-                {/* Executive Zoom meetings */}
-                <div className={styles.panelSection}>
-                    <div className={styles.sectionHeader}>
-                        <h2>Executive Zoom Meeting</h2>
-                        <p>Book a Zoom meeting via Calendly — all executives will be notified by email</p>
-                    </div>
-                    <div className={styles.schedulingWrapper}>
-                        <ExecMeetingBooking />
-                    </div>
-                </div>
+                    {recentSubscribers.length > 0 ? (
+                        <DashboardPanel
+                            title="Recent Alert Subscribers"
+                            description={`Latest ${recentSubscribers.length} signups; ${subscriberCount} active total.`}
+                            action={<Link href="/executive/subscribers" className={styles.textLink}>View all</Link>}
+                        >
+                            <DataTable
+                                columns={['Email', 'Source', 'Date']}
+                                rows={recentSubscribers.map((sub) => [
+                                    <span key="email" className={styles.emailCell}>{sub.email}</span>,
+                                    sub.source ?? 'None',
+                                    formatDate(sub.subscribedAt.toISOString()),
+                                ])}
+                            />
+                        </DashboardPanel>
+                    ) : null}
 
-                {/* Schedule investor meetings */}
-                <div className={styles.panelSection}>
-                    <div className={styles.sectionHeader}>
-                        <h2>Schedule Investor Meeting</h2>
-                        <p>Book investor meetings and partnership calls</p>
-                    </div>
-                    <div className={styles.schedulingWrapper}>
-                        <MeetingTypeSelector />
-                    </div>
-                </div>
+                    <TradingSystemStatus />
 
+                    <div className={dashboardStyles.twoColumnGrid}>
+                        <DashboardPanel
+                            title="Executive Zoom Meeting"
+                            description="Book a Zoom meeting via Calendly; executive notifications remain separate from trading controls."
+                        >
+                            <ExecMeetingBooking />
+                        </DashboardPanel>
+
+                        <DashboardPanel
+                            title="Schedule Investor Meeting"
+                            description="Book investor meetings and partnership calls."
+                        >
+                            <MeetingTypeSelector />
+                        </DashboardPanel>
+                    </div>
+                </DashboardShell>
             </Container>
         </div>
     );

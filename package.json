@@ -7,7 +7,13 @@
     "build": "prisma generate && next build",
     "postinstall": "prisma generate",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint src prisma",
+    "lint:src": "eslint src prisma",
+    "typecheck": "tsc -p tsconfig.typecheck.json --noEmit",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio",
+    "verify": "npm run typecheck && npm run lint:src && npm run build"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
@@ -15,6 +21,7 @@
     "@prisma/client": "^7.3.0",
     "@react-email/components": "^1.0.8",
     "bcryptjs": "^3.0.3",
+    "lucide-react": "^1.11.0",
     "moment": "^2.30.1",
     "next": "16.1.4",
     "next-auth": "^4.24.13",
@@ -22,6 +29,7 @@
     "react": "19.2.3",
     "react-big-calendar": "^1.19.4",
     "react-dom": "19.2.3",
+    "recharts": "^3.8.1",
     "resend": "^6.9.3"
   },
   "devDependencies": {

@@ -84,12 +84,12 @@ model BroadcastLog {
   id             String   @id @default(cuid())
   subject        String
   message        String   @db.Text
-  sentBy         String
+  sentBy         String?
   sentByEmail    String
   sentAt         DateTime @default(now())
   recipientCount Int
 
-  user User @relation(fields: [sentBy], references: [id], onDelete: SetNull)
+  user User? @relation(fields: [sentBy], references: [id], onDelete: SetNull)
 
   @@index([sentBy])
   @@index([sentAt])

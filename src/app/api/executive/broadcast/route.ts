@@ -14,6 +14,8 @@ interface TokenWithUser {
 // Rate limit: 10 broadcasts per hour per user
 const RATE_LIMIT = 10;
 const RATE_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+const SUBJECT_MAX = 120;
+const MESSAGE_MAX = 4000;
 
 export async function POST(req: NextRequest) {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET }) as TokenWithUser | null;
@@ -45,6 +47,10 @@ export async function POST(req: NextRequest) {
 
     if (!subject?.trim() || !message?.trim()) {
         return NextResponse.json({ error: 'Subject and message are required.' }, { status: 400 });
+    }
+
+    if (subject.trim().length > SUBJECT_MAX || message.trim().length > MESSAGE_MAX) {
+        return NextResponse.json({ error: 'Subject or message exceeds the allowed length.' }, { status: 400 });
     }
 
     const activeSubscribers = await prisma.investorAlert.findMany({

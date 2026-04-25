@@ -1,10 +1,24 @@
 import { redirect } from 'next/navigation';
 import { getServerSession } from "next-auth/next";
+import { CalendarClock, DollarSign, FileText, PieChart, WalletCards } from 'lucide-react';
 import { authOptions } from "@/lib/auth";
-import { getTreasurySnapshot } from '@/lib/treasury/snapshot';
-import { getInvestorDocuments, getInvestorEvents } from '@/lib/investor/disclosures';
+import { getTreasuryFreshness, getTreasurySnapshot } from '@/lib/treasury/snapshot';
+import { getInvestorDocuments, getNextInvestorEvent } from '@/lib/investor/disclosures';
 import { Container } from '../../../components/ui/Container';
 import { MeetingTypeSelector } from '../../../components/scheduling/MeetingTypeSelector';
+import {
+    DataTable,
+    DashboardHeader,
+    DashboardPanel,
+    DashboardShell,
+    EmptyState,
+    FreshnessBadge,
+    MetricCard,
+    MetricGrid,
+    StatusBadge,
+    dashboardStyles,
+} from '../../../components/dashboard/Dashboard';
+import { AllocationChart, ValueBarChart } from '../../../components/dashboard/DashboardCharts';
 import styles from './page.module.css';
 
 interface ExtendedUser {
@@ -30,9 +44,16 @@ function formatDate(iso: string) {
 
 function formatEventDate(iso: string) {
     return new Intl.DateTimeFormat('en-US', {
-        weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short'
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        timeZoneName: 'short',
     }).format(new Date(iso));
 }
+
+const chartColors = ['#E8C87A', '#84b8ff', '#b49dff', '#94a3b8'];
 
 export default async function InvestorDashboard() {
     const session = await getServerSession(authOptions);
@@ -43,195 +64,162 @@ export default async function InvestorDashboard() {
 
     const user = session.user as ExtendedUser;
     const snapshot = getTreasurySnapshot();
+    const freshness = getTreasuryFreshness(snapshot);
     const documents = getInvestorDocuments();
-    const events = getInvestorEvents();
-    const nextEvent = events[0];
+    const nextEvent = getNextInvestorEvent();
+    const pnlTone = snapshot.totals.unrealizedPnlUsd >= 0 ? 'success' : 'danger';
 
-    const pnlColor = snapshot.totals.unrealizedPnlUsd >= 0 ? '#4ade80' : '#f87171';
+    const allocationData = [
+        ...snapshot.holdings.map((holding, index) => ({
+            name: holding.symbol,
+            value: holding.marketValueUsd,
+            color: chartColors[index],
+        })),
+        { name: 'Cash', value: snapshot.cash.total, color: chartColors[3] },
+    ];
+
+    const valueData = snapshot.holdings.map((holding, index) => ({
+        name: holding.symbol,
+        value: holding.marketValueUsd,
+        color: chartColors[index],
+    }));
 
     return (
         <div className={styles.dashboardPage}>
             <Container className={styles.dashboardContainer}>
+                <DashboardShell>
+                    <DashboardHeader
+                        eyebrow="Investor Portal"
+                        title={`Welcome back, ${user?.name?.split(' ')[0] || 'Investor'}`}
+                        description="Review treasury posture, investor documents, and upcoming communications from one operational view."
+                        aside={(
+                            <>
+                                <FreshnessBadge status={freshness.status} label={freshness.label} />
+                                <StatusBadge tone="neutral">{snapshot.sourceLabel}</StatusBadge>
+                            </>
+                        )}
+                    />
 
-                {/* Welcome card */}
-                <div className={styles.welcomeCard}>
-                    <div className={styles.welcomeHeader}>
-                        <div className={styles.avatarLarge}>
-                            {user?.name?.charAt(0) || 'I'}
-                        </div>
-                        <div className={styles.welcomeText}>
-                            <h1>Welcome back, {user?.name?.split(' ')[0] || 'Investor'}</h1>
-                            <p>{user?.email}</p>
-                        </div>
-                    </div>
-                </div>
+                    <MetricGrid>
+                        <MetricCard
+                            icon={<DollarSign aria-hidden="true" />}
+                            label="Total Assets"
+                            value={formatUsd(snapshot.totals.totalAssets, 2)}
+                            sub={<span className={styles[pnlTone]}>P&L {snapshot.totals.unrealizedPnlUsd >= 0 ? '+' : ''}{formatUsd(snapshot.totals.unrealizedPnlUsd, 2)}</span>}
+                        />
+                        <MetricCard
+                            icon={<WalletCards aria-hidden="true" />}
+                            label="NAV per Share"
+                            value={formatUsd(snapshot.totals.navPerShareUsd, 4)}
+                            sub={`${snapshot.sharesOutstanding.toLocaleString()} shares outstanding`}
+                        />
+                        <MetricCard
+                            icon={<CalendarClock aria-hidden="true" />}
+                            label="Next Event"
+                            value={nextEvent ? nextEvent.title : 'No upcoming events'}
+                            sub={nextEvent ? formatEventDate(nextEvent.startsAtIso) : 'Investor calendar is clear'}
+                        />
+                    </MetricGrid>
 
-                {/* Treasury stat cards */}
-                <div className={styles.statsGrid}>
-                    <div className={styles.statCard}>
-                        <div className={styles.statIcon}>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                            </svg>
-                        </div>
-                        <div className={styles.statContent}>
-                            <span className={styles.statLabel}>Total Assets</span>
-                            <span className={styles.statValue}>{formatUsd(snapshot.totals.totalAssets, 2)}</span>
-                            <span className={styles.statSub} style={{ color: pnlColor }}>
-                                P&L: {snapshot.totals.unrealizedPnlUsd >= 0 ? '+' : ''}{formatUsd(snapshot.totals.unrealizedPnlUsd, 2)}
-                            </span>
-                        </div>
-                    </div>
+                    <div className={dashboardStyles.dashboardGrid}>
+                        <DashboardPanel
+                            title="Treasury Allocation"
+                            description={`Manual snapshot as of ${snapshot.asOfDate}; source: ${snapshot.sourceLabel}.`}
+                            action={<FreshnessBadge status={freshness.status} label={freshness.status === 'stale' ? 'Needs update' : 'Current'} />}
+                        >
+                            <AllocationChart data={allocationData} />
+                        </DashboardPanel>
 
-                    <div className={styles.statCard}>
-                        <div className={styles.statIcon}>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                                <circle cx="12" cy="12" r="1" fill="currentColor" />
-                            </svg>
-                        </div>
-                        <div className={styles.statContent}>
-                            <span className={styles.statLabel}>NAV per Share</span>
-                            <span className={styles.statValue}>{formatUsd(snapshot.totals.navPerShareUsd, 4)}</span>
-                            <span className={styles.statSub}>{snapshot.sharesOutstanding.toLocaleString()} shares outstanding</span>
-                        </div>
+                        <DashboardPanel
+                            title="ETF Market Value"
+                            description="Capital investment values by current manual mark."
+                        >
+                            <ValueBarChart data={valueData} />
+                        </DashboardPanel>
                     </div>
 
-                    <div className={styles.statCard}>
-                        <div className={styles.statIcon}>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                <line x1="16" y1="2" x2="16" y2="6" />
-                                <line x1="8" y1="2" x2="8" y2="6" />
-                                <line x1="3" y1="10" x2="21" y2="10" />
-                            </svg>
-                        </div>
-                        <div className={styles.statContent}>
-                            <span className={styles.statLabel}>Next Event</span>
-                            {nextEvent ? (
-                                <>
-                                    <span className={styles.statValue} style={{ fontSize: '1rem' }}>{nextEvent.title}</span>
-                                    <span className={styles.statSub}>{formatEventDate(nextEvent.startsAtIso)}</span>
-                                </>
-                            ) : (
-                                <span className={styles.statValue} style={{ fontSize: '1rem', color: 'var(--color-text-muted)' }}>
-                                    No upcoming events
-                                </span>
-                            )}
-                        </div>
-                    </div>
-                </div>
+                    <div className={dashboardStyles.twoColumnGrid}>
+                        <DashboardPanel
+                            title="Capital Investments"
+                            description="ETF holdings and unrealized performance."
+                        >
+                            <DataTable
+                                columns={['Holding', 'Shares', 'Price', 'Market Value', 'P&L']}
+                                rows={snapshot.holdings.map((holding) => [
+                                    <strong key="symbol">{holding.symbol}</strong>,
+                                    holding.shares.toLocaleString(),
+                                    formatUsd(holding.currentPricePerShare, 2),
+                                    formatUsd(holding.marketValueUsd, 2),
+                                    <span key="pnl" className={holding.unrealizedPnlUsd >= 0 ? styles.success : styles.danger}>
+                                        {holding.unrealizedPnlUsd >= 0 ? '+' : ''}{formatUsd(holding.unrealizedPnlUsd, 2)}
+                                    </span>,
+                                ])}
+                            />
+                        </DashboardPanel>
 
-                {/* Cash Positions */}
-                <div className={styles.panelSection}>
-                    <div className={styles.sectionHeader}>
-                        <h2>Cash Positions</h2>
-                        <p>As of {snapshot.asOfDate}</p>
+                        <DashboardPanel
+                            title="Cash Positions"
+                            description={`Reported as of ${snapshot.asOfDate}.`}
+                        >
+                            <DataTable
+                                columns={['Account', 'Value']}
+                                rows={[
+                                    ['Checking Account', formatUsd(snapshot.cash.checking, 2)],
+                                    ['Brokerage Cash', formatUsd(snapshot.cash.brokerage, 2)],
+                                    [<strong key="total">Total Cash</strong>, <strong key="value">{formatUsd(snapshot.cash.total, 2)}</strong>],
+                                ]}
+                            />
+                        </DashboardPanel>
                     </div>
-                    <div className={styles.holdingsGrid}>
-                        <div className={styles.holdingCard}>
-                            <div className={styles.holdingSymbol}>CHK</div>
-                            <div className={styles.holdingDetails}>
-                                <div className={styles.holdingRow}>
-                                    <span>Checking Account</span>
-                                    <strong>{formatUsd(snapshot.cash.checking, 2)}</strong>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={styles.holdingCard}>
-                            <div className={styles.holdingSymbol}>BRK</div>
-                            <div className={styles.holdingDetails}>
-                                <div className={styles.holdingRow}>
-                                    <span>Brokerage Cash</span>
-                                    <strong>{formatUsd(snapshot.cash.brokerage, 2)}</strong>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={styles.holdingCard}>
-                            <div className={styles.holdingSymbol}>$</div>
-                            <div className={styles.holdingDetails}>
-                                <div className={styles.holdingRow}>
-                                    <span>Total Cash</span>
-                                    <strong>{formatUsd(snapshot.cash.total, 2)}</strong>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                {/* ETF Holdings */}
-                <div className={styles.panelSection}>
-                    <div className={styles.sectionHeader}>
-                        <h2>Capital Investments</h2>
-                        <p>As of {snapshot.asOfDate} · ETF Holdings</p>
-                    </div>
-                    <div className={styles.holdingsGrid}>
-                        {snapshot.holdings.map((holding) => (
-                            <div key={holding.symbol} className={styles.holdingCard}>
-                                <div className={styles.holdingSymbol}>{holding.symbol}</div>
-                                <div className={styles.holdingDetails}>
-                                    <div className={styles.holdingRow}>
-                                        <span>Shares</span>
-                                        <strong>{holding.shares.toLocaleString()}</strong>
+                    <DashboardPanel
+                        title="Document Vault"
+                        description="Investor documents, disclosures, and governance materials."
+                        action={<FileText aria-hidden="true" size={18} />}
+                    >
+                        <DataTable
+                            columns={['Document', 'Type', 'Date']}
+                            rows={documents.map((doc) => [
+                                <a key={doc.id} href={doc.href} target={doc.href.startsWith('http') ? '_blank' : undefined} rel="noreferrer" className={styles.docLink}>{doc.title}</a>,
+                                doc.type,
+                                formatDate(doc.dateIso),
+                            ])}
+                        />
+                    </DashboardPanel>
+
+                    <DashboardPanel
+                        title="Upcoming Investor Event"
+                        description="Only future events are shown here."
+                        action={<PieChart aria-hidden="true" size={18} />}
+                    >
+                        {nextEvent ? (
+                            <div className={styles.eventCard}>
+                                <StatusBadge tone="success">Scheduled</StatusBadge>
+                                <h3>{nextEvent.title}</h3>
+                                <p>{nextEvent.description}</p>
+                                <dl>
+                                    <div>
+                                        <dt>When</dt>
+                                        <dd>{formatEventDate(nextEvent.startsAtIso)}</dd>
                                     </div>
-                                    <div className={styles.holdingRow}>
-                                        <span>Price/Share</span>
-                                        <strong>{formatUsd(holding.currentPricePerShare, 2)}</strong>
+                                    <div>
+                                        <dt>Where</dt>
+                                        <dd>{nextEvent.location}</dd>
                                     </div>
-                                    <div className={styles.holdingRow}>
-                                        <span>Market Value</span>
-                                        <strong>{formatUsd(holding.marketValueUsd, 2)}</strong>
-                                    </div>
-                                    <div className={styles.holdingRow}>
-                                        <span>Unrealized P&L</span>
-                                        <strong style={{ color: holding.unrealizedPnlUsd >= 0 ? '#4ade80' : '#f87171' }}>
-                                            {holding.unrealizedPnlUsd >= 0 ? '+' : ''}{formatUsd(holding.unrealizedPnlUsd, 2)}
-                                        </strong>
-                                    </div>
-                                </div>
+                                </dl>
                             </div>
-                        ))}
-                    </div>
-                </div>
+                        ) : (
+                            <EmptyState title="No upcoming events" copy="New briefings will appear here once they are scheduled." />
+                        )}
+                    </DashboardPanel>
 
-                {/* Document vault */}
-                <div className={styles.panelSection}>
-                    <div className={styles.sectionHeader}>
-                        <h2>Document Vault</h2>
-                        <p>Investor documents, disclosures, and governance materials</p>
-                    </div>
-                    <div className={styles.docList}>
-                        {documents.map((doc) => (
-                            <a key={doc.id} href={doc.href} className={styles.docRow} target={doc.href.startsWith('http') ? '_blank' : undefined} rel="noreferrer">
-                                <div className={styles.docIcon}>
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                        <polyline points="14,2 14,8 20,8" />
-                                    </svg>
-                                </div>
-                                <div className={styles.docInfo}>
-                                    <span className={styles.docTitle}>{doc.title}</span>
-                                    <span className={styles.docMeta}>{doc.type} · {formatDate(doc.dateIso)}</span>
-                                </div>
-                                <svg className={styles.docArrow} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                                    <polyline points="9 18 15 12 9 6" />
-                                </svg>
-                            </a>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Schedule a meeting */}
-                <div className={styles.panelSection}>
-                    <div className={styles.sectionHeader}>
-                        <h2>Schedule a Meeting</h2>
-                        <p>Book time directly with the ARI leadership team</p>
-                    </div>
-                    <div className={styles.schedulingWrapper}>
+                    <DashboardPanel
+                        title="Schedule a Meeting"
+                        description="Book time directly with the ARI leadership team."
+                    >
                         <MeetingTypeSelector />
-                    </div>
-                </div>
-
+                    </DashboardPanel>
+                </DashboardShell>
             </Container>
         </div>
     );
