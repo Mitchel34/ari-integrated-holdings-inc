@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { Check, Download, X } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
 import { useToast } from '../../../components/ui/Toast';
 import styles from './page.module.css';
@@ -55,6 +56,11 @@ export default function SubscriberList({ initialSubscribers }: SubscriberListPro
         }
     }
 
+    function escapeCsvCell(value: string) {
+        const escaped = value.replace(/"/g, '""');
+        return /[",\n\r]/.test(escaped) ? `"${escaped}"` : escaped;
+    }
+
     function exportCsv() {
         const headers = ['Email', 'Status', 'Source', 'Subscribed Date'];
         const rows = filteredSubscribers.map((sub) => [
@@ -63,7 +69,7 @@ export default function SubscriberList({ initialSubscribers }: SubscriberListPro
             sub.source || '',
             new Date(sub.subscribedAt).toLocaleDateString(),
         ]);
-        const csv = [headers, ...rows].map((row) => row.join(',')).join('\n');
+        const csv = [headers, ...rows].map((row) => row.map(escapeCsvCell).join(',')).join('\n');
         const blob = new Blob([csv], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -102,11 +108,7 @@ export default function SubscriberList({ initialSubscribers }: SubscriberListPro
                     <option value="inactive">Inactive</option>
                 </select>
                 <Button size="sm" variant="outline" onClick={exportCsv}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                        <polyline points="7 10 12 15 17 10" />
-                        <line x1="12" y1="15" x2="12" y2="3" />
-                    </svg>
+                    <Download aria-hidden="true" size={16} />
                     Export CSV
                 </Button>
             </div>
@@ -148,15 +150,9 @@ export default function SubscriberList({ initialSubscribers }: SubscriberListPro
                                     {updating === sub.id ? (
                                         '...'
                                     ) : sub.isActive ? (
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                                            <circle cx="12" cy="12" r="10" />
-                                            <line x1="15" y1="9" x2="9" y2="15" />
-                                            <line x1="9" y1="9" x2="15" y2="15" />
-                                        </svg>
+                                        <X aria-hidden="true" size={16} />
                                     ) : (
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                                            <polyline points="20 6 9 17 4 12" />
-                                        </svg>
+                                        <Check aria-hidden="true" size={16} />
                                     )}
                                 </button>
                             </span>

@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ari Integrated Holdings Frontend
 
-## Getting Started
+Next.js 16 frontend for Ari Integrated Holdings investor relations, executive operations, treasury reporting, and future read-only trading-system status surfaces.
 
-First, run the development server:
+## Local Setup
+
+Use Node 22 from `.nvmrc`.
 
 ```bash
+nvm use
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Use `env.local.example` as the canonical template. Required production-style values include:
 
-## Learn More
+- `DATABASE_URL`
+- `NEXTAUTH_SECRET`
+- `NEXTAUTH_URL`
+- `RESEND_API_KEY`
+- Calendly URLs used by scheduling components
 
-To learn more about Next.js, take a look at the following resources:
+Database helpers:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run db:migrate
+npm run db:seed
+npm run db:studio
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Verification
 
-## Deploy on Vercel
+```bash
+npm run typecheck
+npm run lint:src
+npm run build
+npm run verify
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`npm run lint` is scoped to `src` and `prisma` so generated build artifacts are not linted.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Dashboard Architecture
+
+Shared dashboard primitives live in `src/components/dashboard`:
+
+- `DashboardShell`, `DashboardHeader`, `DashboardPanel`
+- `MetricCard`, `MetricGrid`, `DataTable`
+- `StatusBadge`, `FreshnessBadge`, `EmptyState`, `ErrorState`
+- Recharts wrappers for allocation and value charts
+
+Treasury data is currently manual and CFO-report sourced. UI surfaces must show source and freshness state until a live data pipeline is integrated.
+
+## Trading Backend Contract
+
+The trading system is intentionally separate from this repository. The executive dashboard includes a read-only placeholder only; no execution controls exist here.
+
+Future read-only endpoints expected from the backend:
+
+- `/api/trading/status`
+- `/api/trading/risk`
+- `/api/trading/performance`
+- `/api/trading/model-runs`
+- `/api/trading/alerts`
+
+Backend integration should start with status, risk, model-run, and alert summaries before any execution-related UI is considered.

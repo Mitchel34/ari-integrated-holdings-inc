@@ -1,0 +1,56 @@
+.statusGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.contractBox {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    border-radius: 10px;
+}
+
+.contractHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-accent-gold-bright);
+}
+
+.contractHeader h3 {
+    margin: 0;
+    color: var(--color-text-main);
+    font-size: 0.95rem;
+}
+
+.contractBox p {
+    margin: 0.65rem 0;
+    color: var(--color-text-muted);
+    font-size: 0.86rem;
+}
+
+.contractBox ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin: 0 0 1rem;
+    padding: 0;
+    list-style: none;
+}
+
+.contractBox code {
+    color: #dbeafe;
+    font-size: 0.82rem;
+}
+
+.iconRail {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    .statusGrid {
+        grid-template-columns: 1fr;
+    }
+}
