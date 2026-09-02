@@ -1,4 +1,4 @@
-import { Activity, AlertTriangle, Database, LineChart, ShieldCheck, WifiOff } from 'lucide-react';
+import { AlertTriangle, Database, ShieldCheck, WifiOff } from 'lucide-react';
 import {
     DataTable,
     DashboardPanel,
@@ -6,7 +6,7 @@ import {
     MetricCard,
     MetricGrid,
     StatusBadge,
-} from '../../../components/dashboard/Dashboard';
+} from '@/components/dashboard/Dashboard';
 import styles from './TradingSystemStatus.module.css';
 
 type TradingSignalStatus = 'not-connected' | 'planned';
@@ -56,34 +56,40 @@ const futureEndpoints = [
 export function TradingSystemStatus() {
     return (
         <DashboardPanel
-            title="Trading System Status"
+            eyebrow="Systems"
+            title="Trading system status"
             description="Read-only placeholder for the separate trading backend. No execution controls are connected."
             action={<StatusBadge tone="warning">Not connected</StatusBadge>}
         >
-            <MetricGrid>
-                <MetricCard icon={<WifiOff aria-hidden="true" />} label="Backend Link" value="Offline" sub="No frontend API route is active" />
-                <MetricCard icon={<ShieldCheck aria-hidden="true" />} label="Execution Safety" value="Read-only" sub="No order controls in this app" />
-                <MetricCard icon={<AlertTriangle aria-hidden="true" />} label="Alerts" value="Unavailable" sub="Backend alerts pending integration" />
+            <MetricGrid columns={3}>
+                <MetricCard size="sm" icon={<WifiOff aria-hidden="true" />} label="Backend Link" value="Offline" sub="No frontend API route is active" />
+                <MetricCard size="sm" icon={<ShieldCheck aria-hidden="true" />} label="Execution Safety" value="Read-only" sub="No order controls in this app" />
+                <MetricCard size="sm" icon={<AlertTriangle aria-hidden="true" />} label="Alerts" value="Unavailable" sub="Backend alerts pending integration" />
             </MetricGrid>
 
             <div className={styles.statusGrid}>
                 <DataTable
-                    columns={['Signal', 'State', 'Detail']}
+                    caption="Trading system signals"
+                    columns={['Signal', 'State', { label: 'Detail', hideOnMobile: true }]}
                     rows={signals.map((signal) => [
-                        <strong key="label">{signal.label}</strong>,
+                        <span key="label" className={styles.signalLabel}>{signal.label}</span>,
                         <StatusBadge key="status" tone={signal.status === 'not-connected' ? 'warning' : 'neutral'}>{signal.value}</StatusBadge>,
-                        signal.detail,
+                        <span key="detail" className={styles.signalDetail}>{signal.detail}</span>,
                     ])}
                 />
                 <div className={styles.contractBox}>
                     <div className={styles.contractHeader}>
-                        <Database aria-hidden="true" size={18} />
-                        <h3>Future API Contract</h3>
+                        <span className={styles.contractIcon} aria-hidden="true">
+                            <Database size={18} />
+                        </span>
+                        <h3 className={styles.contractTitle}>Future API contract</h3>
                     </div>
-                    <p>When the backend is ready, this panel should consume these read-only endpoints first.</p>
-                    <ul>
+                    <p className={styles.contractCopy}>When the backend is ready, this panel should consume these read-only endpoints first.</p>
+                    <ul className={styles.endpointList}>
                         {futureEndpoints.map((endpoint) => (
-                            <li key={endpoint}><code>{endpoint}</code></li>
+                            <li key={endpoint}>
+                                <code className={styles.endpoint}>{endpoint}</code>
+                            </li>
                         ))}
                     </ul>
                     <EmptyState
@@ -91,10 +97,6 @@ export function TradingSystemStatus() {
                         copy="Backend integration should start with status, risk, and model-run summaries before any execution controls are considered."
                     />
                 </div>
-            </div>
-            <div className={styles.iconRail} aria-hidden="true">
-                <Activity />
-                <LineChart />
             </div>
         </DashboardPanel>
     );

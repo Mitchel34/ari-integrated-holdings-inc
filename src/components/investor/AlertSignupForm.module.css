@@ -3,28 +3,62 @@
     gap: 1rem;
 }
 
-.formHint {
-    margin: 0;
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
-}
-
-.feedback {
-    margin: 0;
-    font-size: 0.9rem;
-}
-
-.feedbackSuccess {
-    color: #9de7b3;
-}
-
-.feedbackError {
-    color: #ffc7c7;
-}
-
-.actions {
-    display: flex;
-    align-items: center;
+.row {
+    display: grid;
     gap: 0.75rem;
-    flex-wrap: wrap;
+    align-items: start;
+}
+
+.submit {
+    display: flex;
+}
+
+.submit > * {
+    flex: 1 1 auto;
+}
+
+.submitButton {
+    min-height: 48px;
+}
+
+@media (min-width: 640px) {
+    .row {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    /* Align the button with the input, below the label line. */
+    .submit {
+        padding-top: 1.85rem;
+    }
+
+    .submit > * {
+        flex: 0 0 auto;
+    }
+}
+
+.success {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.85rem 1rem;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--pos-a30);
+    background: var(--pos-a15);
+    color: var(--text-1);
+    font-size: var(--fs-small);
+    line-height: 1.5;
+}
+
+.success svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+    color: var(--pos);
+}
+
+.fine {
+    font-size: var(--fs-caption);
+    line-height: 1.55;
+    color: var(--text-3);
 }

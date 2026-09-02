@@ -153,3 +153,17 @@ export function getNextInvestorEvent(now = new Date()): InvestorEvent | null {
     const nowMs = now.getTime();
     return getInvestorEvents().find((event) => new Date(event.startsAtIso).getTime() > nowMs) ?? null;
 }
+
+/** Events that have not started yet, soonest first. */
+export function getUpcomingInvestorEvents(now = new Date()): InvestorEvent[] {
+    const nowMs = now.getTime();
+    return getInvestorEvents().filter((event) => new Date(event.startsAtIso).getTime() > nowMs);
+}
+
+/** Events that have already taken place, most recent first. */
+export function getPastInvestorEvents(now = new Date()): InvestorEvent[] {
+    const nowMs = now.getTime();
+    return getInvestorEvents()
+        .filter((event) => new Date(event.startsAtIso).getTime() <= nowMs)
+        .reverse();
+}

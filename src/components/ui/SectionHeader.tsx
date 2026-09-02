@@ -51,7 +51,7 @@ export function SectionHeader({
     }
 
     return (
-        <div className={`${styles.row} ${className}`.trim()}>
+        <div className={`${styles.row} ${compact ? styles.compact : ''} ${className}`.trim()}>
             {header}
             <div className={styles.aside}>{aside}</div>
         </div>

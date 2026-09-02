@@ -1,35 +1,47 @@
-import { Container } from '@/components/ui/Container';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import Link from 'next/link';
+import { Container } from '@/components/ui/Container';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { DashboardHeader, DashboardShell } from '@/components/dashboard/Dashboard';
 import AccountSettingsForm from './AccountSettingsForm';
 import styles from './page.module.css';
+
+export const metadata: Metadata = {
+    title: 'Account Settings',
+    description: 'Update the email and password used to sign in to the executive portal.',
+    robots: { index: false, follow: false },
+    alternates: { canonical: '/executive/settings' },
+};
 
 export default async function SettingsPage() {
     const session = await getServerSession(authOptions);
     const user = session?.user;
 
     return (
-        <div className={styles.settingsPage}>
-            <Container className={styles.settingsContainer}>
-                <div className={styles.backLink}>
-                    <Link href="/executive/dashboard">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                            <polyline points="15 18 9 12 15 6" />
-                        </svg>
-                        Back to Dashboard
-                    </Link>
-                </div>
+        <Container narrow>
+            <DashboardShell>
+                <DashboardHeader
+                    eyebrow="Executive"
+                    title="Account Settings"
+                    description="Update the email and password used to sign in to the executive portal. Your current password is required to authorize any change."
+                    aside={(
+                        <Button variant="secondary" size="sm" asChild>
+                            <Link href="/executive/dashboard">
+                                <ArrowLeft aria-hidden="true" size={16} />
+                                Back to dashboard
+                            </Link>
+                        </Button>
+                    )}
+                />
 
-                <div className={styles.header}>
-                    <h1>Account Settings</h1>
-                    <p>Update your login credentials</p>
-                </div>
-
-                <div className={styles.card}>
+                <Card variant="glass" className={styles.card}>
                     <AccountSettingsForm currentEmail={user?.email || ''} />
-                </div>
-            </Container>
-        </div>
+                </Card>
+            </DashboardShell>
+        </Container>
     );
 }

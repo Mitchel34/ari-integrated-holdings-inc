@@ -1,0 +1,30 @@
+/*
+ * Shared rhythm for the legal documents (privacy, terms, disclaimer).
+ * DocumentPage's `.prose p { margin: 0 }` out-specifies its `.prose > * + *`
+ * spacing rule, so consecutive paragraphs and lists render flush and the first
+ * h2 sits directly under the callout. This wrapper restores vertical rhythm
+ * without touching the shared component.
+ */
+
+.doc > :not(:first-child) {
+    margin-top: 1rem;
+}
+
+.doc > h2:first-of-type:first-child {
+    margin-top: 1.75rem;
+}
+
+.doc > h2:not(:first-child) {
+    margin-top: 2.75rem;
+}
+
+.doc > h3:not(:first-child) {
+    margin-top: 1.75rem;
+}
+
+.doc > h2 + p,
+.doc > h2 + ul,
+.doc > h2 + dl,
+.doc > h3 + p {
+    margin-top: 0.75rem;
+}

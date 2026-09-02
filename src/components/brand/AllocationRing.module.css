@@ -2,8 +2,8 @@
     position: relative;
     display: inline-grid;
     place-items: center;
-    width: var(--ring-size);
-    height: var(--ring-size);
+    width: min(var(--ring-size), 100%);
+    aspect-ratio: 1 / 1;
     flex-shrink: 0;
 }
 
@@ -37,7 +37,6 @@
 
 .orbitGroup {
     transform-origin: 50% 50%;
-    animation: orbitSpin 240s linear infinite;
 }
 
 .orbitDot {
@@ -87,15 +86,8 @@
     }
 }
 
-@keyframes orbitSpin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
 @media (prefers-reduced-motion: reduce) {
-    .segment,
-    .orbitGroup {
+    .segment {
         animation: none;
     }
 }

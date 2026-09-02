@@ -17,6 +17,7 @@ interface CardProps {
     as?: ElementType;
     id?: string;
     style?: React.CSSProperties;
+    role?: string;
     'aria-label'?: string;
     'aria-labelledby'?: string;
 }

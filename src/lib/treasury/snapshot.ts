@@ -118,7 +118,7 @@ function buildSnapshot(): TreasurySnapshot {
 
     return {
         asOfIso: new Date(REPORT_DATE).toISOString(),
-        asOfDate: 'March 1, 2026',
+        asOfDate: '1 Mar 2026',
         sourceLabel: SOURCE_LABEL,
         sharesOutstanding: SHARES_OUTSTANDING,
         authorizedShares: AUTHORIZED_SHARES,

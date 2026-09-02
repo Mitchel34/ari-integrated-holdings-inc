@@ -1,0 +1,237 @@
+/* ── Shared icon box: gold line icon in a 40px glass-1 square ─────────── */
+
+.iconBox {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--glass-1-border);
+    background: var(--glass-1-bg);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    color: var(--gold-300);
+    flex-shrink: 0;
+}
+
+/* ── Process ──────────────────────────────────────────────────────────── */
+
+.process {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* Connector: a short silver segment drawn only in the gap between cards —
+   vertical through the icon column on small screens, horizontal on wide screens. */
+.processItem {
+    position: relative;
+    display: flex;
+}
+
+.processItem:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: calc(1.5rem + 20px);
+    top: 100%;
+    width: 1px;
+    height: 1rem;
+    background: rgba(232, 235, 240, 0.35);
+    pointer-events: none;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    width: 100%;
+}
+
+.stepHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.stepIdx {
+    font-size: 0.8125rem;
+    letter-spacing: 0.12em;
+    color: var(--gold-500);
+}
+
+.stepTitle {
+    font-size: var(--fs-h4);
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.stepText {
+    font-size: var(--fs-small);
+    line-height: 1.6;
+    color: var(--text-2);
+}
+
+/* ── Capabilities ─────────────────────────────────────────────────────── */
+
+.capabilities {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+}
+
+.capability {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.capabilityTitle {
+    font-size: var(--fs-h3);
+}
+
+.capabilityText {
+    color: var(--text-2);
+    line-height: 1.6;
+}
+
+/* ── Boundaries ───────────────────────────────────────────────────────── */
+
+.boundaries {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.boundariesHead {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.boundariesTitle {
+    font-size: var(--fs-h2);
+}
+
+.definitions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+    margin: 0;
+}
+
+.definition {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1rem 0 0;
+    border-top: 1px solid var(--line-1);
+}
+
+.term {
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-500);
+}
+
+.detail {
+    margin: 0;
+    color: var(--text-1);
+    line-height: 1.55;
+}
+
+/* ── Closing ──────────────────────────────────────────────────────────── */
+
+.closing {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+}
+
+.closingText {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.closingTitle {
+    font-size: var(--fs-h3);
+    font-weight: 600;
+}
+
+.closingNote {
+    margin-top: 0.4rem;
+    font-size: var(--fs-small);
+    color: var(--text-3);
+    max-width: 60ch;
+}
+
+.mail {
+    color: var(--text-2);
+    overflow-wrap: anywhere;
+    border-bottom: 1px solid var(--gold-a30);
+}
+
+.mail:hover {
+    color: var(--gold-300);
+    border-bottom-color: var(--gold-500);
+}
+
+/* ── Breakpoints ──────────────────────────────────────────────────────── */
+
+@media (max-width: 639px) {
+    .closing > :last-child {
+        width: 100%;
+    }
+}
+
+@media (min-width: 640px) {
+    .definitions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1.5rem 2.5rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .process {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .processItem:not(:last-child)::after {
+        display: none;
+    }
+
+    .capabilities {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .closing {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .process {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1.25rem;
+    }
+
+    .processItem:not(:last-child)::after {
+        display: block;
+        left: 100%;
+        top: calc(2rem + 20px);
+        width: 1.25rem;
+        height: 1px;
+    }
+}

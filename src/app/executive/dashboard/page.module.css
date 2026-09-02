@@ -1,49 +1,58 @@
-.dashboardPage {
-    min-height: 100vh;
-    position: relative;
+.chartNote {
+    margin-top: 0.85rem;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.72rem;
+    color: var(--text-3);
+    overflow-wrap: anywhere;
 }
 
-.dashboardContainer {
-    position: relative;
-    z-index: 10;
-}
-
-.success {
-    color: #86efac;
-    font-weight: 750;
-}
-
-.danger {
-    color: #fca5a5;
-    font-weight: 750;
-}
-
-.settingsLink,
-.textLink {
+.panelIcon {
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
-    min-height: 36px;
-    padding: 0.45rem 0.7rem;
-    color: var(--color-text-main);
-    background: rgba(255, 255, 255, 0.045);
-    border: 1px solid rgba(148, 163, 184, 0.18);
-    border-radius: 8px;
-    font-size: 0.82rem;
-    font-weight: 700;
-}
-
-.settingsLink:hover,
-.textLink:hover {
-    color: var(--color-accent-gold-bright);
-    border-color: rgba(232, 200, 122, 0.35);
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--r-sm);
+    color: var(--gold-300);
+    background: var(--glass-1-bg);
+    border: 1px solid var(--glass-1-border);
 }
 
 .emailCell {
     display: inline-block;
-    max-width: 320px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    vertical-align: bottom;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.footnote {
+    max-width: 70ch;
+    color: var(--text-3);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.footnoteLink {
+    color: var(--text-2);
+    text-decoration: underline;
+    text-decoration-color: var(--line-2);
+    text-underline-offset: 3px;
+}
+
+.footnoteLink:hover {
+    color: var(--gold-300);
+}
+
+/* Calendly panels need their full width (600px+ embeds); stack instead of splitting. */
+.schedulingStack {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+@media (max-width: 767px) {
+    .emailCell {
+        font-size: 0.85rem;
+    }
 }

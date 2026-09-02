@@ -1,0 +1,247 @@
+/* Shared layout for the Home page sections (holdings, pillars, engines, transparency, CTA). */
+
+.grid3,
+.grid2 {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(1rem, 3vw, 1.5rem);
+}
+
+.cardText {
+    color: var(--text-2);
+    line-height: 1.65;
+}
+
+/* ── Holdings ─────────────────────────────────────────────────────────── */
+
+.holdingCard {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    height: 100%;
+}
+
+.holdingTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.4rem;
+}
+
+.holdingWeight {
+    font-size: clamp(1.5rem, 1.3rem + 0.8vw, 1.9rem);
+    font-weight: 500;
+    line-height: 1;
+    color: var(--text-1);
+}
+
+.holdingName {
+    font-size: var(--fs-h3);
+}
+
+.holdingRole {
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-3);
+}
+
+.etfLine {
+    margin-top: auto;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--line-1);
+    font-size: var(--fs-small);
+    color: var(--text-3);
+}
+
+.etfLine .mono {
+    color: var(--text-2);
+}
+
+/* ── Pillars ──────────────────────────────────────────────────────────── */
+
+.pillarCard {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    height: 100%;
+}
+
+.iconBox {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--r-sm);
+    color: var(--gold-300);
+    margin-bottom: 0.25rem;
+}
+
+.pillarTitle {
+    font-size: var(--fs-h3);
+}
+
+/* ── Engines ──────────────────────────────────────────────────────────── */
+
+.engineCard {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    height: 100%;
+}
+
+.engineTitle {
+    font-size: var(--fs-h3);
+}
+
+.engineAction {
+    margin-top: auto;
+    padding-top: 0.75rem;
+}
+
+/* ── Transparency ─────────────────────────────────────────────────────── */
+
+.transparencyCard {
+    max-width: 880px;
+}
+
+.discList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.discRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem 1rem;
+    padding: 0.9rem 0;
+    border-top: 1px solid var(--line-1);
+}
+
+.discRow:first-child {
+    padding-top: 0;
+    border-top: 0;
+}
+
+.discDate {
+    font-size: var(--fs-small);
+    color: var(--text-3);
+}
+
+.discTitle {
+    flex: 1 1 100%;
+    min-width: 0;
+    font-weight: 500;
+    color: var(--text-1);
+    overflow-wrap: anywhere;
+}
+
+.discTitle a:hover,
+.discTitle a:focus-visible {
+    color: var(--gold-300);
+}
+
+.alertsLine {
+    margin-top: 1.1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line-1);
+    font-size: var(--fs-small);
+    color: var(--text-3);
+}
+
+.inlineLink {
+    color: var(--gold-300);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.inlineLink:hover {
+    color: var(--gold-500);
+}
+
+/* ── Closing CTA ──────────────────────────────────────────────────────── */
+
+.cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    max-width: 880px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.ctaTitle {
+    font-size: var(--fs-h2);
+}
+
+.ctaLead {
+    max-width: 56ch;
+    color: var(--text-2);
+    line-height: 1.6;
+}
+
+.ctaActions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.ctaEmail {
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
+}
+
+.ctaNote {
+    font-size: var(--fs-small);
+    color: var(--text-3);
+}
+
+/* ── Breakpoints ──────────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+    .ctaActions > * {
+        flex: 1 1 100%;
+    }
+
+    .ctaEmail {
+        font-size: 0.875rem;
+        line-height: 1.3;
+        padding: 0.6rem 0.75rem;
+    }
+}
+
+/* Tablet: three-up grids are narrow, so tighten card padding in this range only. */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .grid3 .holdingCard,
+    .grid3 .pillarCard {
+        padding: 1.5rem 1.25rem;
+    }
+}
+
+@media (min-width: 640px) {
+    .discTitle {
+        flex: 1 1 0;
+    }
+}
+
+@media (min-width: 768px) {
+    .grid3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

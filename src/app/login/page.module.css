@@ -1,131 +1,82 @@
-.loginPage {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  padding: 2rem;
-  margin-top: -80px; /* Offset navbar height */
+.page {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - var(--nav-h));
+    padding: clamp(2rem, 6vw, 4rem) 0;
 }
 
-.loginContainer {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  max-width: 440px;
-  width: 100%;
+@media (max-width: 768px) {
+    .page {
+        min-height: calc(100vh - var(--nav-h-mobile));
+    }
 }
 
-.loginCard {
-  width: 100%;
-  padding: 2.5rem;
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transition: border-color 0.26s ease-in-out, box-shadow 0.26s ease-in-out;
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: calc(440px + var(--gutter) * 2);
 }
 
-.loginCard:hover {
-  border-color: rgba(194, 155, 78, 0.4);
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.45),
-    0 0 0 1px rgba(194, 155, 78, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+.card {
+    width: 100%;
+    max-width: 440px;
+    padding: clamp(1.75rem, 5vw, 2.5rem);
 }
 
-.loginHeader {
-  text-align: center;
-  margin-bottom: 2rem;
+.head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: center;
+    margin-bottom: 1.75rem;
 }
 
-.loginLogo {
-  display: block;
-  width: auto;
-  height: 100px;
-  object-fit: contain;
-  margin: 0 auto 1.25rem;
-  background: var(--color-primary-bg);
-  border-radius: 14px;
-  filter: drop-shadow(0 0 20px rgba(194, 155, 78, 0.28)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.45));
+.logo {
+    margin-bottom: 0.5rem;
 }
 
 .title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--color-accent-gold) 0%, #f5d76e 50%, var(--color-accent-gold) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.02em;
+    font-size: clamp(1.4rem, 1.2rem + 0.8vw, 1.75rem);
+    line-height: var(--lh-snug);
+    letter-spacing: -0.02em;
+    color: var(--text-1);
 }
 
 .subtitle {
-  color: var(--color-text-muted);
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-.portalInfo {
-  text-align: center;
-  padding: 1.5rem 2rem;
-  background: rgba(0, 0, 0, 0.25);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  max-width: 440px;
-  width: 100%;
-}
-
-.portalInfo h2 {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: var(--color-accent-gold);
-}
-
-.portalInfo p {
-  color: var(--color-text-muted);
-  font-size: 0.875rem;
-  margin: 0;
-  line-height: 1.6;
+    max-width: 30ch;
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.55;
 }
 
 .loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  color: var(--color-text-muted);
+    padding: 2rem 0;
+    text-align: center;
+    color: var(--text-3);
+    font-size: var(--fs-small);
 }
 
-@media (max-width: 480px) {
-  .loginPage {
-    padding: 1rem;
-  }
+.access {
+    max-width: 440px;
+    text-align: center;
+    color: var(--text-3);
+    font-size: var(--fs-small);
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
 
-  .loginCard {
-    padding: 1.75rem;
-    border-radius: 20px;
-  }
+.accessLink {
+    color: var(--gold-300);
+    font-weight: 500;
+}
 
-  .loginLogo {
-    height: 80px;
-  }
-
-  .title {
-    font-size: 1.5rem;
-  }
-
-  .portalInfo {
-    padding: 1.25rem 1.5rem;
-  }
+.accessLink:hover {
+    color: var(--text-1);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
 }

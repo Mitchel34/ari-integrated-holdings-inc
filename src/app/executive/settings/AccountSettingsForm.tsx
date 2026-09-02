@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
-import { Button } from '@/components/ui/Button';
 import { signOut } from 'next-auth/react';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import styles from './page.module.css';
 
 interface AccountSettingsFormProps {
@@ -85,83 +86,81 @@ export default function AccountSettingsForm({ currentEmail }: AccountSettingsFor
     }
 
     return (
-        <form onSubmit={handleSubmit} className={styles.settingsForm}>
-            {message && (
-                <div className={`${styles.alert} ${status === 'success' ? styles.alertSuccess : styles.alertError}`}>
+        <form onSubmit={handleSubmit} className={styles.settingsForm} aria-describedby={message ? 'settings-status' : undefined}>
+            {message ? (
+                <div
+                    id="settings-status"
+                    className={`${styles.alert} ${status === 'success' ? styles.alertSuccess : styles.alertError}`}
+                    role={status === 'success' ? 'status' : 'alert'}
+                >
                     {message}
                 </div>
-            )}
+            ) : null}
 
-            <div className={styles.section}>
-                <h3 className={styles.sectionTitle}>Change Email</h3>
-                <p className={styles.sectionDesc}>Update your login email address.</p>
-                <div className={styles.fieldGroup}>
-                    <label className={styles.label} htmlFor="settings-email">Email Address</label>
-                    <input
-                        id="settings-email"
-                        className={styles.input}
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                </div>
-            </div>
+            <section className={styles.section} aria-labelledby="settings-email-heading">
+                <h2 id="settings-email-heading" className={styles.sectionTitle}>Change email</h2>
+                <p className={styles.sectionDesc}>Update the address you use to sign in.</p>
+                <Input
+                    id="settings-email"
+                    name="email"
+                    label="Email address"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email"
+                    required
+                />
+            </section>
 
-            <div className={styles.divider} />
+            <hr className={`hairline hairline--silver ${styles.divider}`} />
 
-            <div className={styles.section}>
-                <h3 className={styles.sectionTitle}>Change Password</h3>
+            <section className={styles.section} aria-labelledby="settings-password-heading">
+                <h2 id="settings-password-heading" className={styles.sectionTitle}>Change password</h2>
                 <p className={styles.sectionDesc}>Leave the new password fields blank if you only want to change your email.</p>
-                <div className={styles.fieldGroup}>
-                    <label className={styles.label} htmlFor="settings-new-password">New Password</label>
-                    <input
-                        id="settings-new-password"
-                        className={styles.input}
-                        type="password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        placeholder="Leave blank to keep current"
-                        autoComplete="new-password"
-                    />
-                </div>
-                <div className={styles.fieldGroup}>
-                    <label className={styles.label} htmlFor="settings-confirm-password">Confirm New Password</label>
-                    <input
-                        id="settings-confirm-password"
-                        className={styles.input}
-                        type="password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder="Re-enter new password"
-                        autoComplete="new-password"
-                    />
-                </div>
-            </div>
+                <Input
+                    id="settings-new-password"
+                    name="newPassword"
+                    label="New password"
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Leave blank to keep current"
+                    autoComplete="new-password"
+                    hint="At least 6 characters."
+                />
+                <Input
+                    id="settings-confirm-password"
+                    name="confirmPassword"
+                    label="Confirm new password"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Re-enter new password"
+                    autoComplete="new-password"
+                />
+            </section>
 
-            <div className={styles.divider} />
+            <hr className={`hairline hairline--silver ${styles.divider}`} />
 
-            <div className={styles.section}>
-                <h3 className={styles.sectionTitle}>Confirm Changes</h3>
+            <section className={styles.section} aria-labelledby="settings-confirm-heading">
+                <h2 id="settings-confirm-heading" className={styles.sectionTitle}>Confirm changes</h2>
                 <p className={styles.sectionDesc}>Enter your current password to authorize changes.</p>
-                <div className={styles.fieldGroup}>
-                    <label className={styles.label} htmlFor="settings-current-password">Current Password</label>
-                    <input
-                        id="settings-current-password"
-                        className={styles.input}
-                        type="password"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                        placeholder="Required to save changes"
-                        required
-                        autoComplete="current-password"
-                    />
-                </div>
-            </div>
+                <Input
+                    id="settings-current-password"
+                    name="currentPassword"
+                    label="Current password"
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Required to save changes"
+                    required
+                    autoComplete="current-password"
+                />
+            </section>
 
             <div className={styles.formFooter}>
                 <Button type="submit" disabled={status === 'saving'}>
-                    {status === 'saving' ? 'Saving...' : 'Save Changes'}
+                    {status === 'saving' ? 'Saving…' : 'Save changes'}
                 </Button>
             </div>
         </form>

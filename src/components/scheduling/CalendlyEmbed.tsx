@@ -7,6 +7,9 @@ interface CalendlyEmbedProps {
     minHeight?: string;
 }
 
+/** Calendly theme parameters matched to the site palette (navy ground, light text, gold primary). */
+const CALENDLY_THEME = 'hide_gdpr_banner=1&background_color=0A1324&text_color=F4F7FB&primary_color=C29B4E';
+
 export function CalendlyEmbed({ url, minHeight }: CalendlyEmbedProps) {
     const height = minHeight || '100%';
     useEffect(() => {
@@ -20,10 +23,12 @@ export function CalendlyEmbed({ url, minHeight }: CalendlyEmbedProps) {
         }
     }, []);
 
+    const separator = url.includes('?') ? '&' : '?';
+
     return (
         <div
             className="calendly-inline-widget"
-            data-url={`${url}?hide_gdpr_banner=1&background_color=0A1324&text_color=e2e8f0&primary_color=E8C87A`}
+            data-url={`${url}${separator}${CALENDLY_THEME}`}
             style={{ width: '100%', height }}
         />
     );

@@ -1,56 +1,90 @@
 .statusGrid {
     display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: 1rem;
     margin-top: 1rem;
 }
 
+@media (min-width: 1024px) {
+    .statusGrid {
+        grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+    }
+}
+
+.signalLabel {
+    font-weight: 500;
+    color: var(--text-1);
+    white-space: nowrap;
+}
+
+.signalDetail {
+    display: inline-block;
+    padding: 0.5rem 0;
+    color: var(--text-2);
+    font-size: 0.85rem;
+    line-height: 1.45;
+}
+
 .contractBox {
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.035);
-    border: 1px solid rgba(148, 163, 184, 0.14);
-    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.1rem;
+    border-radius: var(--r-sm);
+    background: var(--glass-1-bg);
+    border: 1px solid var(--glass-1-border);
 }
 
 .contractHeader {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    color: var(--color-accent-gold-bright);
+    gap: 0.75rem;
 }
 
-.contractHeader h3 {
-    margin: 0;
-    color: var(--color-text-main);
-    font-size: 0.95rem;
+.contractIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: var(--r-sm);
+    color: var(--gold-300);
+    background: var(--glass-1-bg);
+    border: 1px solid var(--glass-1-border);
 }
 
-.contractBox p {
-    margin: 0.65rem 0;
-    color: var(--color-text-muted);
-    font-size: 0.86rem;
+.contractTitle {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-1);
 }
 
-.contractBox ul {
+.contractCopy {
+    color: var(--text-2);
+    font-size: 0.875rem;
+    line-height: 1.55;
+}
+
+.endpointList {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
-    margin: 0 0 1rem;
+    margin: 0;
     padding: 0;
     list-style: none;
 }
 
-.contractBox code {
-    color: #dbeafe;
-    font-size: 0.82rem;
-}
-
-.iconRail {
-    display: none;
-}
-
-@media (max-width: 900px) {
-    .statusGrid {
-        grid-template-columns: 1fr;
-    }
+.endpoint {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--r-xs);
+    background: rgba(10, 19, 36, 0.55);
+    border: 1px solid var(--line-1);
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
 }

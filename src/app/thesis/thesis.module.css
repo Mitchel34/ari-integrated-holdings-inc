@@ -1,0 +1,496 @@
+/* ── Allocation block ─────────────────────────────────────────────────── */
+
+/* Section wrapper: trim the bottom so the reading column starts sooner. */
+.allocationSection.allocationSection {
+    padding-bottom: var(--section-y-sm);
+}
+
+.allocationCard {
+    margin-top: clamp(2rem, 4vw, 3rem);
+}
+
+.allocationGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+    align-items: center;
+}
+
+.ringCol {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* The ring fixes its own pixel size; cap it so a 320px viewport never overflows. */
+.ringCol > :first-child {
+    width: min(260px, 100%) !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1;
+}
+
+.ringCaption {
+    font-size: var(--fs-caption);
+    color: var(--text-3);
+    letter-spacing: 0.02em;
+    text-align: center;
+}
+
+.tableCol {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.allocationTitle {
+    font-size: var(--fs-h2);
+    margin-bottom: 0.5rem;
+}
+
+.tableWrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+}
+
+.rationaleTable {
+    width: 100%;
+    min-width: 640px;
+    border-collapse: collapse;
+    font-size: var(--fs-small);
+}
+
+.rationaleTable th,
+.rationaleTable td,
+.cagrTable th,
+.cagrTable td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.85rem 0.75rem;
+    border-bottom: 1px solid var(--line-1);
+}
+
+.rationaleTable thead th,
+.cagrTable thead th {
+    padding-top: 0.25rem;
+    padding-bottom: 0.65rem;
+    font-family: var(--font-sans);
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    border-bottom: 1px solid var(--line-2);
+    white-space: nowrap;
+}
+
+.rationaleTable tbody tr:last-child td,
+.rationaleTable tbody tr:last-child th {
+    border-bottom: 0;
+}
+
+.rationaleTable td {
+    color: var(--text-2);
+}
+
+.rationaleTable tbody th:first-child {
+    padding-left: 0.85rem;
+    border-left: 3px solid transparent;
+}
+
+/* Asset color appears only as the 3px row rail (data encoding). */
+.rationaleTable .railBtc th:first-child,
+li.railBtc { border-left-color: var(--btc); }
+
+.rationaleTable .railEth th:first-child,
+li.railEth { border-left-color: var(--eth); }
+
+.rationaleTable .railSol th:first-child,
+li.railSol { border-left-color: var(--sol); }
+
+.num {
+    text-align: right !important;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-1);
+    white-space: nowrap;
+}
+
+.assetCell {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.6rem;
+    font-weight: 500;
+}
+
+.rationaleTable th,
+.rationaleTable td {
+    white-space: nowrap;
+}
+
+.rationaleTable .roleSub {
+    white-space: normal;
+}
+
+/* Stacked list replaces the table below 768px. */
+.stackList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stackItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.85rem 0 0.85rem 0.9rem;
+    border-left: 3px solid transparent;
+    border-bottom: 1px solid var(--line-1);
+}
+
+.stackItem:last-child {
+    border-bottom: 0;
+}
+
+.stackHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.stackWeight {
+    font-size: 1.125rem;
+    color: var(--text-1);
+}
+
+.stackItem .etfCell {
+    margin-top: 0.35rem;
+}
+
+.assetName {
+    color: var(--text-1);
+}
+
+.role {
+    display: block;
+    color: var(--text-1);
+    font-weight: 500;
+}
+
+.roleSub {
+    display: block;
+    margin-top: 0.25rem;
+    max-width: 36ch;
+    font-size: var(--fs-caption);
+    line-height: 1.5;
+    color: var(--text-3);
+}
+
+.etfCell {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+}
+
+.etfName {
+    font-size: var(--fs-caption);
+    color: var(--text-3);
+    white-space: nowrap;
+}
+
+/* ── Jump list ────────────────────────────────────────────────────────── */
+
+.jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+    margin-top: 1.25rem;
+}
+
+.jumpLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--text-3);
+    border-radius: var(--r-sm);
+}
+
+.jumpLink:hover {
+    color: var(--text-1);
+}
+
+.jumpIdx {
+    color: var(--gold-500);
+    letter-spacing: 0.08em;
+}
+
+/* ── Reading column ───────────────────────────────────────────────────── */
+
+.reading {
+    display: flex;
+    flex-direction: column;
+}
+
+.weights {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--text-1);
+    letter-spacing: 0.01em;
+}
+
+.assetList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.assetList > li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding-left: 0 !important;
+    line-height: 1.55;
+}
+
+.assetList > li::before {
+    display: none;
+}
+
+.assetList > li > :first-child {
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+}
+
+/* ── Risk profile ─────────────────────────────────────────────────────── */
+
+.riskGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+}
+
+.riskCol {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.riskTitle {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: var(--text-1);
+}
+
+.riskIcon {
+    display: inline-grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--r-full);
+    border: 1px solid var(--glass-2-border);
+    background: var(--glass-1-bg);
+    flex-shrink: 0;
+}
+
+.riskIconAccept {
+    color: var(--pos);
+}
+
+.riskIconAvoid {
+    color: var(--neg);
+}
+
+.riskList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--fs-small);
+    color: var(--text-2);
+}
+
+.riskList > li {
+    position: relative;
+    padding-left: 1.25rem !important;
+    line-height: 1.55;
+}
+
+.riskList > li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.72em;
+    width: 10px;
+    height: 1px;
+    background: var(--silver-700);
+}
+
+/* ── CAGR table ───────────────────────────────────────────────────────── */
+
+.cagrTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-mono);
+    font-size: var(--fs-small);
+}
+
+.cagrTable td {
+    color: var(--text-2);
+}
+
+.cagrTable .num {
+    font-size: 1rem;
+}
+
+.blendRow th,
+.blendRow td {
+    border-top: 1px solid var(--line-2);
+    border-bottom: 0 !important;
+    background: var(--gold-a08);
+}
+
+.blendRow .num {
+    font-weight: 600;
+}
+
+.tableNote {
+    font-size: var(--fs-caption);
+    color: var(--text-3);
+    line-height: 1.5;
+}
+
+/* ── Disclosure callout ───────────────────────────────────────────────── */
+
+.callout {
+    background: linear-gradient(180deg, var(--gold-a12) 0%, var(--gold-a08) 100%);
+    border-color: var(--gold-a30);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.calloutHead {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.calloutIcon {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--gold-a30);
+    background: var(--gold-a12);
+    color: var(--gold-300);
+    flex-shrink: 0;
+}
+
+.calloutTitle {
+    font-size: var(--fs-h4);
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+}
+
+.calloutText {
+    font-size: var(--fs-small);
+    line-height: 1.65;
+    color: var(--text-2);
+}
+
+/* ── Closing CTA ──────────────────────────────────────────────────────── */
+
+.cta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+}
+
+.ctaTitle {
+    font-size: var(--fs-h2);
+}
+
+.ctaLead {
+    max-width: 58ch;
+    color: var(--text-2);
+}
+
+.ctaActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.ctaNote {
+    font-size: var(--fs-small);
+    color: var(--text-3);
+    max-width: 62ch;
+}
+
+.mail {
+    color: var(--text-2);
+    overflow-wrap: anywhere;
+    border-bottom: 1px solid var(--gold-a30);
+}
+
+.mail:hover {
+    color: var(--gold-300);
+    border-bottom-color: var(--gold-500);
+}
+
+/* ── Breakpoints ──────────────────────────────────────────────────────── */
+
+@media (max-width: 639px) {
+    .ctaActions > * {
+        flex: 1 1 100%;
+    }
+}
+
+@media (max-width: 767px) {
+    .tableCol .tableWrap {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .stackList {
+        display: none;
+    }
+}
+
+@media (min-width: 640px) {
+    .riskGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .allocationGrid {
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 3rem;
+    }
+}

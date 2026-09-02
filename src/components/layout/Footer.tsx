@@ -80,7 +80,9 @@ export function Footer() {
                         <p className={styles.contactTitle}>{CONTACT.title}</p>
                         <a href={CONTACT.mailto} className={styles.contactEmail}>
                             <Mail aria-hidden="true" />
-                            <span>{CONTACT.email}</span>
+                            <span>
+                                {CONTACT.email.split('@')[0]}@<wbr />{CONTACT.email.split('@')[1]}
+                            </span>
                         </a>
                         <p className={styles.contactNote}>
                             All investor, partnership, and press inquiries are routed to the CTO.

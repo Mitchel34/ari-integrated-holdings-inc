@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
-import { Input } from '../../components/ui/Input';
+import { useState, type FormEvent } from 'react';
+import { Check } from 'lucide-react';
+import { Input, Select, Textarea } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
+import { CONTACT } from '../../lib/site';
 import styles from './ContactForm.module.css';
 
 const INVESTOR_TYPES = [
@@ -16,15 +18,49 @@ const INVESTOR_TYPES = [
     'Other',
 ];
 
+/** Mirrors the server-side limits in /api/contact. */
+const LIMITS = {
+    name: 120,
+    email: 254,
+    company: 160,
+    investorType: 80,
+    message: 5000,
+} as const;
+
+const RATE_LIMIT_MESSAGE =
+    'You have sent several inquiries in a short time. Please wait a little while before trying again, or email the CTO directly.';
+
 type FormState = 'idle' | 'submitting' | 'success' | 'error';
+
+interface FieldErrors {
+    name?: string;
+    email?: string;
+    message?: string;
+}
+
+function validate(data: { name: string; email: string; message: string }): FieldErrors {
+    const errors: FieldErrors = {};
+    if (!data.name.trim()) {
+        errors.name = 'Enter your full name.';
+    }
+    if (!data.email.trim()) {
+        errors.email = 'Enter your work email.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
+        errors.email = 'Enter a valid email address.';
+    }
+    if (!data.message.trim()) {
+        errors.message = 'Tell us what you want to discuss.';
+    }
+    return errors;
+}
 
 export default function ContactForm() {
     const [state, setState] = useState<FormState>('idle');
     const [error, setError] = useState('');
+    const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        setState('submitting');
         setError('');
 
         const form = e.currentTarget;
@@ -34,7 +70,17 @@ export default function ContactForm() {
             company: (form.elements.namedItem('company') as HTMLInputElement).value,
             investorType: (form.elements.namedItem('investorType') as HTMLSelectElement).value,
             message: (form.elements.namedItem('message') as HTMLTextAreaElement).value,
+            website: (form.elements.namedItem('website') as HTMLInputElement).value,
         };
+
+        const errors = validate(data);
+        setFieldErrors(errors);
+        if (Object.keys(errors).length > 0) {
+            setState('error');
+            return;
+        }
+
+        setState('submitting');
 
         try {
             const res = await fetch('/api/contact', {
@@ -43,6 +89,9 @@ export default function ContactForm() {
                 body: JSON.stringify(data),
             });
             if (!res.ok) {
+                if (res.status === 429) {
+                    throw new Error(RATE_LIMIT_MESSAGE);
+                }
                 const body = await res.json().catch(() => ({}));
                 throw new Error((body as { error?: string }).error || 'Submission failed.');
             }
@@ -53,19 +102,24 @@ export default function ContactForm() {
         }
     }
 
+    function clearFieldError(field: keyof FieldErrors) {
+        if (fieldErrors[field]) {
+            setFieldErrors((prev) => ({ ...prev, [field]: undefined }));
+        }
+    }
+
     if (state === 'success') {
         return (
-            <div className={styles.successBox} role="status">
-                <div className={styles.successIcon}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-                        <polyline points="20 6 9 17 4 12" />
-                    </svg>
+            <div className={`${styles.success} glass-1`} role="status" aria-live="polite">
+                <span className={styles.successIcon} aria-hidden="true">
+                    <Check size={20} strokeWidth={2.25} />
+                </span>
+                <div className={styles.successText}>
+                    <p className={styles.successTitle}>Received.</p>
+                    <p className={styles.successBody}>
+                        {CONTACT.name} will reply {CONTACT.responseWindow}.
+                    </p>
                 </div>
-                <h3>Inquiry Sent</h3>
-                <p>
-                    Our Investor Relations team has received your message. We will follow up at
-                    the email address you provided.
-                </p>
             </div>
         );
     }
@@ -73,42 +127,90 @@ export default function ContactForm() {
     return (
         <form className={styles.form} onSubmit={handleSubmit} noValidate>
             <div className={styles.row}>
-                <Input label="Full Name" name="name" required placeholder="Jane Smith" autoComplete="name" />
-                <Input label="Work Email" name="email" type="email" required placeholder="investor@example.com" autoComplete="email" />
-            </div>
-
-            <div className={styles.row}>
-                <Input label="Company / Organization" name="company" placeholder="Optional" autoComplete="organization" />
-                <div className={styles.selectWrapper}>
-                    <label className={styles.selectLabel} htmlFor="investorType">Investor Type</label>
-                    <select id="investorType" name="investorType" className={styles.select} defaultValue="">
-                        <option value="" disabled>Select type…</option>
-                        {INVESTOR_TYPES.map((t) => (
-                            <option key={t} value={t}>{t}</option>
-                        ))}
-                    </select>
-                </div>
-            </div>
-
-            <div className={styles.fieldWrapper}>
-                <label className={styles.textareaLabel} htmlFor="message">Message</label>
-                <textarea
-                    id="message"
-                    name="message"
-                    className={styles.textarea}
-                    rows={5}
+                <Input
+                    label="Full name"
+                    name="name"
                     required
-                    placeholder="Tell us about your investment goals, questions about the treasury strategy, or reason for reaching out…"
+                    maxLength={LIMITS.name}
+                    autoComplete="name"
+                    placeholder="Jane Smith"
+                    error={fieldErrors.name}
+                    onChange={() => clearFieldError('name')}
+                />
+                <Input
+                    label="Work email"
+                    name="email"
+                    type="email"
+                    required
+                    maxLength={LIMITS.email}
+                    autoComplete="email"
+                    inputMode="email"
+                    placeholder="you@firm.com"
+                    error={fieldErrors.email}
+                    onChange={() => clearFieldError('email')}
                 />
             </div>
 
-            {state === 'error' && error && (
-                <p className={styles.errorMsg} role="alert">{error}</p>
-            )}
+            <div className={styles.row}>
+                <Input
+                    label="Company"
+                    name="company"
+                    maxLength={LIMITS.company}
+                    autoComplete="organization"
+                    placeholder="Firm or family office"
+                    hint="Optional"
+                />
+                <Select label="Investor type" name="investorType" defaultValue="" hint="Optional">
+                    <option value="" disabled>
+                        Select type…
+                    </option>
+                    {INVESTOR_TYPES.map((t) => (
+                        <option key={t} value={t}>
+                            {t}
+                        </option>
+                    ))}
+                </Select>
+            </div>
 
-            <Button type="submit" size="lg" disabled={state === 'submitting'}>
-                {state === 'submitting' ? 'Sending…' : 'Send Inquiry'}
-            </Button>
+            <Textarea
+                label="Message"
+                name="message"
+                rows={6}
+                required
+                maxLength={LIMITS.message}
+                placeholder="Who you are, your investor type, and what you would like to discuss."
+                error={fieldErrors.message}
+                onChange={() => clearFieldError('message')}
+            />
+
+            {/* Honeypot: hidden from people, filled only by bots. */}
+            <div className={styles.honeypot} aria-hidden="true">
+                <label htmlFor="contact-website">Website</label>
+                <input
+                    id="contact-website"
+                    type="text"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    defaultValue=""
+                />
+            </div>
+
+            {state === 'error' && error ? (
+                <p className={styles.formError} role="alert">
+                    {error}
+                </p>
+            ) : null}
+
+            <div className={styles.footer}>
+                <Button type="submit" size="lg" disabled={state === 'submitting'}>
+                    {state === 'submitting' ? 'Sending…' : 'Send inquiry'}
+                </Button>
+                <p className={styles.footnote}>
+                    Routed to {CONTACT.name}, {CONTACT.title}.
+                </p>
+            </div>
         </form>
     );
 }

@@ -1,10 +1,27 @@
-import { Container } from '../../../components/ui/Container';
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { prisma } from '@/lib/prisma';
+import type { Metadata } from 'next';
 import Link from 'next/link';
+import { ArrowLeft, UserCheck, UserX, Users } from 'lucide-react';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import { Container } from '@/components/ui/Container';
+import { Button } from '@/components/ui/Button';
+import {
+    DashboardHeader,
+    DashboardPanel,
+    DashboardShell,
+    MetricCard,
+    MetricGrid,
+    formatNumber,
+} from '@/components/dashboard/Dashboard';
 import SubscriberList from './SubscriberList';
-import styles from './page.module.css';
+
+export const metadata: Metadata = {
+    title: 'Subscribers',
+    description: 'Manage investor alert subscribers: search, filter, export, and toggle active status.',
+    robots: { index: false, follow: false },
+    alternates: { canonical: '/executive/subscribers' },
+};
 
 export default async function SubscribersPage() {
     const session = await getServerSession(authOptions);
@@ -29,39 +46,39 @@ export default async function SubscribersPage() {
     }
 
     return (
-        <div className={styles.page}>
-            <Container className={styles.container}>
-                <div className={styles.header}>
-                    <Link href="/executive/dashboard" className={styles.backLink}>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
-                            <polyline points="15 18 9 12 15 6" />
-                        </svg>
-                        Back to Dashboard
-                    </Link>
-                    <h1>Subscriber Management</h1>
-                    <p>Manage investor alert subscribers</p>
-                </div>
+        <Container>
+            <DashboardShell>
+                <DashboardHeader
+                    eyebrow="Executive"
+                    title="Subscribers"
+                    description="Manage investor alert subscribers. Deactivated addresses stop receiving broadcasts but remain on record."
+                    aside={(
+                        <Button variant="secondary" size="sm" asChild>
+                            <Link href="/executive/dashboard">
+                                <ArrowLeft aria-hidden="true" size={16} />
+                                Back to dashboard
+                            </Link>
+                        </Button>
+                    )}
+                />
 
-                <div className={styles.statsRow}>
-                    <div className={styles.statBadge}>
-                        <span className={styles.statNumber}>{totalCount}</span>
-                        <span className={styles.statLabel}>Total</span>
-                    </div>
-                    <div className={styles.statBadge}>
-                        <span className={styles.statNumber} style={{ color: '#4ade80' }}>{activeCount}</span>
-                        <span className={styles.statLabel}>Active</span>
-                    </div>
-                    <div className={styles.statBadge}>
-                        <span className={styles.statNumber} style={{ color: '#f87171' }}>{totalCount - activeCount}</span>
-                        <span className={styles.statLabel}>Inactive</span>
-                    </div>
-                </div>
+                <MetricGrid columns={3}>
+                    <MetricCard icon={<Users aria-hidden="true" />} label="Total" value={formatNumber(totalCount, 0)} sub="All alert signups on record" />
+                    <MetricCard icon={<UserCheck aria-hidden="true" />} label="Active" value={formatNumber(activeCount, 0)} sub="Receiving investor broadcasts" />
+                    <MetricCard icon={<UserX aria-hidden="true" />} label="Inactive" value={formatNumber(totalCount - activeCount, 0)} sub="Deactivated or unsubscribed" />
+                </MetricGrid>
 
-                <SubscriberList initialSubscribers={subscribers.map(s => ({
-                    ...s,
-                    subscribedAt: s.subscribedAt.toISOString(),
-                }))} />
-            </Container>
-        </div>
+                <DashboardPanel
+                    eyebrow="Investors"
+                    title="Subscriber list"
+                    description="Search by email, filter by status, or export the current view as CSV."
+                >
+                    <SubscriberList initialSubscribers={subscribers.map((s) => ({
+                        ...s,
+                        subscribedAt: s.subscribedAt.toISOString(),
+                    }))} />
+                </DashboardPanel>
+            </DashboardShell>
+        </Container>
     );
 }

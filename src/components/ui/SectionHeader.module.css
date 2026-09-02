@@ -55,6 +55,11 @@
     justify-content: space-between;
     gap: 1rem 2rem;
     max-width: none;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.row.compact {
+    margin-bottom: 1.5rem;
 }
 
 .row .header {
