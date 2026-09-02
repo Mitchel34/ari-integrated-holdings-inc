@@ -1,14 +1,28 @@
-# Ari Integrated Holdings Frontend
+# Ari Integrated Holdings — Corporate Website & Investor Portal
 
-Next.js 16 frontend for Ari Integrated Holdings investor relations, executive operations, treasury reporting, and future read-only trading-system status surfaces.
+Next.js 16 (App Router) site for Ari Integrated Holdings Inc.: public corporate pages, investor relations and disclosures, an email-alert list, and password-protected investor and executive dashboards.
 
-## Local Setup
+## Correspondence routing
 
-Use Node 22 from `.nvmrc`.
+All inbound correspondence from the site is routed to the CTO, **Mitchel Carson — mitchelcarson@ariintegratedholdings.com**:
+
+| Source | What happens |
+| --- | --- |
+| Contact form (`/contact` → `POST /api/contact`) | Emailed to the CTO with `Reply-To` set to the sender. Rate-limited and honeypot-protected. |
+| Investor alert signup (`/investors#alerts`) | Subscriber gets a confirmation; the CTO gets a "new subscriber" notice. |
+| Executive meeting notification (`POST /api/executive/meeting-notify`) | Sent to every executive in the database, with the CTO always included. |
+| Every displayed email address and `mailto:` link | `CONTACT.email` from `src/lib/site.ts`. |
+
+The destination can be overridden per deployment with `CORRESPONDENCE_EMAIL`; leave it unset to keep the CTO default. The old `RESEND_IR_EMAIL` variable is no longer read.
+
+## Local setup
+
+Use Node 22 (`.nvmrc`).
 
 ```bash
 nvm use
 npm install
+cp env.local.example .env.local   # fill in values
 npm run dev
 ```
 
@@ -16,13 +30,14 @@ Open `http://localhost:3000`.
 
 ## Environment
 
-Use `env.local.example` as the canonical template. Required production-style values include:
+`env.local.example` is the canonical template. Production needs:
 
-- `DATABASE_URL`
-- `NEXTAUTH_SECRET`
-- `NEXTAUTH_URL`
-- `RESEND_API_KEY`
-- Calendly URLs used by scheduling components
+- `NEXT_PUBLIC_SITE_URL` — absolute public URL (used for email links, sitemap, Open Graph)
+- `DATABASE_URL` — Neon PostgreSQL connection string
+- `NEXTAUTH_SECRET`, `NEXTAUTH_URL`
+- `RESEND_API_KEY`, `RESEND_FROM_EMAIL` (domain must be verified in Resend), `RESEND_FROM_NAME`
+- `NEXT_PUBLIC_CALENDLY_*` — Calendly event URLs used by the scheduling components
+- `CORRESPONDENCE_EMAIL` — optional override of the CTO routing default
 
 Database helpers:
 
@@ -38,27 +53,30 @@ npm run db:studio
 npm run typecheck
 npm run lint:src
 npm run build
-npm run verify
+npm run verify     # all three
 ```
 
-`npm run lint` is scoped to `src` and `prisma` so generated build artifacts are not linted.
+## Design system
 
-## Dashboard Architecture
+The site follows an "institutional glass" direction: flat navy ground, three glass tiers, gold and silver (from the lion emblem) as the only chrome accents, and BTC / ETH / SOL brand colors used strictly for data encoding (chips, allocation ring, bars, chart series).
 
-Shared dashboard primitives live in `src/components/dashboard`:
+- Tokens and utilities: `src/app/globals.css`
+- Fonts: Sora (display), Inter (body), JetBrains Mono (all financial figures)
+- Site constants (name, tagline, CTO contact, 50 / 30 / 20 allocation): `src/lib/site.ts`
+- UI primitives: `src/components/ui/` — `Button`, `Card`, `Input`/`Textarea`/`Select`, `SectionHeader`, `StatTile`, `Reveal`, `Toast`, `Sheet`, `Container`
+- Brand primitives: `src/components/brand/` — `Logo`, `AssetChip`, `AllocationRing`, `AllocationBar`
+- Layout: `src/components/layout/` — `Navbar`, `Footer`, `SiteBackground`, `PageHero`, `Section`, `DocumentPage`
+- Dashboard primitives: `src/components/dashboard/` — `DashboardShell`, `DashboardHeader`, `DashboardPanel`, `MetricCard`, `MetricGrid`, `DataTable`, badges, empty/error states, Recharts wrappers
 
-- `DashboardShell`, `DashboardHeader`, `DashboardPanel`
-- `MetricCard`, `MetricGrid`, `DataTable`
-- `StatusBadge`, `FreshnessBadge`, `EmptyState`, `ErrorState`
-- Recharts wrappers for allocation and value charts
+Brand assets live in `public/brand/` (cropped emblem marks) and `src/app/icon.png` / `apple-icon.png`. Open Graph and Twitter images are generated at `src/app/opengraph-image.tsx`.
 
-Treasury data is currently manual and CFO-report sourced. UI surfaces must show source and freshness state until a live data pipeline is integrated.
+## Treasury data
 
-## Trading Backend Contract
+Treasury figures are manual and CFO-report sourced (`src/lib/treasury/snapshot.ts`). Every surface shows the as-of date, the source label, and the freshness state (stale after 14 days) until a live data pipeline exists.
 
-The trading system is intentionally separate from this repository. The executive dashboard includes a read-only placeholder only; no execution controls exist here.
+## Trading backend contract
 
-Future read-only endpoints expected from the backend:
+The trading system is intentionally separate from this repository. The executive dashboard includes a read-only placeholder only; no execution controls exist here. Future read-only endpoints expected from the backend:
 
 - `/api/trading/status`
 - `/api/trading/risk`

@@ -6,7 +6,7 @@ interface ExtendedJWT extends JWT {
     role: "INVESTOR" | "EXECUTIVE" | "ADMIN";
 }
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
     const path = req.nextUrl.pathname;
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET }) as ExtendedJWT | null;
 
