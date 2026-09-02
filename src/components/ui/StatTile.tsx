@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { formatSignedNumber } from '@/lib/format';
 import styles from './StatTile.module.css';
 
 interface StatTileProps {
@@ -17,8 +18,7 @@ interface StatTileProps {
 }
 
 function defaultFormatDelta(delta: number): string {
-    const sign = delta > 0 ? '+' : delta < 0 ? '−' : '';
-    return `${sign}${Math.abs(delta).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    return formatSignedNumber(delta, 2);
 }
 
 /** Glass metric tile with a mono numeral, optional delta, and footnote. */

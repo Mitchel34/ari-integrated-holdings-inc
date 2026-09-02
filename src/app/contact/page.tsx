@@ -108,7 +108,7 @@ export default function ContactPage() {
                     eyebrow="Calendar"
                     id="schedule-title"
                     title="Schedule a meeting"
-                    lead="Select a meeting type and book a time. Every booking sends a confirmation with call details, and a copy reaches the CTO's correspondence inbox."
+                    lead="Select a meeting type and book a time. Calendly sends you a confirmation with call details and adds the meeting to the executive calendar."
                 />
                 <MeetingTypeSelector />
             </Section>

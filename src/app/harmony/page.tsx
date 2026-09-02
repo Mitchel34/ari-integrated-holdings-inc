@@ -20,25 +20,25 @@ const PROCESS = [
         id: 'signals',
         title: 'Signals',
         icon: Radar,
-        text: 'Algorithmic and AI-driven strategies generate trade signals inside the internal platform.',
+        text: 'Algorithmic and AI-driven strategies run inside the internal trading platform.',
     },
     {
         id: 'risk-limits',
         title: 'Risk limits',
         icon: ShieldCheck,
-        text: 'Each signal is checked against strict risk limits that keep trading capital small and separate from the core BTC, ETH, and SOL holdings.',
+        text: 'A small portion of assets is allocated to trading with strict risk limits to protect the core BTC, ETH, and SOL holdings.',
     },
     {
         id: 'execution',
         title: 'Execution',
         icon: ArrowLeftRight,
-        text: 'Trades that pass the limits are executed on the internal-only platform; nothing is customer-facing today.',
+        text: 'Limited trading activity takes place on an internal-only platform. There is no customer-facing product today.',
     },
     {
         id: 'review',
         title: 'Review',
         icon: ClipboardCheck,
-        text: 'Outcomes are reviewed by human governance, and the analytics feed back into broader treasury allocation decisions.',
+        text: 'Human governance is responsible for final decisions. Harmony serves as a testing ground for analytics and models that inform broader treasury allocation decisions.',
     },
 ] as const;
 
@@ -94,7 +94,6 @@ export default function HarmonyPage() {
                 meta={
                     <>
                         <span>Internal-only platform</span>
-                        <span aria-hidden="true">·</span>
                         <span>Subsidiary of {SITE.shortName}</span>
                     </>
                 }
@@ -104,8 +103,8 @@ export default function HarmonyPage() {
                 <SectionHeader
                     id="process-title"
                     eyebrow="How it operates"
-                    title="Four steps, one loop"
-                    lead="Strategies propose, limits constrain, the platform executes, and people review. The loop runs entirely inside the company."
+                    title="Four steps, one boundary"
+                    lead="Strategies run, limits constrain, trading stays limited, and people decide. All of it happens inside the company."
                 />
                 <ol className={styles.process}>
                     {PROCESS.map((step, index) => {
@@ -183,13 +182,10 @@ export default function HarmonyPage() {
                             <h2 id="lead-title" className={styles.closingTitle}>
                                 Led by {CONTACT.name}, {CONTACT.title}
                             </h2>
-                            <p className={styles.closingNote}>
-                                Questions about Harmony are routed to the CTO at{' '}
-                                <a href={CONTACT.mailto} className={`${styles.mail} mono`}>
-                                    {emailLocal}@<wbr />{emailDomain}
-                                </a>
-                                .
-                            </p>
+                            <p className={styles.closingNote}>Questions about Harmony are routed to the CTO.</p>
+                            <a href={CONTACT.mailto} className={`${styles.mail} mono`}>
+                                {emailLocal}@<wbr />{emailDomain}
+                            </a>
                         </div>
                     </div>
                     <Button asChild variant="secondary">

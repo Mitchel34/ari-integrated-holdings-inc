@@ -4,7 +4,7 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: clamp(1rem, 2.5vw, 1.5rem);
-    align-items: start;
+    align-items: stretch;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -64,9 +64,14 @@
     color: var(--text-2);
 }
 
+.bio:not(:last-child) {
+    margin-bottom: 1.5rem;
+}
+
+/* Column flex: push the correspondence block to the bottom of the stretched card. */
 .correspondence {
     width: 100%;
-    margin-top: 1.5rem;
+    margin-top: auto;
     padding-top: 1.25rem;
     border-top: 1px solid var(--line-1);
 }

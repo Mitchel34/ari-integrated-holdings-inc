@@ -51,11 +51,6 @@
     color: var(--text-3);
 }
 
-.list + .subheading,
-.empty + .subheading {
-    margin-top: 2rem;
-}
-
 /* ── Glass-1 rows ───────────────────────────────────────────────────── */
 
 .list {
@@ -77,10 +72,6 @@
     border-radius: var(--r-md);
 }
 
-.rowPast {
-    grid-template-columns: auto minmax(0, 1fr);
-}
-
 .rowBody {
     display: grid;
     gap: 0.4rem;
@@ -94,6 +85,14 @@
     font-weight: 600;
     color: var(--text-1);
     line-height: 1.35;
+}
+
+/* Document links: 44px minimum tap target without pushing the meta line down. */
+a.rowTitle {
+    min-height: 44px;
+    margin: -0.55rem 0;
+    padding: 0.55rem 0;
+    align-self: start;
 }
 
 a.rowTitle:hover {
@@ -130,21 +129,6 @@ a.rowTitle:hover svg {
 .rowMeta time {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
-}
-
-.dateBlock {
-    display: grid;
-    gap: 0.15rem;
-    min-width: 6.5rem;
-    padding-right: 1rem;
-    border-right: 1px solid var(--line-1);
-    font-size: var(--fs-caption);
-    color: var(--text-2);
-    line-height: 1.4;
-}
-
-.dateBlock span {
-    color: var(--text-3);
 }
 
 .empty {
@@ -203,6 +187,7 @@ a.rowTitle:hover svg {
 .cards {
     display: grid;
     gap: 1.25rem;
+    align-items: start;
 }
 
 @media (min-width: 1024px) {

@@ -4,6 +4,7 @@ import { DocumentPage, type DocumentSection } from '../../components/layout/Docu
 import legal from '../(legal)/legal.module.css';
 import { ALLOCATION, CONTACT, SITE } from '../../lib/site';
 import { getTreasuryFreshness, getTreasurySnapshot } from '../../lib/treasury/snapshot';
+import { formatDateProse } from '../../lib/format';
 
 export const metadata: Metadata = {
     title: 'Disclaimer',
@@ -27,14 +28,10 @@ const SECTIONS: DocumentSection[] = [
     { id: 'contact', title: 'Contact' },
 ];
 
-function formatLongDate(iso: string): string {
-    return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
-}
-
 export default function DisclaimerPage() {
     const snapshot = getTreasurySnapshot();
     const freshness = getTreasuryFreshness(snapshot);
-    const asOf = formatLongDate(snapshot.asOfIso);
+    const asOf = formatDateProse(snapshot.asOfIso);
 
     return (
         <DocumentPage
@@ -65,8 +62,8 @@ export default function DisclaimerPage() {
                     basis for any decision about your own money.
                 </p>
                 <p>
-                    Ari is not a registered investment adviser, broker-dealer, or fund manager, and does not act in any such
-                    capacity for anyone who reads this site.
+                    Nothing on this site is advice from Ari to you, and no reader should treat it as such. Before acting on
+                    anything you read here, consult your own independent advisers.
                 </p>
 
                 <h2 id="no-offer">No offer or solicitation</h2>
@@ -82,8 +79,8 @@ export default function DisclaimerPage() {
                 <h2 id="forward-looking">Forward-looking statements</h2>
                 <p>
                     This website contains forward-looking statements: statements about a ten-year investment horizon, the
-                    expected role of each asset in the treasury, planned rebalancing, the development of AI-assisted
-                    oversight and the Harmony Trading App, and the possible future value of digital assets. Words such as
+                    expected role of each asset in the treasury, the direction of the Harmony Trading App, including any
+                    customer-facing roadmap under evaluation, and the possible future value of digital assets. Words such as
                     “expect”, “target”, “plan”, “optionality”, “upside”, and “horizon” identify them.
                 </p>
                 <p>
@@ -187,10 +184,10 @@ export default function DisclaimerPage() {
 
                 <h2 id="harmony-risks">Harmony Trading risks</h2>
                 <p>
-                    The <Link href="/harmony">Harmony Trading App</Link> is Ari’s operating subsidiary, which applies a small
-                    portion of assets to algorithmic trading within strict risk limits, with the aim of offsetting operating
-                    costs and serving as a testing ground for analytics that inform the treasury. Its activity carries
-                    risks that are distinct from the buy-and-hold treasury.
+                    The <Link href="/harmony">Harmony Trading App</Link> is Ari’s operating subsidiary. It runs limited,
+                    internal-only trading that applies a small portion of assets within strict risk limits, under human
+                    governance, with the aim of covering operating costs and serving as a testing ground for analytics that
+                    inform the treasury. Its activity carries risks that are distinct from the buy-and-hold treasury.
                 </p>
                 <ul>
                     <li>
@@ -207,8 +204,8 @@ export default function DisclaimerPage() {
                         outcome. Its contribution may be negative in any period.
                     </li>
                     <li>
-                        Harmony is under active development. Features described on this site may change, be delayed, or be
-                        withdrawn.
+                        Harmony is an internal-only platform today; there is no customer-facing product. Any customer-facing
+                        roadmap remains under evaluation and may change or not proceed.
                     </li>
                 </ul>
 

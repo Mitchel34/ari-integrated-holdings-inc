@@ -13,7 +13,8 @@ import {
     YAxis,
 } from 'recharts';
 import { AssetChip, toneForSymbol } from '@/components/brand/AssetChip';
-import { SERIES_COLORS, formatPercent, formatUsd } from './Dashboard';
+import { formatPercent, formatUsd } from '@/lib/format';
+import { SERIES_COLORS } from './Dashboard';
 import styles from './DashboardCharts.module.css';
 
 interface AllocationDatum {
@@ -26,6 +27,17 @@ interface BarDatum {
     name: string;
     value: number;
     color?: string;
+}
+
+interface ChartA11yProps {
+    /** Accessible name for the chart svg (recharts renders it as an svg <title>). */
+    title?: string;
+    /** Longer accessible description, e.g. the as-of date and source. */
+    description?: string;
+}
+
+function describeSeries(data: { name: string; value: number }[]): string {
+    return data.map((item) => `${item.name} ${formatUsd(item.value, 2)}`).join(', ');
 }
 
 const NAVY = '#0E1A30';
@@ -62,14 +74,16 @@ function formatAxisUsd(value: unknown) {
 }
 
 /** Donut of market value by holding plus a legend with asset chips. */
-export function AllocationChart({ data }: { data: AllocationDatum[] }) {
+export function AllocationChart({ data, title, description }: { data: AllocationDatum[] } & ChartA11yProps) {
     const total = data.reduce((sum, item) => sum + Math.max(0, item.value), 0) || 1;
+    const chartTitle = title ?? 'Allocation by market value';
+    const chartDesc = description ?? describeSeries(data);
 
     return (
         <div className={styles.chartBlock}>
             <div className={styles.pieWrap}>
                 <ResponsiveContainer width="100%" height={240}>
-                    <PieChart>
+                    <PieChart title={chartTitle} desc={chartDesc}>
                         <Pie
                             data={data}
                             dataKey="value"
@@ -118,11 +132,20 @@ export function AllocationChart({ data }: { data: AllocationDatum[] }) {
 }
 
 /** Vertical bars of USD values; series colors come from the data (tokens). */
-export function ValueBarChart({ data }: { data: BarDatum[] }) {
+export function ValueBarChart({ data, title, description }: { data: BarDatum[] } & ChartA11yProps) {
+    const chartTitle = title ?? 'Value by series';
+    const chartDesc = description ?? describeSeries(data);
+
     return (
         <div className={styles.barWrap}>
             <ResponsiveContainer width="100%" height={260}>
-                <BarChart data={data} margin={{ top: 8, right: 8, left: 4, bottom: 0 }} barCategoryGap="28%">
+                <BarChart
+                    data={data}
+                    margin={{ top: 8, right: 8, left: 4, bottom: 0 }}
+                    barCategoryGap="28%"
+                    title={chartTitle}
+                    desc={chartDesc}
+                >
                     <CartesianGrid vertical={false} stroke="rgba(255, 255, 255, 0.06)" />
                     <XAxis
                         dataKey="name"

@@ -108,7 +108,11 @@ export function InvestorDashboardView({ firstName, snapshot, freshness, document
                         description={`Manual snapshot as of ${asOf}; source: ${snapshot.sourceLabel}. Target allocation is 50 / 30 / 20 across BTC / ETH / SOL.`}
                         action={<FreshnessBadge status={freshness.status} label={freshness.status === 'stale' ? 'Needs update' : 'Current'} />}
                     >
-                        <AllocationChart data={allocationData} />
+                        <AllocationChart
+                            data={allocationData}
+                            title={`Allocation by market value as of ${asOf}`}
+                            description={`${allocationData.map((item) => `${item.name} ${formatUsd(item.value, 2)}`).join(', ')}; ${asOfLine}. Full figures are listed in the legend below the chart.`}
+                        />
                     </DashboardPanel>
 
                     <DashboardPanel
@@ -116,7 +120,11 @@ export function InvestorDashboardView({ firstName, snapshot, freshness, document
                         title="ETF market value"
                         description={`Market value of each ETF wrapper at the ${asOf} manual mark.`}
                     >
-                        <ValueBarChart data={valueData} />
+                        <ValueBarChart
+                            data={valueData}
+                            title={`ETF market value as of ${asOf}`}
+                            description={`${valueData.map((item) => `${item.name} ${formatUsd(item.value, 2)}`).join(', ')}; ${asOfLine}. The same values appear in the capital investments table below.`}
+                        />
                         <p className={styles.chartNote}>{asOfLine}</p>
                     </DashboardPanel>
                 </div>
@@ -228,7 +236,7 @@ export function InvestorDashboardView({ firstName, snapshot, freshness, document
                 <DashboardPanel
                     eyebrow="Scheduling"
                     title="Schedule a meeting"
-                    description="Book time directly with the Ari leadership team. Meeting notifications are routed to the CTO."
+                    description="Book time directly with the Ari leadership team. Calendly sends you a confirmation with call details and adds the meeting to the executive calendar."
                 >
                     <MeetingTypeSelector />
                 </DashboardPanel>

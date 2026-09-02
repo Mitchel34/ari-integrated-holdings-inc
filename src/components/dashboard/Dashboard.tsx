@@ -1,49 +1,24 @@
 import type { ReactNode } from 'react';
 import { AlertTriangle, Inbox } from 'lucide-react';
+import { formatUsd } from '@/lib/format';
 import styles from './Dashboard.module.css';
 
 /* ────────────────────────────────────────────────────────────────────────
-   Shared formatting helpers (server-safe; no client code in this module)
+   Shared formatting helpers — canonical implementation lives in
+   src/lib/format.ts; re-exported here so dashboard views keep one import.
    ──────────────────────────────────────────────────────────────────────── */
 
-/** USD with a fixed number of decimals ("$4,671.14"). */
-export function formatUsd(value: number, decimals = 2): string {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals,
-    }).format(value);
-}
-
-/** Plain number with thousands separators ("300,008.7"). */
-export function formatNumber(value: number, maxDecimals = 2): string {
-    return new Intl.NumberFormat('en-US', { maximumFractionDigits: maxDecimals }).format(value);
-}
-
-/** Percent with one decimal at most ("56.0%" → "56%"). */
-export function formatPercent(value: number): string {
-    return `${new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 }).format(value)}%`;
-}
-
-/** ISO calendar date for tables ("2026-03-01"). */
-export function formatDateIso(iso: string): string {
-    return iso.slice(0, 10);
-}
-
-/** Prose date ("1 Mar 2026"). */
-export function formatDateProse(iso: string): string {
-    return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(
-        new Date(iso),
-    );
-}
-
-/** Prose date-time ("12 Mar 2026, 16:00 UTC"). */
-export function formatDateTimeProse(iso: string): string {
-    const date = formatDateProse(iso);
-    const time = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }).format(new Date(iso));
-    return `${date}, ${time} UTC`;
-}
+export {
+    formatDateIso,
+    formatDateProse,
+    formatDateTimeUtc,
+    formatDateTimeUtc as formatDateTimeProse,
+    formatNumber,
+    formatPercent,
+    formatShares,
+    formatSignedUsd,
+    formatUsd,
+} from '@/lib/format';
 
 /**
  * Series colors for charts and legend swatches. Asset colors are data

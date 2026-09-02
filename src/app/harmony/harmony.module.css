@@ -171,10 +171,14 @@
     margin-top: 0.4rem;
     font-size: var(--fs-small);
     color: var(--text-3);
-    max-width: 60ch;
+    max-width: 72ch;
 }
 
 .mail {
+    display: inline-block;
+    max-width: 100%;
+    margin-top: 0.5rem;
+    font-size: var(--fs-small);
     color: var(--text-2);
     overflow-wrap: anywhere;
     border-bottom: 1px solid var(--gold-a30);

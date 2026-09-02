@@ -9,14 +9,10 @@ import { Card } from '../../components/ui/Card';
 import { AssetChip } from '../../components/brand/AssetChip';
 import { AlertSignupForm } from '../../components/investor/AlertSignupForm';
 import { TreasurySnapshot } from '../../components/treasury/TreasurySnapshot';
-import { formatIsoDate, formatProseDate, formatUtcTime } from '../../components/investor/format';
+import { formatDateIso, formatDateProse, formatUtcTime } from '@/lib/format';
 import { CONTACT } from '@/lib/site';
 import { getTreasuryFreshness, getTreasurySnapshot } from '@/lib/treasury/snapshot';
-import {
-    getInvestorDocuments,
-    getPastInvestorEvents,
-    getUpcomingInvestorEvents,
-} from '@/lib/investor/disclosures';
+import { getInvestorDocuments, getUpcomingInvestorEvents } from '@/lib/investor/disclosures';
 import styles from './investors.module.css';
 
 export const metadata: Metadata = {
@@ -39,10 +35,10 @@ export default function InvestorsPage() {
     const documents = getInvestorDocuments();
     const now = new Date();
     const upcomingEvents = getUpcomingInvestorEvents(now);
-    const pastEvents = getPastInvestorEvents(now);
 
-    const asOfIso = formatIsoDate(snapshot.asOfIso);
-    const asOfProse = formatProseDate(snapshot.asOfIso);
+    const asOfIso = formatDateIso(snapshot.asOfIso);
+    const asOfProse = formatDateProse(snapshot.asOfIso);
+    const [emailLocal, emailDomain] = CONTACT.email.split('@');
     const isStale = freshness.status === 'stale';
 
     return (
@@ -112,8 +108,8 @@ export default function InvestorsPage() {
                                         </Link>
                                         <span className={styles.rowMeta}>
                                             <AssetChip tone={documentTone(doc.type)}>{doc.type}</AssetChip>
-                                            <time className="mono" dateTime={formatIsoDate(doc.dateIso)}>
-                                                {formatIsoDate(doc.dateIso)}
+                                            <time className="mono" dateTime={formatDateIso(doc.dateIso)}>
+                                                {formatDateIso(doc.dateIso)}
                                             </time>
                                         </span>
                                     </span>
@@ -144,7 +140,7 @@ export default function InvestorsPage() {
                                             <span className={styles.rowText}>{event.description}</span>
                                             <span className={styles.rowMeta}>
                                                 <time className="mono" dateTime={event.startsAtIso}>
-                                                    {formatIsoDate(event.startsAtIso)} · {formatUtcTime(event.startsAtIso)}
+                                                    {formatDateIso(event.startsAtIso)} · {formatUtcTime(event.startsAtIso)}
                                                 </time>
                                                 <span>{event.location}</span>
                                             </span>
@@ -163,31 +159,6 @@ export default function InvestorsPage() {
                                 </span>
                             </p>
                         )}
-
-                        {pastEvents.length > 0 ? (
-                            <>
-                                <h3 className={styles.subheading}>Recent investor events</h3>
-                                <ul className={styles.list} aria-label="Recent investor events">
-                                    {pastEvents.map((event) => (
-                                        <li key={event.id} className={`glass-1 ${styles.row} ${styles.rowPast}`}>
-                                            <span className={styles.dateBlock}>
-                                                <time className="mono" dateTime={event.startsAtIso}>
-                                                    {formatIsoDate(event.startsAtIso)}
-                                                </time>
-                                                <span className="mono">{formatUtcTime(event.startsAtIso)}</span>
-                                            </span>
-                                            <span className={styles.rowBody}>
-                                                <span className={styles.rowTitle}>{event.title}</span>
-                                                <span className={styles.rowText}>{event.description}</span>
-                                                <span className={styles.rowMeta}>
-                                                    <span>{event.location}</span>
-                                                </span>
-                                            </span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </>
-                        ) : null}
                     </div>
                 </div>
             </Section>
@@ -236,7 +207,9 @@ export default function InvestorsPage() {
                             <div>
                                 <dt>Email</dt>
                                 <dd>
-                                    <a href={CONTACT.mailto} className={`mono ${styles.email}`}>{CONTACT.email}</a>
+                                    <a href={CONTACT.mailto} className={`mono ${styles.email}`}>
+                                        {emailLocal}@<wbr />{emailDomain}
+                                    </a>
                                 </dd>
                             </div>
                         </dl>

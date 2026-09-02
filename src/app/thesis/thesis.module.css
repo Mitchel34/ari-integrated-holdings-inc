@@ -358,7 +358,7 @@ li.railSol { border-left-color: var(--sol); }
     color: var(--text-2);
 }
 
-.cagrTable .num {
+.cagrTable td.num {
     font-size: 1rem;
 }
 

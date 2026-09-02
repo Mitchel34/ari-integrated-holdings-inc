@@ -10,6 +10,12 @@ interface AccountSettingsFormProps {
     currentEmail: string;
 }
 
+interface FieldErrors {
+    currentPassword?: string;
+    newPassword?: string;
+    confirmPassword?: string;
+}
+
 export default function AccountSettingsForm({ currentEmail }: AccountSettingsFormProps) {
     const [email, setEmail] = useState(currentEmail);
     const [currentPassword, setCurrentPassword] = useState('');
@@ -17,26 +23,28 @@ export default function AccountSettingsForm({ currentEmail }: AccountSettingsFor
     const [confirmPassword, setConfirmPassword] = useState('');
     const [status, setStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
+    const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
     async function handleSubmit(e: FormEvent) {
         e.preventDefault();
         setMessage('');
+        setFieldErrors({});
 
         if (!currentPassword) {
             setStatus('error');
-            setMessage('Current password is required to make changes.');
-            return;
-        }
-
-        if (newPassword && newPassword !== confirmPassword) {
-            setStatus('error');
-            setMessage('New passwords do not match.');
+            setFieldErrors({ currentPassword: 'Enter your current password to make changes.' });
             return;
         }
 
         if (newPassword && newPassword.length < 6) {
             setStatus('error');
-            setMessage('New password must be at least 6 characters.');
+            setFieldErrors({ newPassword: 'New password must be at least 6 characters.' });
+            return;
+        }
+
+        if (newPassword && newPassword !== confirmPassword) {
+            setStatus('error');
+            setFieldErrors({ confirmPassword: 'New passwords do not match.' });
             return;
         }
 
@@ -127,6 +135,7 @@ export default function AccountSettingsForm({ currentEmail }: AccountSettingsFor
                     placeholder="Leave blank to keep current"
                     autoComplete="new-password"
                     hint="At least 6 characters."
+                    error={fieldErrors.newPassword}
                 />
                 <Input
                     id="settings-confirm-password"
@@ -137,6 +146,7 @@ export default function AccountSettingsForm({ currentEmail }: AccountSettingsFor
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Re-enter new password"
                     autoComplete="new-password"
+                    error={fieldErrors.confirmPassword}
                 />
             </section>
 
@@ -155,6 +165,7 @@ export default function AccountSettingsForm({ currentEmail }: AccountSettingsFor
                     placeholder="Required to save changes"
                     required
                     autoComplete="current-password"
+                    error={fieldErrors.currentPassword}
                 />
             </section>
 

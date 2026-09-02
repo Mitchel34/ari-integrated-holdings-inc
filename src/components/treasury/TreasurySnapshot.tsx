@@ -9,8 +9,9 @@ import {
     type TreasuryFreshness,
     type TreasurySnapshot as TreasurySnapshotData,
 } from '@/lib/treasury/snapshot';
-import { formatIsoDate, formatProseDate } from '../investor/format';
 import {
+    formatDateIso,
+    formatDateProse,
     formatPercent,
     formatShares,
     formatSignedPoints,
@@ -18,7 +19,7 @@ import {
     formatUnits,
     formatUsd,
     formatUsdPrecise,
-} from './format';
+} from '@/lib/format';
 import styles from './TreasurySnapshot.module.css';
 
 interface TreasurySnapshotProps {
@@ -64,8 +65,8 @@ export function TreasurySnapshot({
     freshness = getTreasuryFreshness(snapshot),
     headingId,
 }: TreasurySnapshotProps) {
-    const asOfIso = formatIsoDate(snapshot.asOfIso);
-    const asOfProse = formatProseDate(snapshot.asOfIso);
+    const asOfIso = formatDateIso(snapshot.asOfIso);
+    const asOfProse = formatDateProse(snapshot.asOfIso);
     const stampLine = `as of ${asOfIso} · ${snapshot.sourceLabel}`;
     const investments = snapshot.totals.capitalInvestments || 1;
     const isStale = freshness.status === 'stale';
@@ -154,8 +155,10 @@ export function TreasurySnapshot({
                                     <td data-label="Market value" className={styles.num}>{formatUsd(holding.marketValueUsd)}</td>
                                     <td data-label="Cost basis" className={styles.num}>{formatUsd(holding.costBasisUsd)}</td>
                                     <td data-label="Unrealized P&L" className={`${styles.num} ${pnlClass(holding.unrealizedPnlUsd)}`.trim()}>
-                                        <span aria-hidden="true">{holding.unrealizedPnlUsd < 0 ? '▼ ' : holding.unrealizedPnlUsd > 0 ? '▲ ' : ''}</span>
-                                        {formatSignedUsd(holding.unrealizedPnlUsd)}
+                                        <span className={styles.deltaValue}>
+                                            <span aria-hidden="true">{holding.unrealizedPnlUsd < 0 ? '▼ ' : holding.unrealizedPnlUsd > 0 ? '▲ ' : ''}</span>
+                                            {formatSignedUsd(holding.unrealizedPnlUsd)}
+                                        </span>
                                     </td>
                                     <td data-label="Weight vs target" className={styles.weightCell}>
                                         <span className={styles.weight}>
@@ -188,8 +191,10 @@ export function TreasurySnapshot({
                                 <td data-label="Market value" className={styles.num}>{formatUsd(snapshot.totals.capitalInvestments)}</td>
                                 <td data-label="Cost basis" className={styles.num}>{formatUsd(snapshot.totals.totalCostBasis)}</td>
                                 <td data-label="Unrealized P&L" className={`${styles.num} ${pnlClass(snapshot.totals.unrealizedPnlUsd)}`.trim()}>
-                                    <span aria-hidden="true">{snapshot.totals.unrealizedPnlUsd < 0 ? '▼ ' : snapshot.totals.unrealizedPnlUsd > 0 ? '▲ ' : ''}</span>
-                                    {formatSignedUsd(snapshot.totals.unrealizedPnlUsd)}
+                                    <span className={styles.deltaValue}>
+                                        <span aria-hidden="true">{snapshot.totals.unrealizedPnlUsd < 0 ? '▼ ' : snapshot.totals.unrealizedPnlUsd > 0 ? '▲ ' : ''}</span>
+                                        {formatSignedUsd(snapshot.totals.unrealizedPnlUsd)}
+                                    </span>
                                 </td>
                                 <td data-label="Weight vs target" className={styles.weightCell}>
                                     <span className="mono">100%</span>
@@ -198,6 +203,7 @@ export function TreasurySnapshot({
                         </tfoot>
                     </table>
                 </div>
+                <p className={styles.scrollHint} aria-hidden="true">scroll → for P&amp;L and weight</p>
             </div>
 
             <p className={styles.source}>

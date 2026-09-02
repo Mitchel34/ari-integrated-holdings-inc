@@ -3,6 +3,7 @@
 import { useCallback, useState, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { EmptyState } from '@/components/dashboard/Dashboard';
+import { formatDateTimeUtc } from '@/lib/format';
 import styles from './BroadcastHistory.module.css';
 
 interface BroadcastLogEntry {
@@ -12,12 +13,6 @@ interface BroadcastLogEntry {
     sentByEmail: string;
     sentAt: string;
     recipientCount: number;
-}
-
-function formatSentAt(iso: string) {
-    const date = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(iso));
-    const time = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(new Date(iso));
-    return `${date}, ${time}`;
 }
 
 export default function BroadcastHistory({ refreshKey = 0 }: { refreshKey?: number }) {
@@ -82,7 +77,7 @@ export default function BroadcastHistory({ refreshKey = 0 }: { refreshKey?: numb
                             <span className={styles.historyMeta}>
                                 <span className={styles.historySubject}>{log.subject}</span>
                                 <span className={styles.historyDetails}>
-                                    {log.recipientCount} recipient{log.recipientCount !== 1 ? 's' : ''} · {formatSentAt(log.sentAt)}
+                                    {log.recipientCount} recipient{log.recipientCount !== 1 ? 's' : ''} · {formatDateTimeUtc(log.sentAt)}
                                 </span>
                             </span>
                             <ChevronDown className={`${styles.chevron} ${expanded ? styles.expanded : ''}`} aria-hidden="true" />

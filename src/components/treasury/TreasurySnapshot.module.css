@@ -72,6 +72,49 @@
     -webkit-overflow-scrolling: touch;
 }
 
+/* Right-edge shade signals hidden columns while the table scrolls (tablet only). */
+.tableWrap::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 56px;
+    pointer-events: none;
+    background: linear-gradient(to right, rgba(10, 19, 36, 0), rgba(10, 19, 36, 0.6));
+    opacity: 0;
+}
+
+.scrollHint {
+    display: none;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.25rem;
+    border-top: 1px solid var(--line-1);
+    font-family: var(--font-mono);
+    font-size: var(--fs-caption);
+    letter-spacing: 0.02em;
+    color: var(--text-3);
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .tableWrap::after {
+        opacity: 1;
+    }
+
+    .scrollHint {
+        display: flex;
+    }
+}
+
+.deltaValue {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    white-space: nowrap;
+}
+
 .table {
     width: 100%;
     min-width: 900px;

@@ -69,7 +69,7 @@ export default function SubscriberList({ initialSubscribers }: SubscriberListPro
             sub.email,
             sub.isActive ? 'Active' : 'Inactive',
             sub.source || '',
-            new Date(sub.subscribedAt).toLocaleDateString(),
+            formatDateIso(sub.subscribedAt),
         ]);
         const csv = [headers, ...rows].map((row) => row.map(escapeCsvCell).join(',')).join('\n');
         const blob = new Blob([csv], { type: 'text/csv' });

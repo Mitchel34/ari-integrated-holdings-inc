@@ -35,7 +35,7 @@ export default function TermsPage() {
         <DocumentPage
             eyebrow="Legal"
             title="Terms of Service"
-            lead={`The rules for using the ${SITE.shortName} website and the investor portal. Reading them takes about five minutes.`}
+            lead={`The rules for using the ${SITE.shortName} website and the investor portal.`}
             updated={UPDATED}
             sections={SECTIONS}
             callout={
@@ -185,10 +185,10 @@ export default function TermsPage() {
                     advised of the possibility of such damages.
                 </p>
                 <p>
-                    If, notwithstanding the above, we are found liable to you in connection with the Site, our total
-                    liability will not exceed one hundred United States dollars ($100.00). Some jurisdictions do not allow
-                    certain limitations, so parts of this section may not apply to you; in that case our liability is
-                    limited to the greatest extent the law allows.
+                    If, notwithstanding the above, we are found liable to you in connection with the Site, our liability is
+                    limited to the fullest extent permitted by law. Some jurisdictions do not allow certain limitations,
+                    so parts of this section may not apply to you; in that case our liability is limited to the greatest
+                    extent the law allows.
                 </p>
                 <p>
                     Nothing in these Terms limits or excludes liability that cannot be limited or excluded by law, including
@@ -212,11 +212,6 @@ export default function TermsPage() {
                     section deprives you of protections that the law of your place of residence grants and does not allow
                     to be waived.
                 </p>
-                <p>
-                    Before starting any proceeding, you agree to raise the matter with the CTO in writing and to allow
-                    thirty days for a good-faith attempt to resolve it.
-                </p>
-
                 <h2 id="changes">Changes to these terms</h2>
                 <p>
                     We may revise these Terms when the Site, the Portal, our service providers, or the law changes. The date

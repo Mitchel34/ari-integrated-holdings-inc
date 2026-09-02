@@ -39,10 +39,10 @@ export default function PrivacyPage() {
             sections={SECTIONS}
             callout={
                 <p>
-                    <strong>In plain English:</strong> we collect only what you type into the contact form, the email
-                    address you give us for investor alerts, the account details needed to run the password-protected
-                    portal, and ordinary server logs. We use that information to answer you, send the alerts you asked
-                    for, and keep the portal secure. We do not sell it, we do not run advertising trackers, and you can
+                    <strong>In plain English:</strong> we collect only what you type into the contact form (which is
+                    delivered to us by email, not stored in a database), the email address you give us for investor
+                    alerts, the account details needed to run the password-protected portal, and ordinary server logs. We
+                    use that information to answer you, send the alerts you asked for, and keep the portal secure. We do not sell it, we do not run advertising trackers, and you can
                     unsubscribe or ask for deletion at any time by emailing {CONTACT.name}, our CTO, at{' '}
                     <a href={CONTACT.mailto}>{CONTACT.email}</a>.
                 </p>
@@ -65,23 +65,27 @@ export default function PrivacyPage() {
                 <p>We collect four kinds of information, and only when you give it to us or your browser sends it.</p>
                 <h3>Contact form</h3>
                 <p>
-                    When you submit the contact form we receive the fields you complete: your name, your email address, the
-                    type of inquiry you select, and the message you write. Any other detail you choose to include in the
-                    message is also stored.
+                    When you submit the contact form we receive the fields you complete: your full name, your work email
+                    address, the company you represent (optional), the investor type you select, and the message you
+                    write. The submission is not stored in the Site’s database. It is delivered by email to {CONTACT.name},{' '}
+                    {CONTACT.title}, and retained in that mailbox as correspondence, together with any other detail you
+                    choose to include in the message.
                 </p>
                 <h3>Investor alerts</h3>
                 <p>
-                    When you sign up for investor alerts we store your email address, the date and time of signup, and the
-                    page or form on the Site where you signed up (the “signup source”). We use the signup source to
-                    understand which parts of the Site are useful and to confirm that a request was made on our own forms.
+                    When you sign up for investor alerts we store your email address, the date and time of signup, the
+                    page or form on the Site where you signed up (the “signup source”), and whether the address is active.
+                    We use the signup source to understand which parts of the Site are useful and to confirm that a
+                    request was made on our own forms. Each alert we send is recorded in a broadcast log: the subject, the
+                    message, the executive who sent it, when it was sent, and how many addresses it went to. The log does
+                    not list individual recipients.
                 </p>
                 <h3>Portal accounts</h3>
                 <p>
                     Investor and executive portal accounts are created by Ari, not by self-registration. For each account we
                     store a name, an email address used as the login, an assigned role (investor or executive), and a
                     password. Passwords are stored only as salted cryptographic hashes; we cannot read them and do not
-                    transmit them in plain text. We also store the date and time of recent logins so that unusual activity
-                    can be reviewed.
+                    transmit them in plain text. We do not record the date or time of individual logins.
                 </p>
                 <h3>Technical logs</h3>
                 <p>
@@ -135,14 +139,15 @@ export default function PrivacyPage() {
                     <dd>Hosts the Site and serves its pages. Vercel handles the technical logs described above.</dd>
                     <dt>Neon (PostgreSQL)</dt>
                     <dd>
-                        Stores the Site’s database: contact-form submissions, the investor-alert list, and portal account
-                        records (with hashed passwords).
+                        Stores the Site’s database: the investor-alert list, portal account records (with hashed
+                        passwords), and the broadcast log of investor alerts we have sent. Contact-form submissions are
+                        not stored in the database.
                     </dd>
                     <dt>Resend</dt>
                     <dd>
-                        Delivers transactional email: the notification that reaches the CTO when you submit a form, and the
-                        investor alerts you subscribe to. Resend processes the recipient address and message content in order
-                        to deliver each email.
+                        Delivers transactional email: the message that carries your contact-form submission to the CTO, the
+                        confirmation sent when you sign up for alerts, and the investor alerts themselves. Resend processes
+                        the recipient address and message content in order to deliver each email.
                     </dd>
                     <dt>Calendly</dt>
                     <dd>
@@ -157,8 +162,11 @@ export default function PrivacyPage() {
                     The Site sets cookies for one purpose only: keeping you signed in to the investor or executive portal.
                     Our authentication library (NextAuth) sets a session cookie and a small number of supporting cookies
                     (for example, a cross-site-request-forgery token) when you log in. These cookies are strictly necessary
-                    for the portal to function, are marked HTTP-only and secure, and expire when the session ends or is
-                    revoked.
+                    for the portal to function. They are marked HTTP-only and, in production where the Site is served over
+                    HTTPS, secure. The login cookie holds a signed token (a JWT) that persists for up to 30 days from the
+                    time you sign in, or until you sign out or clear your browser’s cookies. The token is validated by its
+                    signature rather than against a server-side session record, so it is not revoked centrally before it
+                    expires.
                 </p>
                 <p>
                     We do not use advertising cookies, analytics trackers, social-media pixels, or fingerprinting of any
@@ -169,14 +177,18 @@ export default function PrivacyPage() {
                 <h2 id="retention">Retention</h2>
                 <ul>
                     <li>
-                        <strong>Contact-form submissions</strong> are kept for as long as needed to answer the inquiry and
-                        for up to three years afterwards as a record of correspondence, unless you ask us to delete them
-                        sooner.
+                        <strong>Contact-form messages</strong> are delivered to the CTO’s mailbox and kept there for as long
+                        as needed to answer the inquiry and afterwards as a record of correspondence, unless you ask us to
+                        delete them sooner.
                     </li>
                     <li>
-                        <strong>Investor-alert addresses</strong> are kept until you unsubscribe or ask for deletion, after
-                        which the address is removed from the active list. We may keep a minimal suppression record so that
-                        we do not email you again by mistake.
+                        <strong>Investor-alert addresses</strong> are kept until you unsubscribe or ask for deletion. When
+                        an address is unsubscribed or deactivated by an executive it is marked inactive rather than erased,
+                        so that a later signup from the same address does not re-enable it by mistake; you can ask us to
+                        erase the record entirely.
+                    </li>
+                    <li>
+                        <strong>Broadcast logs</strong> are kept as a record of what was sent to shareholders and when.
                     </li>
                     <li>
                         <strong>Portal account records</strong> are kept while the account is active and for a reasonable
@@ -222,7 +234,9 @@ export default function PrivacyPage() {
                 <h2 id="security">Security</h2>
                 <p>
                     The Site is served over HTTPS only. Portal passwords are hashed with a modern, salted algorithm and are
-                    never stored in readable form. Session cookies are HTTP-only and secure. Database access is limited to
+                    never stored in readable form. Session cookies are HTTP-only and, in production, secure. The contact
+                    form and the alert signup are rate-limited and include a hidden trap field that rejects automated
+                    submissions. Database access is limited to
                     the application and to the executives who administer it, and connections to the database are encrypted
                     in transit. Portal accounts are created and revoked by Ari, so no one can register for access on their
                     own.

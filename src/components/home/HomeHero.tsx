@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { AllocationRing } from '@/components/brand/AllocationRing';
 import { AssetChip } from '@/components/brand/AssetChip';
-import { formatProseDate, formatShares, formatUsd } from './format';
+import { formatDateProse, formatShares, formatUsd } from '@/lib/format';
 import styles from './HomeHero.module.css';
 
 interface HomeHeroProps {
@@ -55,7 +55,7 @@ export function HomeHero({ snapshot, freshness }: HomeHeroProps) {
                         </dl>
                         <p className={styles.meta}>
                             <span className="mono">
-                                as of {formatProseDate(snapshot.asOfIso)} · {snapshot.sourceLabel}
+                                as of {formatDateProse(snapshot.asOfIso)} · {snapshot.sourceLabel}
                             </span>
                             <span className={styles.freshness}>
                                 <AssetChip tone={isStale ? 'warn' : 'pos'}>{isStale ? 'Stale' : 'Current'}</AssetChip>

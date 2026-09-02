@@ -6,7 +6,7 @@ import { Section } from '../../components/layout/Section';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { AssetChip } from '../../components/brand/AssetChip';
-import { formatIsoDate, formatProseDate } from '../../components/investor/format';
+import { formatDateIso, formatDateProse } from '@/lib/format';
 import { CONTACT } from '@/lib/site';
 import { getDisclosures, type DisclosureCategory } from '@/lib/investor/disclosures';
 import styles from './disclosures.module.css';
@@ -35,7 +35,7 @@ export default function DisclosuresPage() {
                 meta={
                     <>
                         <span>{disclosures.length} entries</span>
-                        {latest ? <span>Latest {formatIsoDate(latest.publishedAtIso)}</span> : null}
+                        {latest ? <span>Latest {formatDateIso(latest.publishedAtIso)}</span> : null}
                         <span>Feed /api/disclosures</span>
                     </>
                 }
@@ -49,14 +49,14 @@ export default function DisclosuresPage() {
                                 <span className={styles.marker} aria-hidden="true" />
                                 <article id={item.id} className={`glass-1 ${styles.card}`} aria-labelledby={`${item.id}-title`}>
                                     <div className={styles.meta}>
-                                        <time className="mono" dateTime={formatIsoDate(item.publishedAtIso)}>
-                                            {formatIsoDate(item.publishedAtIso)}
+                                        <time className="mono" dateTime={formatDateIso(item.publishedAtIso)}>
+                                            {formatDateIso(item.publishedAtIso)}
                                         </time>
                                         <AssetChip tone={categoryTone(item.category)}>{item.category}</AssetChip>
                                     </div>
                                     <h2 id={`${item.id}-title`} className={styles.title}>{item.title}</h2>
                                     <p className={styles.summary}>{item.summary}</p>
-                                    <p className={styles.published}>Published {formatProseDate(item.publishedAtIso)}</p>
+                                    <p className={styles.published}>Published {formatDateProse(item.publishedAtIso)}</p>
                                 </article>
                             </li>
                         ))}

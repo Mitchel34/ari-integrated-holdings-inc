@@ -21,6 +21,7 @@ import {
     formatDateIso,
     formatDateProse,
     formatNumber,
+    formatSignedUsd,
     formatUsd,
 } from '@/components/dashboard/Dashboard';
 import { ValueBarChart } from '@/components/dashboard/DashboardCharts';
@@ -58,11 +59,15 @@ export function ExecutiveDashboardView({
     const asOfLine = `as of ${formatDateIso(snapshot.asOfIso)} · ${snapshot.sourceLabel}`;
     const pnl = snapshot.totals.unrealizedPnlUsd;
 
+    const pnlWord = pnl > 0 ? 'gain' : pnl < 0 ? 'loss' : 'unchanged';
+    const pnlSigned = formatSignedUsd(pnl);
+
     const valueData = [
         { name: 'Assets', value: snapshot.totals.totalAssets, color: SERIES_COLORS.GOLD },
         { name: 'Cost basis', value: snapshot.totals.totalCostBasis, color: SERIES_COLORS.SILVER },
         { name: pnl >= 0 ? 'Gain' : 'Loss', value: Math.abs(pnl), color: pnl >= 0 ? SERIES_COLORS.POS : SERIES_COLORS.NEG },
     ];
+    const valueChartDescription = `Total assets ${formatUsd(snapshot.totals.totalAssets, 2)}, cost basis ${formatUsd(snapshot.totals.totalCostBasis, 2)}, unrealized ${pnlWord} ${pnlSigned}; ${asOfLine}.`;
 
     return (
         <Container>
@@ -116,7 +121,17 @@ export function ExecutiveDashboardView({
                         icon={<TrendingUp aria-hidden="true" />}
                         label="Unrealized P&L"
                         value={<Delta value={pnl} />}
-                        sub="Across ARKB, FSOL, FETH"
+                        sub={(
+                            <>
+                                Across{' '}
+                                {snapshot.holdings.map((holding, index) => (
+                                    <span key={holding.symbol}>
+                                        <span className="mono">{holding.symbol}</span>
+                                        {index < snapshot.holdings.length - 1 ? ', ' : ''}
+                                    </span>
+                                ))}
+                            </>
+                        )}
                         meta={asOfLine}
                     />
                 </MetricGrid>
@@ -128,7 +143,15 @@ export function ExecutiveDashboardView({
                         description={`Manual snapshot as of ${asOf}; source: ${snapshot.sourceLabel}. Assets against cost basis, with the unrealized result.`}
                         action={<FreshnessBadge status={freshness.status} label={freshness.status === 'stale' ? 'Needs update' : 'Current'} />}
                     >
-                        <ValueBarChart data={valueData} />
+                        <ValueBarChart
+                            data={valueData}
+                            title={`Treasury operations as of ${asOf}`}
+                            description={valueChartDescription}
+                        />
+                        <p className={styles.chartNote}>
+                            Total assets {formatUsd(snapshot.totals.totalAssets, 2)} · Cost basis{' '}
+                            {formatUsd(snapshot.totals.totalCostBasis, 2)} · Unrealized P&amp;L <Delta value={pnl} />
+                        </p>
                         <p className={styles.chartNote}>{asOfLine}</p>
                     </DashboardPanel>
 

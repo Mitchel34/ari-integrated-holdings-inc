@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { ArrowLeft, UserCheck, UserX, Users } from 'lucide-react';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
@@ -25,8 +26,11 @@ export const metadata: Metadata = {
 
 export default async function SubscribersPage() {
     const session = await getServerSession(authOptions);
-    if (!session?.user || (session.user.role !== 'EXECUTIVE' && session.user.role !== 'ADMIN')) {
-        return null;
+    if (!session?.user) {
+        redirect('/login?callbackUrl=/executive/subscribers');
+    }
+    if (session.user.role !== 'EXECUTIVE' && session.user.role !== 'ADMIN') {
+        redirect('/investor/dashboard');
     }
 
     let subscribers: { id: string; email: string; subscribedAt: Date; isActive: boolean; source: string | null }[] = [];

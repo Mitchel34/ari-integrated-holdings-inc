@@ -49,13 +49,7 @@ export default function ThesisPage() {
                 eyebrow="Treasury strategy"
                 title="Investment Thesis"
                 lead="A ten-year, disciplined treasury approach to long-term digital asset holdings."
-                meta={
-                    <>
-                        <span>Last reviewed 1 Mar 2026</span>
-                        <span aria-hidden="true">·</span>
-                        <span>Not investment advice</span>
-                    </>
-                }
+                meta={<span>Not investment advice</span>}
             />
 
             <Section flush className={styles.allocationSection} aria-labelledby="allocation-title">
@@ -295,7 +289,7 @@ export default function ThesisPage() {
                 </div>
             </Section>
 
-            <Section narrow flush aria-labelledby="disclosure-title">
+            <Section narrow flush>
                 <Card variant="subtle" accent="gold" as="aside" className={styles.callout} aria-labelledby="disclosure-title">
                     <div className={styles.calloutHead}>
                         <span className={styles.calloutIcon} aria-hidden="true">
@@ -325,13 +319,13 @@ export default function ThesisPage() {
                     <p className="eyebrow">Next</p>
                     <h2 id="cta-title" className={styles.ctaTitle}>Read the disclosures, then talk to us</h2>
                     <p className={styles.ctaLead}>
-                        The investor portal holds the current treasury snapshot and disclosures. Questions about the
-                        thesis are welcome.
+                        The Investor Relations page holds the latest published treasury snapshot (as of 1 Mar 2026)
+                        and disclosures. Questions about the thesis are welcome.
                     </p>
                     <div className={styles.ctaActions}>
                         <Button asChild variant="primary">
                             <Link href="/investors">
-                                Investor portal
+                                Investor Relations
                                 <ArrowRight aria-hidden="true" />
                             </Link>
                         </Button>

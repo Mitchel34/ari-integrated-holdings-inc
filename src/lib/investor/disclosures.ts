@@ -76,10 +76,10 @@ const INVESTOR_DOCUMENTS: InvestorDocument[] = [
         href: '/disclosures#treasury-update-mar-2026',
     },
     {
-        id: 'prospectus',
-        title: 'Company Prospectus',
+        id: 'thesis',
+        title: 'Investment Thesis',
         dateIso: '2026-01-25T00:00:00.000Z',
-        type: 'Prospectus',
+        type: 'Thesis',
         href: '/thesis',
     },
     {
@@ -90,10 +90,10 @@ const INVESTOR_DOCUMENTS: InvestorDocument[] = [
         href: '/disclosures#treasury-allocation-q1-2026',
     },
     {
-        id: 'risk-policy',
-        title: 'Risk Management Policy Summary',
+        id: 'risk-disclaimer',
+        title: 'Risk Disclaimer',
         dateIso: '2026-01-15T00:00:00.000Z',
-        type: 'Policy',
+        type: 'Disclaimer',
         href: '/disclaimer',
     },
     {
@@ -158,12 +158,4 @@ export function getNextInvestorEvent(now = new Date()): InvestorEvent | null {
 export function getUpcomingInvestorEvents(now = new Date()): InvestorEvent[] {
     const nowMs = now.getTime();
     return getInvestorEvents().filter((event) => new Date(event.startsAtIso).getTime() > nowMs);
-}
-
-/** Events that have already taken place, most recent first. */
-export function getPastInvestorEvents(now = new Date()): InvestorEvent[] {
-    const nowMs = now.getTime();
-    return getInvestorEvents()
-        .filter((event) => new Date(event.startsAtIso).getTime() <= nowMs)
-        .reverse();
 }

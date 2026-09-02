@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { DisclosureItem } from '@/lib/investor/disclosures';
 import { AssetChip, type ChipTone } from '@/components/brand/AssetChip';
 import { Card } from '@/components/ui/Card';
-import { formatIsoDate } from './format';
+import { formatDateIso } from '@/lib/format';
 import styles from './HomeSections.module.css';
 
 interface TransparencyPanelProps {
@@ -21,7 +21,7 @@ export function TransparencyPanel({ items }: TransparencyPanelProps) {
                     <li key={item.id} className={styles.discRow}>
                         <AssetChip tone={toneForCategory(item.category)}>{item.category}</AssetChip>
                         <time dateTime={item.publishedAtIso} className={`${styles.discDate} mono`}>
-                            {formatIsoDate(item.publishedAtIso)}
+                            {formatDateIso(item.publishedAtIso)}
                         </time>
                         <span className={styles.discTitle}>
                             <Link href={`/disclosures#${item.id}`}>{item.title}</Link>

@@ -8,7 +8,7 @@ export function ClosingCta() {
     const [emailLocal, emailDomain] = CONTACT.email.split('@');
 
     return (
-        <Card variant="elevated" className={styles.cta} aria-labelledby="cta-title">
+        <Card as="section" variant="elevated" className={styles.cta} aria-labelledby="cta-title">
             <p className="eyebrow">Contact</p>
             <h2 id="cta-title" className={styles.ctaTitle}>
                 Speak with the executive team
