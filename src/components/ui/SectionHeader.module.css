@@ -1,0 +1,66 @@
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    max-width: 720px;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.center {
+    align-items: center;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.center .lead {
+    text-align: center;
+}
+
+.title {
+    margin: 0;
+    color: var(--text-1);
+}
+
+.h1 {
+    font-size: var(--fs-h1);
+    line-height: var(--lh-tight);
+    letter-spacing: -0.025em;
+}
+
+.h2 {
+    font-size: var(--fs-h2);
+}
+
+.lead {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--text-2);
+    font-size: var(--fs-lead);
+    line-height: 1.55;
+}
+
+.compact {
+    margin-bottom: 1.5rem;
+}
+
+.compact .lead {
+    font-size: 1rem;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    max-width: none;
+}
+
+.row .header {
+    margin-bottom: 0;
+}
+
+.aside {
+    flex-shrink: 0;
+}

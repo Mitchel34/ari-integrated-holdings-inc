@@ -74,8 +74,8 @@ export function MeetingTypeSelector() {
                         <p>
                             Scheduling is not yet configured for this meeting type.
                             <br />
-                            <a href="mailto:investor-relations@ariholdings.com" className={styles.fallbackLink}>
-                                Email investor-relations@ariholdings.com
+                            <a href="mailto:mitchelcarson@ariintegratedholdings.com" className={styles.fallbackLink}>
+                                Email mitchelcarson@ariintegratedholdings.com
                             </a>{' '}
                             to request this meeting directly.
                         </p>

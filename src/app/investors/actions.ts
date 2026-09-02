@@ -14,7 +14,7 @@ export const INITIAL_ALERT_SIGNUP_STATE: AlertSignupState = {
 };
 
 function isValidEmailAddress(email: string) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    return email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 export async function subscribeInvestorAlertsAction(
@@ -23,6 +23,7 @@ export async function subscribeInvestorAlertsAction(
     source?: string,
 ): Promise<AlertSignupState> {
     const email = String(formData.get('email') ?? '').trim().toLowerCase();
+    const signupSource = source ?? String(formData.get('source') ?? '').trim() ?? 'investors-page';
 
     if (!isValidEmailAddress(email)) {
         return {
@@ -35,19 +36,24 @@ export async function subscribeInvestorAlertsAction(
         await prisma.investorAlert.upsert({
             where: { email },
             update: { isActive: true },
-            create: { email, source: source ?? 'investors-page', isActive: true },
+            create: { email, source: signupSource || 'investors-page', isActive: true },
         });
-
-        await emailService.sendAlertConfirmation(email);
-
-        return {
-            status: 'success',
-            message: 'Confirmed. You\'ll receive treasury updates, disclosures, and investor event announcements.',
-        };
     } catch {
         return {
             status: 'error',
             message: 'Unable to submit signup right now. Please try again shortly.',
         };
     }
+
+    // Confirmation to the subscriber and a routing notice to the CTO.
+    // Neither should block a successful signup.
+    await Promise.allSettled([
+        emailService.sendAlertConfirmation(email),
+        emailService.sendSubscriberNotification(email, signupSource || 'investors-page'),
+    ]);
+
+    return {
+        status: 'success',
+        message: "Confirmed. You'll receive treasury updates, disclosures, and investor event announcements.",
+    };
 }

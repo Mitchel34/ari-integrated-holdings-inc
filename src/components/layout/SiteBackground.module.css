@@ -1,0 +1,87 @@
+.root {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-ambient, 0);
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 75% 62% at 50% 0%, #000 25%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 75% 62% at 50% 0%, #000 25%, transparent 100%);
+}
+
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(110px);
+    mix-blend-mode: screen;
+    will-change: opacity;
+}
+
+.orbGold {
+    width: 640px;
+    height: 640px;
+    top: -220px;
+    left: -180px;
+    background: rgba(194, 155, 78, 0.13);
+    animation: drift 40s ease-in-out infinite alternate;
+}
+
+.orbSilver {
+    width: 560px;
+    height: 560px;
+    top: 18%;
+    right: -220px;
+    background: rgba(132, 184, 255, 0.09);
+    animation: drift 46s ease-in-out infinite alternate-reverse;
+}
+
+.vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 120% 90% at 50% 100%, rgba(5, 10, 20, 0.55) 0%, transparent 60%);
+}
+
+@keyframes drift {
+    from {
+        opacity: 0.85;
+        transform: translate3d(0, 0, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate3d(24px, 18px, 0);
+    }
+}
+
+@media (max-width: 767px) {
+    .orbGold {
+        width: 420px;
+        height: 420px;
+        top: -160px;
+        left: -140px;
+    }
+
+    .orbSilver {
+        width: 380px;
+        height: 380px;
+        right: -160px;
+    }
+
+    .grid {
+        background-size: 48px 48px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .orb {
+        animation: none;
+    }
+}

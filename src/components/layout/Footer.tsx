@@ -1,65 +1,113 @@
 import Link from 'next/link';
-import Image from 'next/image';
+import { Mail, ArrowUpRight } from 'lucide-react';
 import { Container } from '../ui/Container';
+import { Logo } from '../brand/Logo';
+import { AssetChip } from '../brand/AssetChip';
+import { ALLOCATION, CONTACT, SITE } from '@/lib/site';
 import styles from './Footer.module.css';
 
+const COMPANY_LINKS = [
+    { href: '/thesis', label: 'Investment Thesis' },
+    { href: '/harmony', label: 'Harmony Trading' },
+    { href: '/team', label: 'Leadership' },
+    { href: '/contact', label: 'Contact' },
+];
+
+const INVESTOR_LINKS = [
+    { href: '/investors', label: 'Investor Relations' },
+    { href: '/disclosures', label: 'Disclosures' },
+    { href: '/investors#alerts', label: 'Investor Alerts' },
+    { href: '/login', label: 'Investor Portal' },
+];
+
+const LEGAL_LINKS = [
+    { href: '/privacy', label: 'Privacy Policy' },
+    { href: '/terms', label: 'Terms of Service' },
+    { href: '/disclaimer', label: 'Disclaimer' },
+];
+
 export function Footer() {
+    const year = new Date().getFullYear();
+
     return (
         <footer className={styles.footer}>
+            <div className={styles.hairline} aria-hidden="true" />
             <Container>
-                <div className={styles.content}>
-                    <div className={styles.column}>
-                        <Link href="/">
-                            <Image
-                                src="/logo.jpeg"
-                                alt="Ari Integrated Holdings Inc."
-                                width={90}
-                                height={90}
-                                className={styles.footerLogo}
-                            />
-                        </Link>
-                        <p>Building the Strategic Reserve of the Digital Age.</p>
-                        <ul className={styles.contactList}>
-                            <li className={styles.contactItem}>
-                                <svg className={styles.contactIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                                    <polyline points="22,6 12,13 2,6"/>
-                                </svg>
-                                <span>contact@ariholdings.com</span>
-                            </li>
-                            <li className={styles.contactItem}>
-                                <svg className={styles.contactIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <line x1="2" y1="12" x2="22" y2="12"/>
-                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                                </svg>
-                                <span>www.ariholdings.com</span>
-                            </li>
+                <div className={styles.grid}>
+                    <div className={styles.brand}>
+                        <Logo size={44} />
+                        <p className={styles.tagline}>{SITE.tagline}.</p>
+                        <p className={styles.blurb}>
+                            A disciplined, long-horizon digital-asset treasury built around a 50 / 30 / 20
+                            allocation to Bitcoin, Ethereum, and Solana.
+                        </p>
+                        <ul className={styles.chips} aria-label="Target allocation">
+                            {ALLOCATION.map((asset) => (
+                                <li key={asset.symbol}>
+                                    <AssetChip symbol={asset.symbol}>
+                                        {asset.symbol} {asset.weight}%
+                                    </AssetChip>
+                                </li>
+                            ))}
                         </ul>
                     </div>
+
+                    <nav className={styles.column} aria-labelledby="footer-company">
+                        <h2 id="footer-company" className={styles.heading}>Company</h2>
+                        <ul className={styles.list}>
+                            {COMPANY_LINKS.map((link) => (
+                                <li key={link.href}>
+                                    <Link href={link.href} className={styles.link}>{link.label}</Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </nav>
+
+                    <nav className={styles.column} aria-labelledby="footer-investors">
+                        <h2 id="footer-investors" className={styles.heading}>Investors</h2>
+                        <ul className={styles.list}>
+                            {INVESTOR_LINKS.map((link) => (
+                                <li key={link.href}>
+                                    <Link href={link.href} className={styles.link}>{link.label}</Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </nav>
+
                     <div className={styles.column}>
-                        <h4>Company</h4>
-                        <Link href="/thesis">Investment Thesis</Link>
-                        <Link href="/harmony">Harmony Trading</Link>
-                        <Link href="/disclosures">Disclosures</Link>
-                        <Link href="/investors">Investor Relations</Link>
-                        <Link href="/team">Team</Link>
-                    </div>
-                    <div className={styles.column}>
-                        <h4>Legal</h4>
-                        <Link href="/privacy">Privacy Policy</Link>
-                        <Link href="/terms">Terms of Service</Link>
-                        <Link href="/disclaimer">Disclaimer</Link>
-                    </div>
-                    <div className={styles.column}>
-                        <h4>Contact</h4>
-                        <Link href="/contact">Contact Us</Link>
-                        <span className={styles.contactItem}>contact@ariholdings.com</span>
+                        <h2 className={styles.heading}>Correspondence</h2>
+                        <p className={styles.contactName}>{CONTACT.name}</p>
+                        <p className={styles.contactTitle}>{CONTACT.title}</p>
+                        <a href={CONTACT.mailto} className={styles.contactEmail}>
+                            <Mail aria-hidden="true" />
+                            <span>{CONTACT.email}</span>
+                        </a>
+                        <p className={styles.contactNote}>
+                            All investor, partnership, and press inquiries are routed to the CTO.
+                        </p>
+                        <Link href="/contact" className={styles.contactCta}>
+                            Send an inquiry
+                            <ArrowUpRight aria-hidden="true" />
+                        </Link>
                     </div>
                 </div>
-                <div className={styles.copyright}>
-                    &copy; {new Date().getFullYear()} Ari Integrated Holdings Inc. All rights reserved.
+
+                <div className={styles.bottom}>
+                    <p className={styles.copyright}>
+                        &copy; {year} {SITE.legalName} All rights reserved.
+                    </p>
+                    <ul className={styles.legal}>
+                        {LEGAL_LINKS.map((link) => (
+                            <li key={link.href}>
+                                <Link href={link.href} className={styles.legalLink}>{link.label}</Link>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
+                <p className={styles.disclaimer}>
+                    Nothing on this website is an offer to sell, or a solicitation of an offer to buy, any security.
+                    Digital assets are volatile and may lose value. Past performance is not indicative of future results.
+                </p>
             </Container>
         </footer>
     );

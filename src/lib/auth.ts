@@ -91,7 +91,7 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       // Initial sign in
       if (user) {
         token.id = user.id;

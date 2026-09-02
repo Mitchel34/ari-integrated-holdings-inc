@@ -1,0 +1,248 @@
+.layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+    padding-bottom: var(--section-y);
+}
+
+.toc {
+    display: none;
+}
+
+.tocTitle {
+    margin-bottom: 0.75rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold-500);
+}
+
+.tocList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tocLink {
+    display: flex;
+    gap: 0.6rem;
+    align-items: baseline;
+    min-height: 36px;
+    padding: 0.35rem 0;
+    font-size: 0.875rem;
+    color: var(--text-3);
+    border-left: 1px solid transparent;
+}
+
+.tocLink:hover {
+    color: var(--text-1);
+}
+
+.tocIndex {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--gold-500);
+}
+
+.prose {
+    max-width: 72ch;
+    color: var(--text-2);
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+.prose > * + * {
+    margin-top: 1rem;
+}
+
+.prose h2 {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-top: 2.75rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--line-1);
+    font-size: var(--fs-h3);
+    font-weight: 600;
+    color: var(--text-1);
+    scroll-margin-top: calc(var(--nav-h) + 1.5rem);
+}
+
+.prose h2:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+}
+
+.prose h2 .index,
+.prose h2::before {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--gold-500);
+    letter-spacing: 0.04em;
+}
+
+.numbered {
+    counter-reset: section;
+}
+
+.numbered h2::before {
+    counter-increment: section;
+    content: counter(section, decimal-leading-zero);
+}
+
+.prose h3 {
+    margin-top: 1.75rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-1);
+}
+
+.prose p {
+    margin: 0;
+}
+
+.prose ul,
+.prose ol {
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.prose li {
+    margin-top: 0.4rem;
+}
+
+.prose li::marker {
+    color: var(--gold-500);
+}
+
+.prose strong {
+    color: var(--text-1);
+    font-weight: 600;
+}
+
+.prose a {
+    color: var(--gold-300);
+    text-decoration: underline;
+    text-decoration-color: var(--gold-a45);
+    text-underline-offset: 3px;
+}
+
+.prose a:hover {
+    color: var(--text-1);
+}
+
+.prose table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.prose th,
+.prose td {
+    padding: 0.7rem 0.6rem;
+    border-bottom: 1px solid var(--line-1);
+    text-align: left;
+    vertical-align: top;
+}
+
+.prose th {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+}
+
+.prose dl {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem 1.5rem;
+}
+
+.prose dt {
+    font-weight: 600;
+    color: var(--text-1);
+}
+
+.prose dd {
+    margin: 0;
+}
+
+.callout {
+    margin-top: 1.5rem;
+    padding: 1.1rem 1.25rem;
+    border-radius: var(--r-md);
+    border: 1px solid var(--gold-a30);
+    background: var(--gold-a08);
+    color: var(--text-2);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+}
+
+.callout strong {
+    color: var(--gold-300);
+}
+
+.footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line-1);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2rem;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--text-3);
+}
+
+.footer a {
+    color: var(--gold-300);
+}
+
+.footerMono {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+}
+
+@media (min-width: 1024px) {
+    .layout {
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 4rem;
+    }
+
+    .toc {
+        display: block;
+        position: sticky;
+        top: calc(var(--nav-h) + 1.5rem);
+        align-self: start;
+    }
+
+    .prose dl {
+        grid-template-columns: 200px minmax(0, 1fr);
+    }
+}
+
+@media print {
+    .toc,
+    .callout {
+        display: none;
+    }
+
+    .prose {
+        color: #000;
+        max-width: none;
+    }
+
+    .prose h2,
+    .prose h3,
+    .prose strong {
+        color: #000;
+    }
+}

@@ -1,13 +1,15 @@
 "use client";
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
+import { LogOut, Menu, X } from 'lucide-react';
 import { Container } from '../ui/Container';
 import { Sheet } from '../ui/Sheet';
+import { Logo } from '../brand/Logo';
 import { NAV_ITEMS } from './nav-items';
+import { CONTACT } from '@/lib/site';
 import styles from './Navbar.module.css';
 
 function isActivePath(pathname: string | null, href: string) {
@@ -15,23 +17,17 @@ function isActivePath(pathname: string | null, href: string) {
     return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-function MenuIcon() {
-    return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-            <line x1="4" y1="7" x2="20" y2="7" />
-            <line x1="4" y1="12" x2="20" y2="12" />
-            <line x1="4" y1="17" x2="20" y2="17" />
-        </svg>
-    );
+function subscribeToScroll(callback: () => void) {
+    window.addEventListener('scroll', callback, { passive: true });
+    return () => window.removeEventListener('scroll', callback);
 }
 
-function LockIcon() {
-    return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-            <rect x="5" y="11" width="14" height="10" rx="2" />
-            <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-        </svg>
-    );
+function getScrolledSnapshot() {
+    return window.scrollY > 16;
+}
+
+function getServerScrolledSnapshot() {
+    return false;
 }
 
 interface SessionUser {
@@ -43,41 +39,26 @@ interface SessionUser {
 
 export function SiteHeader() {
     const pathname = usePathname();
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const scrolled = useSyncExternalStore(subscribeToScroll, getScrolledSnapshot, getServerScrolledSnapshot);
+    // The menu is only "open" for the path it was opened on, so navigation
+    // implicitly closes it without an effect.
+    const [menu, setMenu] = useState<{ open: boolean; path: string | null }>({ open: false, path: null });
+    const mobileMenuOpen = menu.open && menu.path === pathname;
+    const openMenu = () => setMenu({ open: true, path: pathname });
+    const closeMenu = () => setMenu({ open: false, path: null });
+
     const { data: session, status } = useSession();
     const user = session?.user as SessionUser | undefined;
-
     const isExecutive = user?.role === 'EXECUTIVE' || user?.role === 'ADMIN';
-
-    useEffect(() => {
-        setMobileMenuOpen(false);
-    }, [pathname]);
+    const dashboardHref = isExecutive ? '/executive/dashboard' : '/investor/dashboard';
+    const isAuthPage = pathname === '/login';
 
     return (
         <>
-            <header className={styles.navbar}>
+            <header className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`.trim()}>
                 <Container className={styles.container}>
-                    <div className={styles.mobileBar}>
-                        <button
-                            className={styles.menuButton}
-                            type="button"
-                            aria-label="Open navigation menu"
-                            aria-expanded={mobileMenuOpen}
-                            aria-controls="mobile-nav"
-                            onClick={() => setMobileMenuOpen(true)}
-                        >
-                            <MenuIcon />
-                        </button>
-                        <Link href="/" className={styles.mobileBrand}>
-                            <Image src="/logo.jpeg" alt="Ari Integrated Holdings Inc. Logo" width={110} height={50} className={styles.navLogo} />
-                        </Link>
-                        <span className={styles.mobileSpacer} aria-hidden="true" />
-                    </div>
-
-                    <div className={styles.desktopBar}>
-                        <Link href="/" className={styles.logo}>
-                            <Image src="/logo.jpeg" alt="Ari Integrated Holdings Inc. Logo" width={140} height={60} className={styles.navLogo} />
-                        </Link>
+                    <div className={styles.bar}>
+                        <Logo size={38} priority />
 
                         <nav className={styles.links} aria-label="Primary">
                             {NAV_ITEMS.map((item) => {
@@ -89,14 +70,7 @@ export function SiteHeader() {
                                         className={`${styles.link} ${isActive ? styles.linkActive : ''}`.trim()}
                                         aria-current={isActive ? 'page' : undefined}
                                     >
-                                        {item.gated ? (
-                                            <span className={styles.gatedLabel}>
-                                                <LockIcon />
-                                                {item.label}
-                                            </span>
-                                        ) : (
-                                            item.label
-                                        )}
+                                        {item.label}
                                     </Link>
                                 );
                             })}
@@ -104,51 +78,59 @@ export function SiteHeader() {
 
                         <div className={styles.actions}>
                             {status === 'loading' ? (
-                                <div className={styles.loadingPill}>Loading...</div>
+                                <span className={styles.loadingPill} aria-live="polite">Loading…</span>
                             ) : session ? (
                                 <div className={styles.userMenu}>
-                                    <Link
-                                        href={isExecutive ? '/executive/dashboard' : '/investor/dashboard'}
-                                        className={styles.dashboardLink}
-                                    >
-                                        <span className={styles.userAvatar}>
+                                    <Link href={dashboardHref} className={styles.dashboardLink}>
+                                        <span className={styles.userAvatar} aria-hidden="true">
                                             {user?.name?.charAt(0) || 'U'}
                                         </span>
-                                        <span className={styles.userName}>
-                                            {user?.name?.split(' ')[0] || 'Dashboard'}
-                                        </span>
+                                        <span className={styles.userName}>{user?.name?.split(' ')[0] || 'Dashboard'}</span>
                                     </Link>
                                     <button
+                                        type="button"
                                         onClick={() => signOut({ callbackUrl: '/' })}
-                                        className={styles.signOutBtn}
+                                        className={styles.iconButton}
                                         aria-label="Sign out"
                                     >
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                                            <polyline points="16,17 21,12 16,7" />
-                                            <line x1="21" y1="12" x2="9" y2="12" />
-                                        </svg>
+                                        <LogOut aria-hidden="true" />
                                     </button>
                                 </div>
                             ) : (
-                                <Link href="/login" className={styles.loginBtn}>Investor Portal</Link>
+                                <>
+                                    {!isAuthPage ? (
+                                        <Link href="/login" className={styles.ghostLink}>Investor Portal</Link>
+                                    ) : null}
+                                    <Link href="/contact" className={styles.primaryLink}>Book a Meeting</Link>
+                                </>
                             )}
+
+                            <button
+                                className={`${styles.iconButton} ${styles.menuButton}`}
+                                type="button"
+                                aria-label="Open navigation menu"
+                                aria-expanded={mobileMenuOpen}
+                                aria-controls="mobile-nav"
+                                onClick={openMenu}
+                            >
+                                <Menu aria-hidden="true" />
+                            </button>
                         </div>
                     </div>
                 </Container>
             </header>
 
-            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} title="Primary navigation">
+            <Sheet open={mobileMenuOpen} onOpenChange={(open) => (open ? openMenu() : closeMenu())} title="Primary navigation">
                 <div id="mobile-nav" className={styles.sheetContent}>
                     <div className={styles.sheetHeader}>
-                        <p className={styles.sheetBrand}>Ari Integrated Holdings Inc.</p>
+                        <Logo size={34} href={null} />
                         <button
                             type="button"
-                            className={styles.sheetCloseButton}
+                            className={styles.iconButton}
                             aria-label="Close navigation menu"
-                            onClick={() => setMobileMenuOpen(false)}
+                            onClick={closeMenu}
                         >
-                            Close
+                            <X aria-hidden="true" />
                         </button>
                     </div>
 
@@ -161,61 +143,52 @@ export function SiteHeader() {
                                     href={item.href}
                                     className={`${styles.sheetLink} ${isActive ? styles.sheetLinkActive : ''}`.trim()}
                                     aria-current={isActive ? 'page' : undefined}
-                                    onClick={() => setMobileMenuOpen(false)}
+                                    onClick={closeMenu}
                                 >
-                                    {item.gated ? (
-                                        <span className={styles.gatedLabel}>
-                                            <LockIcon />
-                                            {item.label}
-                                        </span>
-                                    ) : (
-                                        item.label
-                                    )}
+                                    {item.label}
                                 </Link>
                             );
                         })}
                     </nav>
 
-                    {status === 'loading' ? (
-                        <div className={styles.loadingPill}>Loading...</div>
-                    ) : session ? (
-                        <div className={styles.sheetAccount}>
-                            <Link
-                                href={isExecutive ? '/executive/dashboard' : '/investor/dashboard'}
-                                className={styles.dashboardLink}
-                                onClick={() => setMobileMenuOpen(false)}
-                            >
-                                <span className={styles.userAvatar}>
-                                    {user?.name?.charAt(0) || 'U'}
-                                </span>
-                                <span className={styles.userName}>Dashboard</span>
-                            </Link>
-                            <button
-                                onClick={() => {
-                                    setMobileMenuOpen(false);
-                                    void signOut({ callbackUrl: '/' });
-                                }}
-                                className={styles.signOutBtn}
-                                aria-label="Sign out"
-                            >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                                    <polyline points="16,17 21,12 16,7" />
-                                    <line x1="21" y1="12" x2="9" y2="12" />
-                                </svg>
-                            </button>
-                        </div>
-                    ) : (
-                        <div className={styles.sheetAccount}>
-                            <Link
-                                href="/login"
-                                className={styles.loginBtn}
-                                onClick={() => setMobileMenuOpen(false)}
-                            >
-                                Investor Portal
-                            </Link>
-                        </div>
-                    )}
+                    <div className={styles.sheetAccount}>
+                        {status === 'loading' ? (
+                            <span className={styles.loadingPill}>Loading…</span>
+                        ) : session ? (
+                            <>
+                                <Link href={dashboardHref} className={styles.dashboardLink} onClick={closeMenu}>
+                                    <span className={styles.userAvatar} aria-hidden="true">
+                                        {user?.name?.charAt(0) || 'U'}
+                                    </span>
+                                    <span className={styles.userName}>Dashboard</span>
+                                </Link>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        closeMenu();
+                                        void signOut({ callbackUrl: '/' });
+                                    }}
+                                    className={styles.iconButton}
+                                    aria-label="Sign out"
+                                >
+                                    <LogOut aria-hidden="true" />
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <Link href="/contact" className={`${styles.primaryLink} ${styles.sheetPrimary}`} onClick={closeMenu}>
+                                    Book a Meeting
+                                </Link>
+                                <Link href="/login" className={`${styles.ghostLink} ${styles.sheetGhost}`} onClick={closeMenu}>
+                                    Investor Portal
+                                </Link>
+                            </>
+                        )}
+                        <p className={styles.sheetContact}>
+                            Correspondence:{' '}
+                            <a href={CONTACT.mailto}>{CONTACT.email}</a>
+                        </p>
+                    </div>
                 </div>
             </Sheet>
         </>

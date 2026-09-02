@@ -1,0 +1,90 @@
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: 24px;
+    padding: 0 10px 0 7px;
+    border-radius: var(--r-full);
+    border: 1px solid var(--chip-border, rgba(192, 197, 203, 0.3));
+    background: var(--chip-bg, rgba(192, 197, 203, 0.12));
+    color: var(--chip-text, var(--text-2));
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.md {
+    height: 28px;
+    padding: 0 12px 0 9px;
+    font-size: 0.8125rem;
+}
+
+.dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--chip-dot, var(--silver-500));
+    box-shadow: 0 0 0 1px rgba(10, 19, 36, 0.7), 0 0 0 2px rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+}
+
+.btc {
+    --chip-border: var(--btc-a40);
+    --chip-bg: var(--btc-a15);
+    --chip-text: var(--btc-text);
+    --chip-dot: var(--btc);
+}
+
+.eth {
+    --chip-border: var(--eth-a40);
+    --chip-bg: var(--eth-a15);
+    --chip-text: var(--eth-text);
+    --chip-dot: var(--eth);
+}
+
+.sol {
+    --chip-border: var(--sol-a40);
+    --chip-bg: var(--sol-a15);
+    --chip-text: var(--sol-text);
+    --chip-dot: var(--sol);
+}
+
+.gold {
+    --chip-border: var(--gold-a30);
+    --chip-bg: var(--gold-a12);
+    --chip-text: var(--gold-300);
+    --chip-dot: var(--gold-500);
+}
+
+.neutral {
+    --chip-border: rgba(192, 197, 203, 0.3);
+    --chip-bg: rgba(192, 197, 203, 0.12);
+    --chip-text: var(--text-2);
+    --chip-dot: var(--silver-500);
+}
+
+.pos {
+    --chip-border: var(--pos-a30);
+    --chip-bg: var(--pos-a15);
+    --chip-text: var(--pos);
+    --chip-dot: var(--pos);
+}
+
+.warn {
+    --chip-border: var(--warn-a30);
+    --chip-bg: var(--warn-a15);
+    --chip-text: var(--warn);
+    --chip-dot: var(--warn);
+}
+
+.neg {
+    --chip-border: var(--neg-a30);
+    --chip-bg: var(--neg-a15);
+    --chip-text: var(--neg);
+    --chip-dot: var(--neg);
+}

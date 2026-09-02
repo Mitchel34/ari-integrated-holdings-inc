@@ -1,0 +1,65 @@
+.hero {
+    position: relative;
+    padding: clamp(2.5rem, 6vw, 4.5rem) 0 clamp(2rem, 4vw, 3rem);
+}
+
+.inner {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 780px;
+}
+
+.center {
+    align-items: center;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.title {
+    font-size: var(--fs-h1);
+    line-height: var(--lh-tight);
+    letter-spacing: -0.025em;
+    color: var(--text-1);
+}
+
+.lead {
+    max-width: 62ch;
+    color: var(--text-2);
+    font-size: var(--fs-lead);
+    line-height: 1.55;
+}
+
+.meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    margin-top: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-3);
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.center .actions {
+    justify-content: center;
+}
+
+.hairline {
+    height: 1px;
+    margin-top: clamp(2rem, 4vw, 3rem);
+    background: var(--hairline-gold);
+}
+
+@media (max-width: 640px) {
+    .actions > * {
+        flex: 1 1 100%;
+    }
+}
