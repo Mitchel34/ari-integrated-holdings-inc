@@ -15,7 +15,7 @@ import { ClosingCta } from '@/components/home/ClosingCta';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
-    title: 'Digital-Asset Treasury',
+    title: { absolute: `${SITE.name} — ${SITE.tagline}` },
     description: SITE.description,
     alternates: { canonical: '/' },
 };

@@ -5,7 +5,7 @@ import { Footer } from "../components/layout/Footer";
 import { SiteBackground } from "../components/layout/SiteBackground";
 import { AuthSessionProvider } from "../components/auth/AuthSessionProvider";
 import { ToastProvider } from "../components/ui/Toast";
-import { SITE, getSiteUrl } from "../lib/site";
+import { CONTACT, SITE, getSiteUrl } from "../lib/site";
 import "./globals.css";
 
 const inter = Inter({
@@ -44,26 +44,34 @@ export const metadata: Metadata = {
     "FSOL",
     "investor relations",
   ],
+  // Open Graph / Twitter titles and descriptions resolve from each page's own
+  // metadata; only the site-wide fields are set here.
   openGraph: {
     type: "website",
     siteName: SITE.name,
-    title: `${SITE.name} — ${SITE.tagline}`,
-    description: SITE.description,
-    url: "/",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE.name} — ${SITE.tagline}`,
-    description: SITE.description,
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
-  alternates: {
-    canonical: "/",
-  },
+};
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: SITE.legalName,
+  alternateName: SITE.shortName,
+  url: getSiteUrl(),
+  logo: `${getSiteUrl()}/brand/ari-mark-512.png`,
+  description: SITE.description,
+  contactPoint: [
+    {
+      "@type": "ContactPoint",
+      contactType: "investor relations",
+      email: CONTACT.email,
+      name: `${CONTACT.name}, ${CONTACT.title}`,
+    },
+  ],
 };
 
 export const viewport: Viewport = {
@@ -81,6 +89,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${sora.variable} ${jetbrainsMono.variable}`}>
       <body suppressHydrationWarning>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
         <a href="#main-content" className="skip-link">Skip to content</a>
         <AuthSessionProvider>
           <ToastProvider>

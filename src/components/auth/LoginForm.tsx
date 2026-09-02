@@ -7,10 +7,18 @@ import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import styles from './LoginForm.module.css';
 
+/** Only same-origin relative paths are honored; anything else lands on the role router. */
+function safeCallbackUrl(raw: string | null): string {
+    if (raw && raw.startsWith('/') && !raw.startsWith('//') && !raw.startsWith('/\\')) {
+        return raw;
+    }
+    return '/dashboard';
+}
+
 export function LoginForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const callbackUrl = searchParams.get('callbackUrl') || '/executive/dashboard';
+    const callbackUrl = safeCallbackUrl(searchParams.get('callbackUrl'));
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');

@@ -83,6 +83,8 @@ export const authOptions: NextAuthOptions = {
 
   session: {
     strategy: "jwt",
+    // Login cookie lifetime; stated in the Privacy Policy.
+    maxAge: 30 * 24 * 60 * 60,
   },
 
   pages: {

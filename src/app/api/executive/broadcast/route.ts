@@ -63,9 +63,9 @@ export async function POST(req: NextRequest) {
     }
 
     const emails = activeSubscribers.map((s) => s.email);
-    const ok = await emailService.sendTreasuryUpdateAlert(emails, subject.trim(), message.trim());
+    const delivery = await emailService.sendTreasuryUpdateAlert(emails, subject.trim(), message.trim());
 
-    if (!ok) {
+    if (delivery.sent === 0) {
         return NextResponse.json({ error: 'Email delivery failed. Check RESEND_API_KEY configuration.' }, { status: 500 });
     }
 
@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
                     message: message.trim(),
                     sentBy: token.id,
                     sentByEmail: token.email || 'unknown',
-                    recipientCount: emails.length,
+                    recipientCount: delivery.sent,
                 },
             });
         } catch (err) {
@@ -87,5 +87,5 @@ export async function POST(req: NextRequest) {
         }
     }
 
-    return NextResponse.json({ ok: true, sent: emails.length });
+    return NextResponse.json({ ok: true, sent: delivery.sent, failed: delivery.failed });
 }

@@ -116,8 +116,8 @@
 /* ── Sizes ────────────────────────────────────────────────────────────── */
 
 .sm {
-    min-height: 38px;
-    padding: 0 0.9rem;
+    min-height: 44px;
+    padding: 0 0.95rem;
     font-size: 0.875rem;
 }
 

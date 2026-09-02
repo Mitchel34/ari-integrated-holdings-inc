@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export async function PUT(req: Request) {
   const session = await getServerSession(authOptions);
   if (
@@ -13,11 +15,17 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const body = (await req.json()) as {
-    email?: string;
-    currentPassword?: string;
-    newPassword?: string;
-  };
+  let body: { email?: string; currentPassword?: string; newPassword?: string };
+  try {
+    body = (await req.json()) as typeof body;
+  } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
+  const requestedEmail = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+  if (requestedEmail && (requestedEmail.length > 254 || !EMAIL_PATTERN.test(requestedEmail))) {
+    return NextResponse.json({ error: "Enter a valid email address" }, { status: 400 });
+  }
 
   const userId = session.user.id;
 
@@ -55,10 +63,10 @@ export async function PUT(req: Request) {
   // Build update payload
   const updateData: { email?: string; password?: string } = {};
 
-  if (body.email && body.email !== user.email) {
+  if (requestedEmail && requestedEmail !== user.email) {
     // Check for duplicate email
     const existing = await prisma.user.findUnique({
-      where: { email: body.email },
+      where: { email: requestedEmail },
     });
     if (existing && existing.id !== userId) {
       return NextResponse.json(
@@ -66,7 +74,7 @@ export async function PUT(req: Request) {
         { status: 409 }
       );
     }
-    updateData.email = body.email;
+    updateData.email = requestedEmail;
   }
 
   if (body.newPassword) {

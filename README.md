@@ -9,7 +9,8 @@ All inbound correspondence from the site is routed to the CTO, **Mitchel Carson 
 | Source | What happens |
 | --- | --- |
 | Contact form (`/contact` → `POST /api/contact`) | Emailed to the CTO with `Reply-To` set to the sender. Rate-limited and honeypot-protected. |
-| Investor alert signup (`/investors#alerts`) | Subscriber gets a confirmation; the CTO gets a "new subscriber" notice. |
+| Investor alert signup (`/investors#alerts`) | Subscriber gets a confirmation; the CTO gets a "new subscriber" notice. Rate-limited and honeypot-protected; addresses an executive deactivated are not silently re-enabled. |
+| Investor broadcasts (executive dashboard) | Sent as one email per subscriber (addresses are never shared), reply-to the CTO. |
 | Executive meeting notification (`POST /api/executive/meeting-notify`) | Sent to every executive in the database, with the CTO always included. |
 | Every displayed email address and `mailto:` link | `CONTACT.email` from `src/lib/site.ts`. |
 
@@ -43,7 +44,7 @@ Database helpers:
 
 ```bash
 npm run db:migrate
-npm run db:seed
+npm run db:seed      # reads SEED_EXECUTIVES / SEED_PASSWORD; refuses to run in production
 npm run db:studio
 ```
 

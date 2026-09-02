@@ -81,7 +81,7 @@
 .link {
     display: inline-flex;
     align-items: center;
-    min-height: 40px;
+    min-height: 44px;
     color: var(--text-2);
     font-size: 0.9375rem;
     transition: color var(--dur-fast) var(--ease-out);
@@ -106,7 +106,7 @@
     align-items: center;
     gap: 0.5rem;
     margin-top: 0.5rem;
-    min-height: 40px;
+    min-height: 44px;
     color: var(--gold-300);
     font-family: var(--font-mono);
     font-size: 0.85rem;
@@ -134,7 +134,7 @@
     align-items: center;
     gap: 0.35rem;
     margin-top: 0.5rem;
-    min-height: 40px;
+    min-height: 44px;
     color: var(--text-1);
     font-size: 0.9rem;
     font-weight: 600;
@@ -178,7 +178,7 @@
 .legalLink {
     display: inline-flex;
     align-items: center;
-    min-height: 36px;
+    min-height: 44px;
     font-size: 0.82rem;
     color: var(--text-3);
 }

@@ -56,6 +56,61 @@ async function send(
     return true;
 }
 
+export interface BulkSendResult {
+    sent: number;
+    failed: number;
+}
+
+const BATCH_SIZE = 100;
+
+/**
+ * Deliver the same message to many recipients as SEPARATE emails, so no
+ * subscriber ever sees another subscriber's address. Uses Resend's batch API
+ * in chunks and falls back to individual sends if a batch is rejected.
+ */
+async function sendEach(
+    recipients: string[],
+    subject: string,
+    html: string,
+    options: SendOptions = {},
+): Promise<BulkSendResult> {
+    const unique = Array.from(new Set(recipients.map((r) => r.trim().toLowerCase()).filter(Boolean)));
+
+    if (!resend) {
+        console.log(`[Email] Bulk to ${unique.length} recipient(s) | Subject: ${subject}\n(Set RESEND_API_KEY to enable real delivery)`);
+        return { sent: unique.length, failed: 0 };
+    }
+
+    let sent = 0;
+    let failed = 0;
+
+    for (let i = 0; i < unique.length; i += BATCH_SIZE) {
+        const chunk = unique.slice(i, i + BATCH_SIZE);
+        const payload = chunk.map((to) => ({
+            from: `${FROM_NAME} <${FROM}>`,
+            to: [to],
+            subject,
+            html,
+            ...(options.replyTo ? { replyTo: options.replyTo } : {}),
+        }));
+
+        const { error } = await resend.batch.send(payload);
+        if (!error) {
+            sent += chunk.length;
+            continue;
+        }
+
+        console.error('[Email] Resend batch error, retrying individually:', error);
+        for (const to of chunk) {
+            const ok = await send(to, subject, html, options);
+            if (ok) sent += 1;
+            else failed += 1;
+        }
+    }
+
+    return { sent, failed };
+}
+
 // ── Shared template pieces ────────────────────────────────────────────────
 
 const BRAND_BG = '#070d1a';
@@ -112,11 +167,6 @@ function row(label: string, value: string): string {
 // ── Public API ────────────────────────────────────────────────────────────
 
 export const emailService = {
-    /** Plain text convenience wrapper. */
-    async sendEmail(to: string, subject: string, body: string): Promise<boolean> {
-        return send(to, subject, `<pre style="font-family:sans-serif;white-space:pre-wrap">${escapeHtml(body)}</pre>`);
-    },
-
     async sendWelcomeEmail(to: string, name: string): Promise<boolean> {
         const subject = `Welcome to ${SITE.shortName} — Investor Portal Access`;
         const html = shell(
@@ -173,24 +223,15 @@ export const emailService = {
         return send(CORRESPONDENCE_EMAIL, subject, html);
     },
 
-    async sendTreasuryUpdateAlert(to: string[], subject: string, summary: string): Promise<boolean> {
+    /** Investor broadcast: one email per subscriber (addresses are never shared). */
+    async sendTreasuryUpdateAlert(to: string[], subject: string, summary: string): Promise<BulkSendResult> {
         const html = shell(
             heading(`${SITE.shortName} — Investor Update`, escapeHtml(subject)) +
             panel(`<div style="color:${TEXT_MUTED};font-size:16px;line-height:1.7;white-space:pre-wrap">${escapeHtml(summary)}</div>`) +
             button(`${getSiteUrl()}/disclosures`, 'View Full Disclosures'),
             `You are receiving this because you subscribed to ${SITE.shortName} investor alerts.<br>Reply to this email to unsubscribe. This is not investment advice.`,
         );
-        return send(to, subject, html, { replyTo: CORRESPONDENCE_EMAIL });
-    },
-
-    async sendMeetingSummary(to: string, topic: string, summary: string): Promise<boolean> {
-        const subject = `Meeting Summary: ${topic}`;
-        const html = shell(
-            heading(SITE.name, 'Meeting Summary', escapeHtml(topic)) +
-            panel(`<div style="color:${TEXT_MUTED};font-size:16px;line-height:1.7;white-space:pre-wrap">${escapeHtml(summary)}</div>`),
-            `${SITE.name} &mdash; Confidential. For addressee only.`,
-        );
-        return send(to, subject, html, { replyTo: CORRESPONDENCE_EMAIL });
+        return sendEach(to, subject, html, { replyTo: CORRESPONDENCE_EMAIL });
     },
 
     /** Sends a prepared HTML notification; callers are responsible for escaping. */

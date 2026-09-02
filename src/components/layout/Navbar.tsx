@@ -110,7 +110,7 @@ export function SiteHeader() {
                                 type="button"
                                 aria-label="Open navigation menu"
                                 aria-expanded={mobileMenuOpen}
-                                aria-controls="mobile-nav"
+                                aria-controls={mobileMenuOpen ? 'mobile-nav' : undefined}
                                 onClick={openMenu}
                             >
                                 <Menu aria-hidden="true" />

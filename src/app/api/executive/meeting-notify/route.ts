@@ -42,13 +42,14 @@ export async function POST(req: Request) {
   }
 
   const bookedBy = escapeHtml(session.user.name || session.user.email || "An executive");
-  const meetingType = escapeHtml((body.meetingType || "Executive Zoom Meeting").slice(0, MEETING_TYPE_MAX));
+  const meetingTypeRaw = (body.meetingType || "Executive Zoom Meeting").slice(0, MEETING_TYPE_MAX);
+  const meetingType = escapeHtml(meetingTypeRaw);
   const customMessage = escapeHtml(
     (body.message || "A new executive meeting has been scheduled.").slice(0, MESSAGE_MAX),
   );
 
   const baseUrl = getSiteUrl();
-  const subject = `New Meeting Scheduled: ${meetingType}`;
+  const subject = `New Meeting Scheduled: ${meetingTypeRaw}`;
   const html = `
 <!DOCTYPE html>
 <html>

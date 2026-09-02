@@ -1,29 +1,48 @@
 'use server';
 
+import { headers } from 'next/headers';
 import { prisma } from '@/lib/prisma';
 import { emailService } from '@/lib/email';
+import { checkRateLimit } from '@/lib/rate-limit';
+import { CONTACT } from '@/lib/site';
+import { ALERT_SIGNUP_SOURCES, type AlertSignupState } from '@/components/investor/alert-state';
 
-export interface AlertSignupState {
-    status: 'idle' | 'success' | 'error';
-    message: string;
-}
-
-export const INITIAL_ALERT_SIGNUP_STATE: AlertSignupState = {
-    status: 'idle',
-    message: '',
-};
+// Five signups per hour per client mirrors the contact form.
+const RATE_LIMIT = 5;
+const RATE_WINDOW_MS = 60 * 60 * 1000;
 
 function isValidEmailAddress(email: string) {
     return email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+async function clientKey(): Promise<string> {
+    const h = await headers();
+    const forwarded = h.get('x-forwarded-for');
+    const ip = forwarded?.split(',')[0]?.trim() || h.get('x-real-ip') || 'unknown';
+    return `alerts:${ip}`;
+}
+
 export async function subscribeInvestorAlertsAction(
     _prevState: AlertSignupState,
     formData: FormData,
-    source?: string,
 ): Promise<AlertSignupState> {
+    // Honeypot: real users never see or fill this field. Pretend success for bots.
+    const honeypot = String(formData.get('website') ?? '').trim();
+    if (honeypot) {
+        return { status: 'success', message: 'Confirmed. Check your inbox for a confirmation email.' };
+    }
+
+    const rateLimit = checkRateLimit(await clientKey(), RATE_LIMIT, RATE_WINDOW_MS);
+    if (!rateLimit.allowed) {
+        return {
+            status: 'error',
+            message: 'Too many signup attempts from this connection. Please try again later.',
+        };
+    }
+
     const email = String(formData.get('email') ?? '').trim().toLowerCase();
-    const signupSource = source ?? String(formData.get('source') ?? '').trim() ?? 'investors-page';
+    const requestedSource = String(formData.get('source') ?? '').trim();
+    const source = (ALERT_SIGNUP_SOURCES as readonly string[]).includes(requestedSource) ? requestedSource : 'website';
 
     if (!isValidEmailAddress(email)) {
         return {
@@ -32,12 +51,22 @@ export async function subscribeInvestorAlertsAction(
         };
     }
 
+    let isNew = false;
     try {
-        await prisma.investorAlert.upsert({
-            where: { email },
-            update: { isActive: true },
-            create: { email, source: signupSource || 'investors-page', isActive: true },
-        });
+        const existing = await prisma.investorAlert.findUnique({ where: { email } });
+
+        if (existing && !existing.isActive) {
+            // Deactivated by an executive: do not silently re-enable.
+            return {
+                status: 'error',
+                message: `This address was previously unsubscribed. Email ${CONTACT.email} to re-enable alerts.`,
+            };
+        }
+
+        if (!existing) {
+            await prisma.investorAlert.create({ data: { email, source, isActive: true } });
+            isNew = true;
+        }
     } catch {
         return {
             status: 'error',
@@ -45,11 +74,11 @@ export async function subscribeInvestorAlertsAction(
         };
     }
 
-    // Confirmation to the subscriber and a routing notice to the CTO.
+    // Confirmation to the subscriber and a routing notice to the CTO for new signups.
     // Neither should block a successful signup.
     await Promise.allSettled([
         emailService.sendAlertConfirmation(email),
-        emailService.sendSubscriberNotification(email, signupSource || 'investors-page'),
+        ...(isNew ? [emailService.sendSubscriberNotification(email, source)] : []),
     ]);
 
     return {

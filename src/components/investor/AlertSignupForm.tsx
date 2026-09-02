@@ -6,10 +6,8 @@ import { CheckCircle2 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { CONTACT } from '@/lib/site';
-import {
-    INITIAL_ALERT_SIGNUP_STATE,
-    subscribeInvestorAlertsAction,
-} from '@/app/investors/actions';
+import { subscribeInvestorAlertsAction } from '@/app/investors/actions';
+import { INITIAL_ALERT_SIGNUP_STATE } from './alert-state';
 import styles from './AlertSignupForm.module.css';
 
 interface AlertSignupFormProps {
@@ -39,6 +37,11 @@ export function AlertSignupForm({ source = 'investors-page' }: AlertSignupFormPr
     return (
         <form className={styles.form} action={formAction}>
             <input type="hidden" name="source" value={source} />
+            {/* Honeypot: hidden from people, filled by bots. */}
+            <div className={styles.honeypot} aria-hidden="true">
+                <label htmlFor="investor-alert-website">Website</label>
+                <input id="investor-alert-website" type="text" name="website" tabIndex={-1} autoComplete="off" />
+            </div>
 
             <div className={styles.row}>
                 <Input
