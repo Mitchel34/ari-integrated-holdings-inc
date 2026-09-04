@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { SITE } from '@/lib/site';
-import { getTreasuryFreshness, getTreasurySnapshot } from '@/lib/treasury/snapshot';
-import { getDisclosures } from '@/lib/investor/disclosures';
+import { SITE, TREASURY_FRAMEWORK } from '@/lib/site';
+import { getCompanyUpdates } from '@/lib/investor/updates';
 import { Section } from '@/components/layout/Section';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { Button } from '@/components/ui/Button';
@@ -10,7 +9,7 @@ import { HomeHero } from '@/components/home/HomeHero';
 import { HoldingsGrid } from '@/components/home/HoldingsGrid';
 import { PillarsGrid } from '@/components/home/PillarsGrid';
 import { EnginesSplit } from '@/components/home/EnginesSplit';
-import { TransparencyPanel } from '@/components/home/TransparencyPanel';
+import { LatestUpdates } from '@/components/home/LatestUpdates';
 import { ClosingCta } from '@/components/home/ClosingCta';
 import styles from './page.module.css';
 
@@ -20,24 +19,19 @@ export const metadata: Metadata = {
     alternates: { canonical: '/' },
 };
 
-/** Re-render daily so the snapshot age shown in the hero stays honest. */
-export const revalidate = 86400;
-
 export default function HomePage() {
-    const snapshot = getTreasurySnapshot();
-    const freshness = getTreasuryFreshness(snapshot);
-    const latestDisclosures = getDisclosures().slice(0, 3);
+    const latestUpdates = getCompanyUpdates().slice(0, 3);
 
     return (
         <>
-            <HomeHero snapshot={snapshot} freshness={freshness} />
+            <HomeHero />
 
-            <Section id="holdings" aria-labelledby="holdings-title">
+            <Section id="framework" aria-labelledby="framework-title">
                 <SectionHeader
-                    id="holdings-title"
-                    eyebrow="What we hold"
-                    title="Three assets, one framework"
-                    lead="Each position is sized for its role in the portfolio and held through a regulated spot ETF."
+                    id="framework-title"
+                    eyebrow="Treasury framework"
+                    title={TREASURY_FRAMEWORK.title}
+                    lead={TREASURY_FRAMEWORK.summary}
                 />
                 <HoldingsGrid />
             </Section>
@@ -55,26 +49,26 @@ export default function HomePage() {
             <Section id="engines" aria-labelledby="engines-title">
                 <SectionHeader
                     id="engines-title"
-                    eyebrow="Two engines"
-                    title="Treasury and operations"
-                    lead="A long-horizon reserve, supported by a small operating subsidiary that helps cover costs."
+                    eyebrow="Treasury and technology"
+                    title="A reserve, and the platform behind it"
+                    lead="A long-horizon treasury, supported by an internal research and risk-analysis platform that informs human decisions."
                 />
                 <EnginesSplit />
             </Section>
 
-            <Section id="transparency" tone="alt" aria-labelledby="transparency-title">
+            <Section id="updates" tone="alt" aria-labelledby="updates-title">
                 <SectionHeader
-                    id="transparency-title"
-                    eyebrow="Transparency"
-                    title="Latest disclosures"
-                    lead="Treasury updates, financial results, and governance notices as they are published."
+                    id="updates-title"
+                    eyebrow="Company updates"
+                    title="Latest updates"
+                    lead="Company, governance, and investor-relations announcements as they are published."
                     aside={
                         <Button asChild variant="outline">
-                            <Link href="/disclosures">All disclosures</Link>
+                            <Link href="/updates">All updates</Link>
                         </Button>
                     }
                 />
-                <TransparencyPanel items={latestDisclosures} />
+                <LatestUpdates items={latestUpdates} />
             </Section>
 
             <Section id="contact-cta" compact>

@@ -43,51 +43,52 @@
     width: 100%;
 }
 
-.metrics {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1rem 2.25rem;
+.principles {
+    list-style: none;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem 1.5rem;
+    width: 100%;
     margin: 0.75rem 0 0;
-    padding: 0;
+    padding: 1rem 0 0;
+    border-top: 1px solid var(--line-1);
+    text-align: left;
 }
 
-.metric {
+.principle {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.6rem;
+    align-items: start;
+    min-width: 0;
+}
+
+.principleIndex {
+    font-size: var(--fs-caption);
+    font-weight: 500;
+    line-height: 1.45;
+    letter-spacing: 0.08em;
+    color: var(--gold-500);
+}
+
+.principleBody {
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
     min-width: 0;
 }
 
-.metricLabel {
-    font-size: var(--fs-caption);
+.principleTitle {
+    font-size: var(--fs-small);
     font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-3);
-}
-
-.metricValue {
-    margin: 0;
-    font-size: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
-    line-height: 1.2;
+    line-height: 1.35;
     color: var(--text-1);
 }
 
-.meta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem 1rem;
-    font-size: 0.8rem;
+.principleText {
+    font-size: var(--fs-caption);
+    line-height: 1.5;
     color: var(--text-3);
-}
-
-.freshness {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
 }
 
 .panel {
@@ -166,35 +167,18 @@
         flex: 1 1 100%;
     }
 
-    .metrics {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 0.75rem 0.5rem;
-        width: 100%;
-        text-align: left;
-    }
-
-    /* Bottom-align so the three values share a baseline even when a label wraps. */
-    .metric {
-        justify-content: flex-end;
-    }
-
-    .metricLabel {
-        font-size: 0.625rem;
-        letter-spacing: 0.08em;
-    }
-
-    .metricValue {
-        font-size: 0.9375rem;
-        overflow-wrap: anywhere;
-    }
-
     .legendRow {
         grid-template-columns: minmax(0, 1fr) auto;
     }
 
     .legendChips {
         grid-column: 1 / -1;
+    }
+}
+
+@media (min-width: 640px) {
+    .principles {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 
@@ -213,9 +197,7 @@
         align-items: flex-start;
     }
 
-    .actions,
-    .metrics,
-    .meta {
+    .actions {
         justify-content: flex-start;
     }
 

@@ -1,27 +1,13 @@
 import Link from 'next/link';
-import { ALLOCATION } from '@/lib/site';
-import type { TreasuryFreshness, TreasurySnapshot } from '@/lib/treasury/snapshot';
+import { ALLOCATION, PRINCIPLES } from '@/lib/site';
 import { Container } from '@/components/ui/Container';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { AllocationRing } from '@/components/brand/AllocationRing';
 import { AssetChip } from '@/components/brand/AssetChip';
-import { formatDateProse, formatShares, formatUsd } from '@/lib/format';
 import styles from './HomeHero.module.css';
 
-interface HomeHeroProps {
-    snapshot: TreasurySnapshot;
-    freshness: TreasuryFreshness;
-}
-
-export function HomeHero({ snapshot, freshness }: HomeHeroProps) {
-    const isStale = freshness.status === 'stale';
-    const metrics = [
-        { label: 'Total assets', value: formatUsd(snapshot.totals.totalAssets) },
-        { label: 'Shares outstanding', value: formatShares(snapshot.sharesOutstanding) },
-        { label: 'NAV per share', value: formatUsd(snapshot.totals.navPerShareUsd, 4) },
-    ];
-
+export function HomeHero() {
     return (
         <section className={styles.hero} aria-labelledby="home-title">
             <Container>
@@ -34,7 +20,7 @@ export function HomeHero({ snapshot, freshness }: HomeHeroProps) {
                         <p className={styles.lead}>
                             Ari Integrated Holdings is an early-stage, long-horizon treasury company. We hold
                             Bitcoin, Ethereum, and Solana exposure through a 50 / 30 / 20 allocation framework,
-                            with AI-assisted oversight and transparent disclosures to investors.
+                            with AI-assisted oversight and human governance.
                         </p>
                         <div className={styles.actions}>
                             <Button asChild size="lg">
@@ -45,23 +31,19 @@ export function HomeHero({ snapshot, freshness }: HomeHeroProps) {
                             </Button>
                         </div>
 
-                        <dl className={styles.metrics} aria-label="Treasury snapshot">
-                            {metrics.map((metric) => (
-                                <div key={metric.label} className={styles.metric}>
-                                    <dt className={styles.metricLabel}>{metric.label}</dt>
-                                    <dd className={`${styles.metricValue} mono`}>{metric.value}</dd>
-                                </div>
+                        <ol className={styles.principles} aria-label="Treasury principles">
+                            {PRINCIPLES.map((principle, index) => (
+                                <li key={principle.id} className={styles.principle}>
+                                    <span className={`${styles.principleIndex} mono`} aria-hidden="true">
+                                        {String(index + 1).padStart(2, '0')}
+                                    </span>
+                                    <span className={styles.principleBody}>
+                                        <span className={styles.principleTitle}>{principle.title}</span>
+                                        <span className={styles.principleText}>{principle.text}</span>
+                                    </span>
+                                </li>
                             ))}
-                        </dl>
-                        <p className={styles.meta}>
-                            <span className="mono">
-                                as of {formatDateProse(snapshot.asOfIso)} · {snapshot.sourceLabel}
-                            </span>
-                            <span className={styles.freshness}>
-                                <AssetChip tone={isStale ? 'warn' : 'pos'}>{isStale ? 'Stale' : 'Current'}</AssetChip>
-                                <span className="mono">{freshness.ageDays} days old</span>
-                            </span>
-                        </p>
+                        </ol>
                     </div>
 
                     <Card variant="elevated" className={styles.panel}>

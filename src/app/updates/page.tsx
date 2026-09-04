@@ -7,44 +7,43 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { AssetChip } from '../../components/brand/AssetChip';
 import { formatDateIso, formatDateProse } from '@/lib/format';
-import { CONTACT } from '@/lib/site';
-import { getDisclosures, type DisclosureCategory } from '@/lib/investor/disclosures';
-import styles from './disclosures.module.css';
+import { getCompanyUpdates, type UpdateCategory } from '@/lib/investor/updates';
+import styles from './updates.module.css';
 
 export const metadata: Metadata = {
-    title: 'Disclosures',
+    title: 'Company Updates',
     description:
-        'Material updates, treasury actions, and financial communications from Ari Integrated Holdings Inc., published in the order they were released, with a machine-readable JSON feed.',
-    alternates: { canonical: '/disclosures' },
+        'Current announcements from Ari Integrated Holdings Inc., published in the order they were released, with a machine-readable JSON feed.',
+    alternates: { canonical: '/updates' },
 };
 
-function categoryTone(category: DisclosureCategory): 'gold' | 'neutral' {
-    return category === 'Treasury Update' ? 'gold' : 'neutral';
+function categoryTone(category: UpdateCategory): 'gold' | 'neutral' {
+    return category === 'Governance' ? 'gold' : 'neutral';
 }
 
-export default function DisclosuresPage() {
-    const disclosures = getDisclosures();
-    const latest = disclosures[0];
+export default function UpdatesPage() {
+    const updates = getCompanyUpdates();
+    const latest = updates[0];
 
     return (
         <>
             <PageHero
-                eyebrow="Investors"
-                title="Disclosures"
-                lead="Material updates, treasury actions, and financial communications, listed as they were published. Each entry is the public summary of the underlying report; the treasury figures it cites are reproduced exactly on the Investor Relations page."
+                eyebrow="Company"
+                title="Company Updates"
+                lead="Current announcements from Ari Integrated Holdings. Detailed treasury information is available to verified investors through the secure portal."
                 meta={
                     <>
-                        <span>{disclosures.length} entries</span>
+                        <span>{updates.length} {updates.length === 1 ? 'entry' : 'entries'}</span>
                         {latest ? <span>Latest {formatDateIso(latest.publishedAtIso)}</span> : null}
-                        <span>Feed /api/disclosures</span>
+                        <span>Feed /api/updates</span>
                     </>
                 }
             />
 
-            <Section compact aria-label="Disclosure timeline and subscription">
+            <Section compact aria-label="Company updates timeline and subscription">
                 <div className={styles.layout}>
-                    <ol className={styles.timeline} aria-label="Disclosures, newest first">
-                        {disclosures.map((item) => (
+                    <ol className={styles.timeline} aria-label="Company updates, newest first">
+                        {updates.map((item) => (
                             <li key={item.id} className={styles.entry}>
                                 <span className={styles.marker} aria-hidden="true" />
                                 <article id={item.id} className={`glass-1 ${styles.card}`} aria-labelledby={`${item.id}-title`}>
@@ -68,19 +67,19 @@ export default function DisclosuresPage() {
                                 <span className={styles.iconBox} aria-hidden="true">
                                     <Rss focusable="false" />
                                 </span>
-                                <h2 id="follow-heading" className={styles.asideTitle}>Follow disclosures</h2>
+                                <h2 id="follow-heading" className={styles.asideTitle}>Follow updates</h2>
                             </div>
                             <p className={styles.asideText}>
-                                New entries are announced to alert subscribers by email. The same list is available as JSON
-                                for portfolio systems and archival.
+                                New updates are announced to alert subscribers by email. The same list is available as
+                                JSON for portfolio systems and archival.
                             </p>
                             <div className={styles.asideActions}>
                                 <Button asChild variant="secondary" block>
                                     <Link href="/investors#alerts">Subscribe to alerts</Link>
                                 </Button>
                             </div>
-                            <a href="/api/disclosures" className={`mono ${styles.feedLink}`}>
-                                GET /api/disclosures
+                            <a href="/api/updates" className={`mono ${styles.feedLink}`}>
+                                GET /api/updates
                                 <ArrowUpRight aria-hidden="true" focusable="false" />
                             </a>
                         </Card>
@@ -88,9 +87,8 @@ export default function DisclosuresPage() {
                 </div>
 
                 <p className={styles.closing}>
-                    Questions about any disclosure are routed to {CONTACT.name}, {CONTACT.title}, at{' '}
-                    <a href={CONTACT.mailto} className={`mono ${styles.email}`}>{CONTACT.email}</a>. Responses are sent{' '}
-                    {CONTACT.responseWindow}.
+                    Questions about an update?{' '}
+                    <Link href="/contact" className={styles.closingLink}>Contact us</Link>.
                 </p>
             </Section>
         </>

@@ -60,7 +60,7 @@ export function LoginForm() {
             ) : null}
 
             <Input
-                label="Email"
+                label="Email address"
                 type="email"
                 name="email"
                 placeholder="you@example.com"

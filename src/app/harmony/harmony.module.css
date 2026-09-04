@@ -13,88 +13,25 @@
     flex-shrink: 0;
 }
 
-/* ── Process ──────────────────────────────────────────────────────────── */
+/* ── Functions ────────────────────────────────────────────────────────── */
 
-.process {
-    position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-/* Connector: a short silver segment drawn only in the gap between cards —
-   vertical through the icon column on small screens, horizontal on wide screens. */
-.processItem {
-    position: relative;
-    display: flex;
-}
-
-.processItem:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    left: calc(1.5rem + 20px);
-    top: 100%;
-    width: 1px;
-    height: 1rem;
-    background: rgba(232, 235, 240, 0.35);
-    pointer-events: none;
-}
-
-.step {
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
-    width: 100%;
-}
-
-.stepHead {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-}
-
-.stepIdx {
-    font-size: 0.8125rem;
-    letter-spacing: 0.12em;
-    color: var(--gold-500);
-}
-
-.stepTitle {
-    font-size: var(--fs-h4);
-    font-family: var(--font-display);
-    font-weight: 600;
-    letter-spacing: -0.01em;
-}
-
-.stepText {
-    font-size: var(--fs-small);
-    line-height: 1.6;
-    color: var(--text-2);
-}
-
-/* ── Capabilities ─────────────────────────────────────────────────────── */
-
-.capabilities {
+.functions {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 1rem;
 }
 
-.capability {
+.function {
     display: flex;
     flex-direction: column;
     gap: 0.9rem;
 }
 
-.capabilityTitle {
+.functionTitle {
     font-size: var(--fs-h3);
 }
 
-.capabilityText {
+.functionText {
     color: var(--text-2);
     line-height: 1.6;
 }
@@ -167,13 +104,6 @@
     font-weight: 600;
 }
 
-.closingNote {
-    margin-top: 0.4rem;
-    font-size: var(--fs-small);
-    color: var(--text-3);
-    max-width: 72ch;
-}
-
 .mail {
     display: inline-block;
     max-width: 100%;
@@ -205,15 +135,7 @@
 }
 
 @media (min-width: 768px) {
-    .process {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .processItem:not(:last-child)::after {
-        display: none;
-    }
-
-    .capabilities {
+    .functions {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
@@ -222,20 +144,5 @@
         align-items: center;
         justify-content: space-between;
         gap: 2rem;
-    }
-}
-
-@media (min-width: 1024px) {
-    .process {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 1.25rem;
-    }
-
-    .processItem:not(:last-child)::after {
-        display: block;
-        left: 100%;
-        top: calc(2rem + 20px);
-        width: 1.25rem;
-        height: 1px;
     }
 }

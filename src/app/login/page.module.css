@@ -48,7 +48,7 @@
 }
 
 .subtitle {
-    max-width: 30ch;
+    max-width: 34ch;
     color: var(--text-2);
     font-size: var(--fs-small);
     line-height: 1.55;

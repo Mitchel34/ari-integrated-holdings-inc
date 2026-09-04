@@ -53,19 +53,19 @@ export default function PrivacyPage() {
                 <p>
                     This Privacy Policy applies to the website at {SITE.domain} and any subdomains (the “Site”), operated by{' '}
                     {SITE.legalName} (“Ari”, “we”, “us”). It covers the public informational pages, the contact form, the
-                    investor-alert email list, and the password-protected investor and executive portal.
+                    investor-alert email list, and the password-protected investor portal.
                 </p>
                 <p>
                     It does not cover third-party websites we link to, including the pages of the ETF issuers whose products
-                    are described on the Site, or the scheduling pages hosted by Calendly. Those services have their own
-                    privacy policies.
+                    are described on the Site, or any meeting-scheduling pages hosted by Calendly. Those services have their
+                    own privacy policies.
                 </p>
 
                 <h2 id="information-we-collect">Information we collect</h2>
                 <p>We collect four kinds of information, and only when you give it to us or your browser sends it.</p>
                 <h3>Contact form</h3>
                 <p>
-                    When you submit the contact form we receive the fields you complete: your full name, your work email
+                    When you submit the contact form we receive the fields you complete: your full name, your email
                     address, the company you represent (optional), the investor type you select, and the message you
                     write. The submission is not stored in the Site’s database. It is delivered by email to {CONTACT.name},{' '}
                     {CONTACT.title}, and retained in that mailbox as correspondence, together with any other detail you
@@ -77,14 +77,14 @@ export default function PrivacyPage() {
                     page or form on the Site where you signed up (the “signup source”), and whether the address is active.
                     We use the signup source to understand which parts of the Site are useful and to confirm that a
                     request was made on our own forms. Each alert we send is recorded in a broadcast log: the subject, the
-                    message, the executive who sent it, when it was sent, and how many addresses it went to. The log does
-                    not list individual recipients.
+                    message, the Ari staff member who sent it, when it was sent, and how many addresses it went to. The log
+                    does not list individual recipients.
                 </p>
                 <h3>Portal accounts</h3>
                 <p>
-                    Investor and executive portal accounts are created by Ari, not by self-registration. For each account we
-                    store a name, an email address used as the login, an assigned role (investor or executive), and a
-                    password. Passwords are stored only as salted cryptographic hashes; we cannot read them and do not
+                    Portal accounts are created by Ari, not by self-registration. For each account we store a name, an
+                    email address used as the login, an assigned role that determines which pages the account can see, and
+                    a password. Passwords are stored only as salted cryptographic hashes; we cannot read them and do not
                     transmit them in plain text. We do not record the date or time of individual logins.
                 </p>
                 <h3>Technical logs</h3>
@@ -97,8 +97,8 @@ export default function PrivacyPage() {
 
                 <h2 id="how-we-use-it">How we use it</h2>
                 <ul>
-                    <li>To read and answer contact-form messages. Every inquiry is routed to {CONTACT.name}, {CONTACT.title}.</li>
-                    <li>To send the investor alerts you asked for: treasury updates, disclosures, and meeting announcements.</li>
+                    <li>To read and answer contact-form messages, which are delivered to {CONTACT.name}, {CONTACT.title}.</li>
+                    <li>To send the investor alerts you asked for: company updates, investor documents, and meeting announcements.</li>
                     <li>To authenticate portal users, keep their sessions open, and limit each user to the pages their role allows.</li>
                     <li>To detect, investigate, and prevent abuse, unauthorized access, and technical faults.</li>
                     <li>To meet record-keeping duties that apply to a company communicating with its shareholders.</li>
@@ -151,15 +151,15 @@ export default function PrivacyPage() {
                     </dd>
                     <dt>Calendly</dt>
                     <dd>
-                        Provides the meeting-scheduling embed. When you book a meeting you enter your details into
-                        Calendly’s form, which is governed by Calendly’s privacy policy; Calendly then shares the booking
-                        details with us so we can hold the meeting.
+                        Provides the meeting-scheduling embed when online booking is offered on the Site. When you book a
+                        meeting you enter your details into Calendly’s form, which is governed by Calendly’s privacy policy;
+                        Calendly then shares the booking details with us so we can hold the meeting.
                     </dd>
                 </dl>
 
                 <h2 id="cookies">Cookies</h2>
                 <p>
-                    The Site sets cookies for one purpose only: keeping you signed in to the investor or executive portal.
+                    The Site sets cookies for one purpose only: keeping you signed in to the investor portal.
                     Our authentication library (NextAuth) sets a session cookie and a small number of supporting cookies
                     (for example, a cross-site-request-forgery token) when you log in. These cookies are strictly necessary
                     for the portal to function. They are marked HTTP-only and, in production where the Site is served over
@@ -183,7 +183,7 @@ export default function PrivacyPage() {
                     </li>
                     <li>
                         <strong>Investor-alert addresses</strong> are kept until you unsubscribe or ask for deletion. When
-                        an address is unsubscribed or deactivated by an executive it is marked inactive rather than erased,
+                        an address is unsubscribed or deactivated by Ari it is marked inactive rather than erased,
                         so that a later signup from the same address does not re-enable it by mistake; you can ask us to
                         erase the record entirely.
                     </li>
@@ -236,9 +236,8 @@ export default function PrivacyPage() {
                     The Site is served over HTTPS only. Portal passwords are hashed with a modern, salted algorithm and are
                     never stored in readable form. Session cookies are HTTP-only and, in production, secure. The contact
                     form and the alert signup are rate-limited and include a hidden trap field that rejects automated
-                    submissions. Database access is limited to
-                    the application and to the executives who administer it, and connections to the database are encrypted
-                    in transit. Portal accounts are created and revoked by Ari, so no one can register for access on their
+                    submissions. Database access is limited to the application and to the Ari personnel who administer
+                    it, and connections to the database are encrypted in transit. Portal accounts are created and revoked by Ari, so no one can register for access on their
                     own.
                 </p>
                 <p>
@@ -273,8 +272,8 @@ export default function PrivacyPage() {
                 <h2 id="contact">Contact</h2>
                 <p>
                     Questions, requests, and notices about privacy go to {CONTACT.name}, {CONTACT.title}, at{' '}
-                    <a href={CONTACT.mailto}>{CONTACT.email}</a>. All correspondence with {SITE.shortName} is routed to the
-                    CTO. You can also use the <Link href="/contact">contact form</Link>.
+                    <a href={CONTACT.mailto}>{CONTACT.email}</a>. You can also use the{' '}
+                    <Link href="/contact">contact form</Link>.
                 </p>
                 <p>
                     See also our <Link href="/terms">Terms of Service</Link> and <Link href="/disclaimer">Disclaimer</Link>.

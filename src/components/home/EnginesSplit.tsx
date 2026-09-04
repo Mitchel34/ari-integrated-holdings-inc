@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { HARMONY } from '@/lib/site';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Reveal } from '@/components/ui/Reveal';
@@ -14,9 +15,9 @@ const ENGINES = [
         cta: 'Read the thesis',
     },
     {
-        eyebrow: 'Operating subsidiary',
-        title: 'Harmony Trading',
-        text: 'Harmony Trading App handles limited trading activity under strict risk limits. Its role is to generate modest, steady revenue that covers operating expenses and reduces the need to liquidate core treasury assets.',
+        eyebrow: 'Technology',
+        title: HARMONY.name,
+        text: HARMONY.positioning,
         href: '/harmony',
         cta: 'About Harmony',
     },

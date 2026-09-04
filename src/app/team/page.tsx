@@ -1,18 +1,19 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { CalendarDays, Landmark, Mail, Scale, Timer } from 'lucide-react';
+import { ArrowRight, Landmark, Mail, Scale, Timer } from 'lucide-react';
 import { PageHero } from '../../components/layout/PageHero';
 import { Section } from '../../components/layout/Section';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { SectionHeader } from '../../components/ui/SectionHeader';
-import { CONTACT, SITE } from '../../lib/site';
+import { PRIMARY_CTA } from '../../lib/scheduling';
+import { CONTACT, SITE, getSiteUrl } from '../../lib/site';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
     title: 'Leadership',
     description:
-        'The leadership team of Ari Integrated Holdings Inc.: risk-management veterans Curtis and Judith Carson and CTO Mitchel Carson, who leads AI development and the Harmony Trading App.',
+        'The leadership team of Ari Integrated Holdings Inc.: Curtis Carson (Chief Executive Officer & Chairman), Judith Carson (Chief Marketing Officer & Board Member), and Mitchel Carson (Chief Technology Officer & Director).',
     alternates: { canonical: '/team' },
 };
 
@@ -21,7 +22,7 @@ interface TeamMember {
     initials: string;
     role: string;
     bio: string;
-    /** Show the correspondence chip; all inquiries are routed to this person. */
+    /** Show the correspondence chip for this person. */
     correspondence?: boolean;
 }
 
@@ -41,10 +42,21 @@ const TEAM: TeamMember[] = [
     {
         name: 'Mitchel Carson',
         initials: 'MC',
-        role: 'Chief Technology Officer',
-        bio: 'Leads AI development and the Harmony Trading App. Expert in algorithmic trading systems, data analytics, and software architecture.',
+        role: 'Chief Technology Officer & Director',
+        bio: 'Leads Ari’s technology: the Harmony research and risk-analysis platform, the data and analytics behind treasury monitoring, and the company’s investor systems, including this website and the investor portal. Serves as a director of Ari Integrated Holdings.',
         correspondence: true,
     },
+];
+
+interface BoardMember {
+    name: string;
+    role: 'Chairman' | 'Board Member' | 'Director';
+}
+
+const BOARD: BoardMember[] = [
+    { name: 'Curtis Carson', role: 'Chairman' },
+    { name: 'Judith Carson', role: 'Board Member' },
+    { name: 'Mitchel Carson', role: 'Director' },
 ];
 
 /** Split so the chip can wrap at the "@" instead of mid-word on narrow cards. */
@@ -57,14 +69,12 @@ const GOVERNANCE = [
         title: 'Board of directors',
         body: (
             <ul className={styles.boardList}>
-                <li>
-                    <span className={styles.boardName}>Curtis Carson</span>
-                    <span className={styles.boardRole}>Chairman</span>
-                </li>
-                <li>
-                    <span className={styles.boardName}>Judith Carson</span>
-                    <span className={styles.boardRole}>Board Member</span>
-                </li>
+                {BOARD.map((member) => (
+                    <li key={member.name}>
+                        <span className={styles.boardName}>{member.name}</span>
+                        <span className={styles.boardRole}>{member.role}</span>
+                    </li>
+                ))}
             </ul>
         ),
     },
@@ -92,20 +102,43 @@ const GOVERNANCE = [
     },
 ];
 
+/** Schema.org Organization with executives (employee) and board (member). */
+const ORGANIZATION_JSON_LD = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: SITE.legalName,
+    url: getSiteUrl(),
+    employee: TEAM.map((member) => ({
+        '@type': 'Person',
+        name: member.name,
+        jobTitle: member.role,
+    })),
+    member: BOARD.map((member) => ({
+        '@type': 'Person',
+        name: member.name,
+        jobTitle: member.role,
+    })),
+};
+
 export default function TeamPage() {
     return (
         <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_JSON_LD) }}
+            />
+
             <PageHero
                 eyebrow="Team"
                 title="Leadership"
-                lead="Risk-management veterans and an AI engineer running a disciplined digital-asset treasury."
+                lead="Risk-management veterans and a technology lead running a disciplined digital-asset treasury."
             />
 
             <Section flush aria-labelledby="executives-title">
                 <SectionHeader
                     id="executives-title"
                     eyebrow="Executive team"
-                    title="Three people, one balance sheet"
+                    title="Focused leadership, direct accountability."
                     lead={`${SITE.shortName} is led by its co-founders and its CTO. Decisions are made close to the numbers.`}
                     compact
                 />
@@ -132,8 +165,7 @@ export default function TeamPage() {
                                             </span>
                                         </a>
                                         <p className={styles.correspondenceNote}>
-                                            All inquiries to {SITE.shortName} are routed to {CONTACT.name}. Expect a reply{' '}
-                                            {CONTACT.responseWindow}.
+                                            Expect a reply {CONTACT.responseWindow}.
                                         </p>
                                     </div>
                                 ) : null}
@@ -171,15 +203,15 @@ export default function TeamPage() {
                             Talk with an executive
                         </h2>
                         <p className={styles.ctaLead}>
-                            Book a video meeting, or write to the CTO. Investor, partnership, press, and technical
-                            questions all land in the same inbox.
+                            Investor, partnership, press, and technical questions are welcome. Reach us through the
+                            contact page or write to the CTO directly.
                         </p>
                     </div>
                     <div className={styles.ctaActions}>
                         <Button asChild>
-                            <Link href="/contact#schedule">
-                                <CalendarDays aria-hidden="true" />
-                                Book an executive meeting
+                            <Link href={PRIMARY_CTA.href}>
+                                {PRIMARY_CTA.label}
+                                <ArrowRight aria-hidden="true" />
                             </Link>
                         </Button>
                         <Button asChild variant="secondary">

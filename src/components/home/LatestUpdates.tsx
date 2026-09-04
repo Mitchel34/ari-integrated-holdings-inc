@@ -1,22 +1,22 @@
 import Link from 'next/link';
-import type { DisclosureItem } from '@/lib/investor/disclosures';
+import type { CompanyUpdate, UpdateCategory } from '@/lib/investor/updates';
 import { AssetChip, type ChipTone } from '@/components/brand/AssetChip';
 import { Card } from '@/components/ui/Card';
 import { formatDateIso } from '@/lib/format';
 import styles from './HomeSections.module.css';
 
-interface TransparencyPanelProps {
-    items: DisclosureItem[];
+interface LatestUpdatesProps {
+    items: CompanyUpdate[];
 }
 
-function toneForCategory(category: DisclosureItem['category']): ChipTone {
-    return category === 'Treasury Update' ? 'gold' : 'neutral';
+function toneForCategory(category: UpdateCategory): ChipTone {
+    return category === 'Governance' ? 'gold' : 'neutral';
 }
 
-export function TransparencyPanel({ items }: TransparencyPanelProps) {
+export function LatestUpdates({ items }: LatestUpdatesProps) {
     return (
         <Card variant="subtle" className={styles.transparencyCard}>
-            <ul className={styles.discList} aria-label="Latest disclosures">
+            <ul className={styles.discList} aria-label="Latest company updates">
                 {items.map((item) => (
                     <li key={item.id} className={styles.discRow}>
                         <AssetChip tone={toneForCategory(item.category)}>{item.category}</AssetChip>
@@ -24,7 +24,7 @@ export function TransparencyPanel({ items }: TransparencyPanelProps) {
                             {formatDateIso(item.publishedAtIso)}
                         </time>
                         <span className={styles.discTitle}>
-                            <Link href={`/disclosures#${item.id}`}>{item.title}</Link>
+                            <Link href={`/updates#${item.id}`}>{item.title}</Link>
                         </span>
                     </li>
                 ))}

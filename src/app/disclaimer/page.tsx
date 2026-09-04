@@ -2,14 +2,12 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { DocumentPage, type DocumentSection } from '../../components/layout/DocumentPage';
 import legal from '../(legal)/legal.module.css';
-import { ALLOCATION, CONTACT, SITE } from '../../lib/site';
-import { getTreasuryFreshness, getTreasurySnapshot } from '../../lib/treasury/snapshot';
-import { formatDateProse } from '../../lib/format';
+import { ALLOCATION, CONTACT, HARMONY, SITE } from '../../lib/site';
 
 export const metadata: Metadata = {
     title: 'Disclaimer',
     description:
-        'Important limitations on the information published by Ari Integrated Holdings Inc.: no investment advice, no offer of securities, digital-asset and ETF risks, and the illustrative nature of performance figures.',
+        'Important limitations on the information published by Ari Integrated Holdings Inc.: no investment advice, no offer of securities, digital-asset and ETF risks, and no performance information on the public website.',
     alternates: { canonical: '/disclaimer' },
 };
 
@@ -21,33 +19,29 @@ const SECTIONS: DocumentSection[] = [
     { id: 'forward-looking', title: 'Forward-looking statements' },
     { id: 'digital-asset-risks', title: 'Digital-asset risks' },
     { id: 'etf-risks', title: 'ETF wrapper risks' },
-    { id: 'illustrative-performance', title: 'Illustrative performance figures' },
-    { id: 'harmony-risks', title: 'Harmony Trading risks' },
+    { id: 'performance-information', title: 'Performance information' },
+    { id: 'harmony', title: 'Harmony platform' },
     { id: 'accuracy', title: 'Accuracy and timeliness of information' },
     { id: 'consult-your-advisers', title: 'Consult your advisers' },
     { id: 'contact', title: 'Contact' },
 ];
 
 export default function DisclaimerPage() {
-    const snapshot = getTreasurySnapshot();
-    const freshness = getTreasuryFreshness(snapshot);
-    const asOf = formatDateProse(snapshot.asOfIso);
-
     return (
         <DocumentPage
             eyebrow="Legal"
             title="Disclaimer"
-            lead={`The limits of what this website can tell you about ${SITE.legalName}, its treasury, and the assets it holds.`}
+            lead={`The limits of what this website can tell you about ${SITE.legalName}, its treasury strategy, and the assets to which it is exposed.`}
             updated={UPDATED}
             sections={SECTIONS}
             callout={
                 <p>
-                    <strong>In plain English:</strong> this site explains how {SITE.shortName} runs a small, early-stage
+                    <strong>In plain English:</strong> this site explains how {SITE.shortName} approaches a long-horizon
                     digital-asset treasury. It is not advice and not an offer of shares. Bitcoin, Ethereum, and Solana
-                    are volatile and can lose most of their value; the ETFs we hold add their own costs and risks; the
-                    historical growth rates on the Thesis page are rough illustrations, not forecasts; and the treasury
-                    figures are copied by hand from CFO reports and may be out of date. Make your own decisions with
-                    your own advisers, and send questions to {CONTACT.name}, CTO, at{' '}
+                    are volatile and can lose most of their value; the ETFs through which exposure is held add their own
+                    costs and risks; no performance information is published on the public website; and detailed
+                    treasury information is available only to verified investors through the secure portal. Make your
+                    own decisions with your own advisers, and send questions to {CONTACT.name}, CTO, at{' '}
                     <a href={CONTACT.mailto}>{CONTACT.email}</a>.
                 </p>
             }
@@ -71,17 +65,17 @@ export default function DisclaimerPage() {
                     Nothing on this website is an offer to sell, or a solicitation of an offer to buy, shares of Ari or any
                     other security, token, fund, or financial instrument, in any jurisdiction. Any offering of Ari securities
                     would be made only to eligible persons, only through definitive offering documents, and only where such
-                    an offering is lawful. Descriptions of the company’s share structure, share count, or net asset value on
-                    this site are informational disclosures to existing and prospective stakeholders and are not terms of any
-                    offer.
+                    an offering is lawful. Descriptions of the company’s strategy, allocation framework, governance, or
+                    leadership on this site are informational statements to existing and prospective stakeholders and are
+                    not terms of any offer.
                 </p>
 
                 <h2 id="forward-looking">Forward-looking statements</h2>
                 <p>
                     This website contains forward-looking statements: statements about a ten-year investment horizon, the
-                    expected role of each asset in the treasury, the direction of the Harmony Trading App, including any
-                    customer-facing roadmap under evaluation, and the possible future value of digital assets. Words such as
-                    “expect”, “target”, “plan”, “optionality”, “upside”, and “horizon” identify them.
+                    expected role of each asset in the treasury, the development of the {HARMONY.name} platform, and the
+                    possible future value of digital assets. Words such as “expect”, “target”, “plan”, “optionality”,
+                    “upside”, and “horizon” identify them.
                 </p>
                 <p>
                     Forward-looking statements are based on management’s current views and assumptions and are subject to
@@ -96,8 +90,8 @@ export default function DisclaimerPage() {
                 </p>
                 <ul>
                     <li>
-                        <strong>Volatility.</strong> Daily price moves of 10% or more are common. The value of the treasury
-                        can change materially between the “as of” date of a report and the day you read it.
+                        <strong>Volatility.</strong> Daily price moves of 10% or more are common. The value of any position
+                        can change materially between the date on which it is measured and the day you read about it.
                     </li>
                     <li>
                         <strong>Drawdowns.</strong> Each of these assets has previously fallen by more than half from a prior
@@ -139,7 +133,7 @@ export default function DisclaimerPage() {
                 <ul>
                     <li>
                         <strong>Premiums and discounts.</strong> An ETF’s market price can trade above or below the value of
-                        the assets it holds, especially in fast or thinly traded markets. The treasury’s reported market value
+                        the assets it holds, especially in fast or thinly traded markets. Any valuation of an ETF position
                         reflects the ETF price, not the spot price of the underlying asset.
                     </li>
                     <li>
@@ -167,67 +161,64 @@ export default function DisclaimerPage() {
                     description of its risks before drawing any conclusion from its appearance on this site.
                 </p>
 
-                <h2 id="illustrative-performance">Illustrative performance figures</h2>
+                <h2 id="performance-information">Performance information</h2>
                 <p>
-                    The <Link href="/thesis">Thesis</Link> page includes an illustrative five-year compound annual growth
-                    rate (CAGR) analysis for Bitcoin, Ethereum, and Solana, and explains why a ten-year comparison is not yet
-                    statistically robust. Those figures are approximate, are rounded, depend heavily on the start and end
-                    dates chosen, and are provided only to explain the reasoning behind the 50 / 30 / 20 allocation.
+                    No performance information is published on the public website. The public pages, including the{' '}
+                    <Link href="/thesis">Thesis</Link>, describe strategy, allocation targets, and the qualitative criteria
+                    by which each asset is evaluated. They do not present historical returns, growth rates, valuations, or
+                    projections for any asset or for the treasury.
                 </p>
                 <p>
-                    Past performance is not indicative of future results. A historical CAGR is not a forecast, not a target
-                    return, and not a promise of any kind. Assets that have compounded rapidly in the past have also suffered
-                    severe losses, and there is no assurance that any of these assets will appreciate over any period. The
-                    treasury’s own results will additionally reflect ETF fees, timing of purchases, cash held in reserve,
-                    and any activity of the supporting subsidiary.
+                    Past performance is not indicative of future results. Assets that have appreciated rapidly in the past
+                    have also suffered severe losses, and there is no assurance that any of these assets will appreciate over
+                    any period. The treasury’s own results will additionally reflect ETF fees, the timing of purchases, and
+                    any cash held in reserve. Nothing on this site is a forecast, a target return, or a promise of any kind.
                 </p>
 
-                <h2 id="harmony-risks">Harmony Trading risks</h2>
+                <h2 id="harmony">Harmony platform</h2>
                 <p>
-                    The <Link href="/harmony">Harmony Trading App</Link> is Ari’s operating subsidiary. It runs limited,
-                    internal-only trading that applies a small portion of assets within strict risk limits, under human
-                    governance, with the aim of covering operating costs and serving as a testing ground for analytics that
-                    inform the treasury. Its activity carries risks that are distinct from the buy-and-hold treasury.
+                    {HARMONY.positioning} It is an internal platform, not a product, service, or business line, and
+                    references to it on the <Link href="/harmony">Harmony</Link> page and elsewhere on this site are
+                    descriptive only.
                 </p>
                 <ul>
                     <li>
-                        Algorithmic strategies can fail. Models fitted to past data may not work in future conditions, and
-                        software, data-feed, exchange, or connectivity faults can produce losses faster than a human can
-                        intervene.
+                        Research and analysis produced by the platform inform, but do not replace, the judgement of the board
+                        and executive team. Allocation, risk, and disclosure decisions rest with people.
                     </li>
                     <li>
-                        Risk limits reduce, but do not eliminate, the possibility of loss. The capital allocated to Harmony
-                        could be lost in full.
+                        Analytical models can be wrong. Models fitted to past data may not describe future conditions, and
+                        software or data-feed faults can produce misleading output. Governance and risk boundaries reduce,
+                        but do not eliminate, the possibility of error.
                     </li>
                     <li>
-                        Any statement that Harmony offsets operating costs describes an objective, not a guaranteed
-                        outcome. Its contribution may be negative in any period.
+                        No statement about {HARMONY.name} is a claim about revenue, cost savings, returns, or any other
+                        financial outcome, and no such outcome should be inferred from its description.
                     </li>
                     <li>
-                        Harmony is an internal-only platform today; there is no customer-facing product. Any customer-facing
-                        roadmap remains under evaluation and may change or not proceed.
+                        There is no customer-facing product. Any future development of the platform remains under evaluation
+                        and may change or not proceed.
                     </li>
                 </ul>
 
                 <h2 id="accuracy">Accuracy and timeliness of information</h2>
                 <p>
-                    Treasury data on this site (holdings, cost basis, market value, cash, share count, and net asset value
-                    per share) is entered manually from internal CFO reports. It is not fed from a live market or custodial
-                    source. Each figure carries an “as of” date and a source label, and the site flags a snapshot as stale
-                    once it is more than two weeks old.
+                    The public pages of this site describe strategy and process only. They do not publish treasury values,
+                    holdings, cash, share counts, prices, or performance figures. Detailed treasury information is available
+                    to verified investors through the secure <Link href="/login">investor portal</Link>.
                 </p>
                 <p>
-                    The snapshot currently published is dated <span className="mono">{asOf}</span> (source:{' '}
-                    {snapshot.sourceLabel.toLowerCase()}) and, as of the date at the top of this page, is flagged{' '}
-                    <strong>{freshness.status}</strong>
-                    {freshness.status === 'stale' ? ' because it is more than two weeks old' : ''}. Values may have changed
-                    materially since then. Do not rely on any figure on this site as a current valuation.
+                    Treasury information shown to verified investors in the portal is manually sourced from internal reports
+                    and may not reflect current market prices. It is not fed from a live market or custodial source, and
+                    values may have changed materially since the date on which they were recorded. Do not rely on any figure
+                    in the portal as a current valuation.
                 </p>
                 <p>
                     We try to keep every page accurate, but the site may contain typographical errors, omissions, or
-                    information that has been superseded. Formal disclosures to shareholders are delivered through the
-                    investor portal and by email; where a figure on a public page conflicts with a formal disclosure, the
-                    formal disclosure governs.
+                    information that has been superseded. Formal communications to shareholders are delivered through the
+                    investor portal and by email; where a statement on a public page conflicts with a formal communication,
+                    the formal communication governs. Company announcements are published on the{' '}
+                    <Link href="/updates">Company Updates</Link> page.
                 </p>
 
                 <h2 id="consult-your-advisers">Consult your advisers</h2>
@@ -240,9 +231,9 @@ export default function DisclaimerPage() {
 
                 <h2 id="contact">Contact</h2>
                 <p>
-                    Questions about this disclaimer, or about any figure or statement on the site, go to {CONTACT.name},{' '}
-                    {CONTACT.title}, at <a href={CONTACT.mailto}>{CONTACT.email}</a>. All correspondence with{' '}
-                    {SITE.shortName} is routed to the CTO. You can also use the <Link href="/contact">contact form</Link>.
+                    Questions about this disclaimer, or about any statement on the site, go to {CONTACT.name},{' '}
+                    {CONTACT.title}, at <a href={CONTACT.mailto}>{CONTACT.email}</a>. You can also use the{' '}
+                    <Link href="/contact">contact form</Link>.
                 </p>
                 <p>
                     See also our <Link href="/terms">Terms of Service</Link> and <Link href="/privacy">Privacy Policy</Link>.

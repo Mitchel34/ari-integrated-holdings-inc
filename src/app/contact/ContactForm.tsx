@@ -28,7 +28,7 @@ const LIMITS = {
 } as const;
 
 const RATE_LIMIT_MESSAGE =
-    'You have sent several inquiries in a short time. Please wait a little while before trying again, or email the CTO directly.';
+    'You have sent several inquiries in a short time. Please wait a little while before trying again, or email us directly.';
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error';
 
@@ -44,7 +44,7 @@ function validate(data: { name: string; email: string; message: string }): Field
         errors.name = 'Enter your full name.';
     }
     if (!data.email.trim()) {
-        errors.email = 'Enter your work email.';
+        errors.email = 'Enter your email address.';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
         errors.email = 'Enter a valid email address.';
     }
@@ -138,14 +138,14 @@ export default function ContactForm() {
                     onChange={() => clearFieldError('name')}
                 />
                 <Input
-                    label="Work email"
+                    label="Email address"
                     name="email"
                     type="email"
                     required
                     maxLength={LIMITS.email}
                     autoComplete="email"
                     inputMode="email"
-                    placeholder="you@firm.com"
+                    placeholder="you@example.com"
                     error={fieldErrors.email}
                     onChange={() => clearFieldError('email')}
                 />
@@ -208,7 +208,7 @@ export default function ContactForm() {
                     {state === 'submitting' ? 'Sending…' : 'Send inquiry'}
                 </Button>
                 <p className={styles.footnote}>
-                    Routed to {CONTACT.name}, {CONTACT.title}.
+                    Delivered to {CONTACT.name}, {CONTACT.title}.
                 </p>
             </div>
         </form>

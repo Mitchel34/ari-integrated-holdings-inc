@@ -5,13 +5,12 @@ import { useFormStatus } from 'react-dom';
 import { CheckCircle2 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
-import { CONTACT } from '@/lib/site';
 import { subscribeInvestorAlertsAction } from '@/app/investors/actions';
 import { INITIAL_ALERT_SIGNUP_STATE } from './alert-state';
 import styles from './AlertSignupForm.module.css';
 
 interface AlertSignupFormProps {
-    /** Recorded with the signup so the CTO knows where it came from. */
+    /** Recorded with the signup so the origin of each subscription is known. */
     source?: string;
 }
 
@@ -53,7 +52,7 @@ export function AlertSignupForm({ source = 'investors-page' }: AlertSignupFormPr
                     autoComplete="email"
                     inputMode="email"
                     required
-                    hint={isError ? undefined : 'Treasury updates, disclosure releases, and event notices. Nothing else.'}
+                    hint={isError ? undefined : 'Company updates and investor event notices. Nothing else.'}
                     error={isError ? state.message : undefined}
                 />
                 <div className={styles.submit}>
@@ -69,8 +68,7 @@ export function AlertSignupForm({ source = 'investors-page' }: AlertSignupFormPr
             ) : null}
 
             <p className={styles.fine}>
-                Signups are recorded and routed to {CONTACT.name}, {CONTACT.title}. A confirmation is sent to the
-                address you enter.
+                A confirmation is sent to the address you enter. Unsubscribe any time by replying to any alert.
             </p>
         </form>
     );

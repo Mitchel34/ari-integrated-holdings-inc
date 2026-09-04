@@ -7,12 +7,13 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { MeetingTypeSelector } from '../../components/scheduling/MeetingTypeSelector';
 import { CONTACT } from '../../lib/site';
+import { HAS_PUBLIC_BOOKING } from '../../lib/scheduling';
 import ContactForm from './ContactForm';
 import styles from './contact.module.css';
 
 export const metadata: Metadata = {
     title: 'Contact',
-    description: `Investor, partnership, press, and technical inquiries for Ari Integrated Holdings are routed to ${CONTACT.name}, ${CONTACT.title}. Send an inquiry or schedule a meeting.`,
+    description: `Investor, partnership, press, and technical inquiries for Ari Integrated Holdings are routed to ${CONTACT.name}, ${CONTACT.title}. Send an inquiry${HAS_PUBLIC_BOOKING ? ' or book a meeting' : ''}.`,
     alternates: { canonical: '/contact' },
 };
 
@@ -84,34 +85,37 @@ export default function ContactPage() {
                             </ol>
                         </Card>
 
-                        <Card variant="subtle" className={styles.asideCard}>
-                            <div className={styles.cardHead}>
-                                <span className={styles.iconBox} aria-hidden="true">
-                                    <CalendarDays size={20} strokeWidth={1.75} />
-                                </span>
-                                <h2 className={styles.cardTitle}>Prefer to talk?</h2>
-                            </div>
-                            <p className={styles.cardBody}>
-                                Book an introduction, an investor briefing, or a partnership discussion
-                                directly on the calendar below.
-                            </p>
-                            <Button asChild variant="secondary" size="md">
-                                <a href="#schedule">Schedule a meeting</a>
-                            </Button>
-                        </Card>
+                        {HAS_PUBLIC_BOOKING ? (
+                            <Card variant="subtle" className={styles.asideCard}>
+                                <div className={styles.cardHead}>
+                                    <span className={styles.iconBox} aria-hidden="true">
+                                        <CalendarDays size={20} strokeWidth={1.75} />
+                                    </span>
+                                    <h2 className={styles.cardTitle}>Prefer to talk?</h2>
+                                </div>
+                                <p className={styles.cardBody}>
+                                    Book a meeting directly on the calendar below.
+                                </p>
+                                <Button asChild variant="secondary" size="md">
+                                    <a href="#schedule">Book a meeting</a>
+                                </Button>
+                            </Card>
+                        ) : null}
                     </aside>
                 </div>
             </Section>
 
-            <Section id="schedule" hairline aria-labelledby="schedule-title">
-                <SectionHeader
-                    eyebrow="Calendar"
-                    id="schedule-title"
-                    title="Schedule a meeting"
-                    lead="Select a meeting type and book a time. Calendly sends you a confirmation with call details and adds the meeting to the executive calendar."
-                />
-                <MeetingTypeSelector />
-            </Section>
+            {HAS_PUBLIC_BOOKING ? (
+                <Section id="schedule" hairline aria-labelledby="schedule-title">
+                    <SectionHeader
+                        eyebrow="Calendar"
+                        id="schedule-title"
+                        title="Schedule a meeting"
+                        lead="Select a meeting type and book a time. Calendly sends you a confirmation with the call details."
+                    />
+                    <MeetingTypeSelector />
+                </Section>
+            ) : null}
         </>
     );
 }

@@ -8,5 +8,9 @@ export const INITIAL_ALERT_SIGNUP_STATE: AlertSignupState = {
     message: '',
 };
 
-/** Signup origins the server accepts; anything else is recorded as "website". */
-export const ALERT_SIGNUP_SOURCES = ['investors-page', 'home', 'disclosures', 'thesis', 'website'] as const;
+/**
+ * Signup origins the server accepts; anything else is recorded as "website".
+ * 'disclosures' is kept only so records created before the section was renamed
+ * to Company Updates stay valid.
+ */
+export const ALERT_SIGNUP_SOURCES = ['investors-page', 'home', 'updates', 'disclosures', 'thesis', 'website'] as const;

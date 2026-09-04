@@ -8,13 +8,13 @@ import { Button } from '@/components/ui/Button';
 import { AssetChip } from '@/components/brand/AssetChip';
 import { AllocationRing } from '@/components/brand/AllocationRing';
 import { ThesisSection } from '@/components/thesis/ThesisSection';
-import { ALLOCATION, CONTACT } from '@/lib/site';
+import { ALLOCATION, type AssetSymbol } from '@/lib/site';
 import styles from './thesis.module.css';
 
 export const metadata: Metadata = {
     title: 'Investment Thesis',
     description:
-        'A ten-year, disciplined treasury approach to long-term digital asset holdings: the 50 / 30 / 20 BTC, ETH, and SOL framework, why it works, its risk profile, and an illustrative 5-year CAGR analysis.',
+        'A ten-year, disciplined treasury approach to long-term digital asset holdings: the 50 / 30 / 20 BTC, ETH, and SOL framework, why it works, its risk profile, and how each asset is evaluated.',
     alternates: { canonical: '/thesis' },
 };
 
@@ -24,23 +24,75 @@ const SECTIONS = [
     { id: 'construction-lens', title: 'Portfolio construction lens' },
     { id: 'why-it-works', title: 'Why it works' },
     { id: 'risk-profile', title: 'Risk profile' },
-    { id: 'cagr-analysis', title: 'Illustrative 5-year CAGR analysis' },
-    { id: 'ten-year-cagr', title: 'Why not 10-year CAGR yet' },
+    { id: 'evaluation-criteria', title: 'How each asset is evaluated' },
 ] as const;
 
-const CAGR_ROWS = [
-    { symbol: 'BTC', label: 'Bitcoin', cagr: '~59%' },
-    { symbol: 'ETH', label: 'Ethereum', cagr: '~55%' },
-    { symbol: 'SOL', label: 'Solana', cagr: '~123%' },
-] as const;
+interface Criterion {
+    id: string;
+    title: string;
+    summary: string;
+    assets: Record<AssetSymbol, string>;
+}
+
+/** Qualitative evaluation criteria. Strategy and process only; no figures or performance claims. */
+const CRITERIA: Criterion[] = [
+    {
+        id: 'liquidity',
+        title: 'Liquidity',
+        summary: 'Can the position be built or reduced through regulated vehicles without moving the market or waiting on it?',
+        assets: {
+            BTC: 'The deepest and most mature market of the three; treated as the reference standard for liquidity.',
+            ETH: 'Broad, institutionally supported liquidity; assessed alongside the maturity of its ETF market.',
+            SOL: 'Liquidity is developing and monitored closely; position size is kept consistent with what the market can absorb.',
+        },
+    },
+    {
+        id: 'volatility',
+        title: 'Volatility',
+        summary: 'Are expected price swings acceptable relative to the long-term return the asset is held for?',
+        assets: {
+            BTC: 'Volatile in absolute terms but the least volatile of the three; sized as the anchor that steadies the whole.',
+            ETH: 'Moderate-to-high volatility, weighed against its role as a settlement layer with structural utility.',
+            SOL: 'The highest-beta asset in the framework; its weight is deliberately the smallest to keep drawdowns bounded.',
+        },
+    },
+    {
+        id: 'custody',
+        title: 'Custody structure',
+        summary: 'How is exposure held, and who is responsible for safeguarding the underlying asset?',
+        assets: {
+            BTC: 'Held through a regulated spot ETF (ARKB), with custody handled by the fund’s qualified custodian rather than by Ari.',
+            ETH: 'Held through a regulated spot ETF (FETH), which removes key management and staking-operations risk from Ari’s balance sheet.',
+            SOL: 'Held through a regulated spot ETF (FSOL); the wrapper’s custody arrangements and track record are part of the ongoing review.',
+        },
+    },
+    {
+        id: 'concentration',
+        title: 'Concentration',
+        summary: 'Does any single asset, protocol, or wrapper dominate the balance sheet or share a hidden point of failure?',
+        assets: {
+            BTC: 'The largest target weight by design; its dominance is reviewed so the treasury does not become a single-asset position.',
+            ETH: 'A meaningful second position that diversifies protocol and use-case exposure away from Bitcoin alone.',
+            SOL: 'A bounded satellite position; concentration in one execution layer is limited by its lower target weight.',
+        },
+    },
+    {
+        id: 'governance',
+        title: 'Governance',
+        summary: 'How are protocol changes decided, and how does the ETF sponsor govern the vehicle that holds the exposure?',
+        assets: {
+            BTC: 'Conservative, slow-moving protocol governance with a long track record; the lowest protocol-change risk of the three.',
+            ETH: 'Active, well-documented governance with a clear upgrade process; monitored for changes that affect the settlement layer.',
+            SOL: 'Younger governance and a more concentrated developer base; assessed continuously as part of the risk review.',
+        },
+    },
+];
 
 const RAIL_CLASS: Record<string, string> = {
     BTC: styles.railBtc,
     ETH: styles.railEth,
     SOL: styles.railSol,
 };
-
-const [emailLocal, emailDomain] = CONTACT.email.split('@');
 
 export default function ThesisPage() {
     return (
@@ -233,58 +285,26 @@ export default function ThesisPage() {
 
                     <ThesisSection
                         index={6}
-                        id="cagr-analysis"
-                        title="Illustrative 5-year CAGR analysis"
-                        lead="A disciplined illustrative analysis for the 50/30/20 BTC-ETH-SOL basket over approximately Apr 2020 to Mar 2025, using public historical return estimates."
+                        id="evaluation-criteria"
+                        title="How each asset is evaluated"
+                        lead="Every asset in the framework is reviewed against the same five criteria. The review is qualitative and ongoing; it informs target weights and is revisited by the board and executive team rather than by a formula."
                     >
-                        <div className={styles.tableWrap}>
-                            <table className={styles.cagrTable}>
-                                <caption className="sr-only">
-                                    Approximate compound annual growth rate by asset, April 2020 to March 2025
-                                </caption>
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Asset</th>
-                                        <th scope="col" className={styles.num}>5-yr CAGR</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {CAGR_ROWS.map((row) => (
-                                        <tr key={row.symbol}>
-                                            <th scope="row">
-                                                <span className={styles.assetCell}>
-                                                    <AssetChip symbol={row.symbol} />
-                                                    <span className={styles.assetName}>{row.label}</span>
-                                                </span>
-                                            </th>
-                                            <td className={`${styles.num} mono`}>{row.cagr}</td>
-                                        </tr>
-                                    ))}
-                                    <tr className={styles.blendRow}>
-                                        <th scope="row">
-                                            <span className={styles.assetCell}>
-                                                <AssetChip tone="gold">50 / 30 / 20</AssetChip>
-                                                <span className={styles.assetName}>Blended basket</span>
-                                            </span>
-                                        </th>
-                                        <td className={`${styles.num} mono`}>~70%</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <p className={`${styles.tableNote} mono`}>
-                            Period 2020-04 to 2025-03 (approx.) · Source: public historical return estimates · Blended figure is annualized
-                        </p>
-                        <p>These figures are approximate and for illustrative context only. They are not financial advice.</p>
-                    </ThesisSection>
-
-                    <ThesisSection index={7} id="ten-year-cagr" title="Why not 10-year CAGR yet">
-                        <ul>
-                            <li>Bitcoin launched in 2009, Ethereum in 2015, and Solana in 2020.</li>
-                            <li>SOL does not have a full 10-year price history.</li>
-                            <li>Early ETH data is limited versus mature public market datasets.</li>
-                            <li>A uniform 10-year CAGR comparison across all three assets is not statistically robust yet.</li>
-                        </ul>
+                        <ol className={styles.criteria} aria-label="Evaluation criteria">
+                            {CRITERIA.map((criterion) => (
+                                <li key={criterion.id} className={styles.criterion} id={`criterion-${criterion.id}`}>
+                                    <h3 className={styles.criterionTitle}>{criterion.title}</h3>
+                                    <p className={styles.criterionSummary}>{criterion.summary}</p>
+                                    <ul className={styles.assetList}>
+                                        {ALLOCATION.map((asset) => (
+                                            <li key={asset.symbol}>
+                                                <AssetChip symbol={asset.symbol} />
+                                                <span>{criterion.assets[asset.symbol]}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </li>
+                            ))}
+                        </ol>
                     </ThesisSection>
                 </div>
             </Section>
@@ -317,10 +337,10 @@ export default function ThesisPage() {
             <Section narrow hairline compact aria-labelledby="cta-title">
                 <div className={styles.cta}>
                     <p className="eyebrow">Next</p>
-                    <h2 id="cta-title" className={styles.ctaTitle}>Read the disclosures, then talk to us</h2>
+                    <h2 id="cta-title" className={styles.ctaTitle}>Read the updates, then talk to us</h2>
                     <p className={styles.ctaLead}>
-                        The Investor Relations page holds the latest published treasury snapshot (as of 1 Mar 2026)
-                        and disclosures. Questions about the thesis are welcome.
+                        Company updates are published on the Investor Relations page; detailed treasury information is
+                        available to verified investors through the secure portal.
                     </p>
                     <div className={styles.ctaActions}>
                         <Button asChild variant="primary">
@@ -330,16 +350,9 @@ export default function ThesisPage() {
                             </Link>
                         </Button>
                         <Button asChild variant="secondary">
-                            <Link href="/contact">Contact the CTO</Link>
+                            <Link href="/contact">Contact us</Link>
                         </Button>
                     </div>
-                    <p className={styles.ctaNote}>
-                        All correspondence is routed to {CONTACT.name}, {CONTACT.title}, at{' '}
-                        <a href={CONTACT.mailto} className={`${styles.mail} mono`}>
-                            {emailLocal}@<wbr />{emailDomain}
-                        </a>
-                        .
-                    </p>
                 </div>
             </Section>
         </>

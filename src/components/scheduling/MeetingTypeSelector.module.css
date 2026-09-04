@@ -113,56 +113,6 @@
     border: 1px solid var(--glass-1-border);
 }
 
-.noUrl {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    min-height: 300px;
-    padding: 3rem 1.5rem;
-    text-align: center;
-}
-
-.noUrlIcon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    margin-bottom: 0.25rem;
-    border-radius: var(--r-sm);
-    background: var(--glass-1-bg);
-    border: 1px solid var(--glass-1-border);
-    color: var(--gold-500);
-}
-
-.noUrlTitle {
-    font-family: var(--font-display);
-    font-size: 1.0625rem;
-    font-weight: 600;
-    color: var(--text-1);
-}
-
-.noUrlBody {
-    max-width: 48ch;
-    font-size: var(--fs-small);
-    line-height: 1.7;
-    color: var(--text-2);
-    overflow-wrap: anywhere;
-}
-
-.fallbackLink {
-    color: var(--gold-300);
-    font-size: 0.875rem;
-}
-
-.fallbackLink:hover {
-    color: var(--text-1);
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
-}
-
 @media (max-width: 768px) {
     .embedWrapper {
         min-height: 500px;
@@ -181,9 +131,4 @@
         transition: none;
         transform: none;
     }
-}
-
-/* No booking URL configured: do not reserve the embed height. */
-.embedWrapper.embedWrapperEmpty {
-    min-height: 0;
 }

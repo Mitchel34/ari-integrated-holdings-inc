@@ -1,29 +1,82 @@
-/* ── Hero meta ──────────────────────────────────────────────────────── */
+/* ── Treasury: portal card + principles ─────────────────────────────── */
 
-.metaWarn,
-.metaOk {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
+.portalCard {
+    display: grid;
+    gap: 0.9rem;
+    justify-items: start;
+    max-width: 52rem;
+    padding: clamp(1.5rem, 3.5vw, 2.5rem);
 }
 
-.metaWarn {
-    color: var(--warn);
+.portalCard :global(.eyebrow) {
+    margin: 0;
 }
 
-.metaOk {
-    color: var(--pos);
+.portalTitle {
+    max-width: 30ch;
+    font-size: var(--fs-h2);
+    line-height: 1.2;
+    color: var(--text-1);
 }
 
-.metaWarn svg {
-    width: 14px;
-    height: 14px;
+.portalText {
+    max-width: var(--prose);
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.6;
 }
 
-/* ── Treasury header (aside chip needs room above the notice) ────────── */
+.portalActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
 
-.treasuryHeader {
-    margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+@media (max-width: 640px) {
+    .portalActions {
+        width: 100%;
+    }
+
+    .portalActions > * {
+        flex: 1 1 100%;
+    }
+}
+
+.principles {
+    display: grid;
+    gap: 1rem;
+    margin: clamp(1.5rem, 3vw, 2.25rem) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+@media (min-width: 768px) {
+    .principles {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+.principle {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+    padding: 1.1rem 1.2rem;
+    border-radius: var(--r-md);
+}
+
+.principleTitle {
+    font-size: var(--fs-body);
+    font-weight: 600;
+    color: var(--text-1);
+}
+
+.principleText {
+    font-size: var(--fs-small);
+    line-height: 1.55;
+    color: var(--text-2);
 }
 
 /* ── Two-column split (documents / events) ──────────────────────────── */

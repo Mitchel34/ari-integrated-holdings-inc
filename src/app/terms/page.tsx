@@ -2,12 +2,12 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { DocumentPage, type DocumentSection } from '../../components/layout/DocumentPage';
 import legal from '../(legal)/legal.module.css';
-import { ALLOCATION, CONTACT, SITE } from '../../lib/site';
+import { ALLOCATION, CONTACT, GOVERNING_LAW_STATE, HARMONY, SITE } from '../../lib/site';
 
 export const metadata: Metadata = {
     title: 'Terms of Service',
     description:
-        'The terms that govern use of the Ari Integrated Holdings Inc. website and its password-protected investor and executive portal.',
+        'The terms that govern use of the Ari Integrated Holdings Inc. website and its password-protected investor portal.',
     alternates: { canonical: '/terms' },
 };
 
@@ -30,6 +30,20 @@ const SECTIONS: DocumentSection[] = [
 
 const ETF_LIST = ALLOCATION.map((a) => `${a.etf} (${a.etfName})`).join(', ');
 
+/**
+ * Governing-law wording. Counsel sets GOVERNING_LAW_STATE in site.ts; until
+ * then the Terms refer to the state in which the company is organized.
+ */
+const GOVERNING_LAW =
+    typeof GOVERNING_LAW_STATE === 'string'
+        ? `the laws of the State of ${GOVERNING_LAW_STATE}`
+        : `the laws of the state in which ${SITE.legalName} is organized`;
+
+const GOVERNING_LAW_SHORT =
+    typeof GOVERNING_LAW_STATE === 'string'
+        ? `the law of the State of ${GOVERNING_LAW_STATE}`
+        : 'the law of the state in which the company is organized';
+
 export default function TermsPage() {
     return (
         <DocumentPage
@@ -40,11 +54,11 @@ export default function TermsPage() {
             sections={SECTIONS}
             callout={
                 <p>
-                    <strong>In plain English:</strong> this website describes {SITE.legalName} and its treasury. It is
-                    information, not an offer to sell securities and not investment advice. If you have been given a
-                    portal login, keep it to yourself and use it only as an authorized person. We provide the site as-is,
-                    we limit our liability to the extent the law allows, and any dispute is governed by the law of the
-                    jurisdiction in which the company is organized. Questions go to {CONTACT.name}, CTO, at{' '}
+                    <strong>In plain English:</strong> this website describes {SITE.legalName} and its treasury
+                    strategy. It is information, not an offer to sell securities and not investment advice. If you have
+                    been given a portal login, keep it to yourself and use it only as an authorized person. We provide
+                    the site as-is, we limit our liability to the extent the law allows, and any dispute is governed by{' '}
+                    {GOVERNING_LAW_SHORT}. Questions go to {CONTACT.name}, CTO, at{' '}
                     <a href={CONTACT.mailto}>{CONTACT.email}</a>.
                 </p>
             }
@@ -54,8 +68,7 @@ export default function TermsPage() {
                 <p>
                     These Terms of Service (the “Terms”) are an agreement between you and {SITE.legalName} (“Ari”, “we”,
                     “us”) covering the website at {SITE.domain} and its subdomains (the “Site”), including the public pages,
-                    the contact form, the investor-alert list, and the password-protected investor and executive portal (the
-                    “Portal”).
+                    the contact form, the investor-alert list, and the password-protected investor portal (the “Portal”).
                 </p>
                 <p>
                     By opening the Site, submitting a form, subscribing to alerts, or logging in to the Portal, you accept
@@ -66,8 +79,8 @@ export default function TermsPage() {
 
                 <h2 id="informational-purpose">Informational purpose</h2>
                 <p>
-                    The Site exists to describe Ari, its treasury strategy, its supporting subsidiary, and its leadership,
-                    and to publish disclosures for existing shareholders. Everything on it is provided for general
+                    The Site exists to describe Ari, its treasury strategy, its internal technology platform ({HARMONY.name}),
+                    and its leadership, and to publish company updates. Everything on it is provided for general
                     information only.
                 </p>
                 <ul>
@@ -81,8 +94,10 @@ export default function TermsPage() {
                         to your circumstances. Consult your own advisers before making any decision.
                     </li>
                     <li>
-                        Treasury figures shown on the Site are drawn manually from internal CFO reports and carry an “as of”
-                        date. They may be out of date and are not a live valuation.
+                        The public pages of the Site describe strategy and process only. No treasury values, holdings, or
+                        performance figures are published on the public website. Treasury information shown to verified
+                        investors in the Portal is manually sourced from internal reports and may not reflect current market
+                        prices.
                     </li>
                 </ul>
                 <p>
@@ -93,7 +108,7 @@ export default function TermsPage() {
                 <h2 id="portal-access">Investor portal access</h2>
                 <p>
                     The Portal is a private area for shareholders, prospective investors we have specifically invited, and
-                    Ari executives. Access is granted only by Ari; there is no self-registration.
+                    authorized Ari personnel. Access is granted only by Ari; there is no self-registration.
                 </p>
                 <h3>Credentials</h3>
                 <p>
@@ -135,7 +150,7 @@ export default function TermsPage() {
                 <h2 id="intellectual-property">Intellectual property</h2>
                 <p>
                     The Site, including its text, graphics, layout, the Ari name and lion emblem, and the content of
-                    disclosures and Portal documents, is owned by Ari or its licensors and is protected by copyright,
+                    company updates and Portal documents, is owned by Ari or its licensors and is protected by copyright,
                     trademark, and other laws. Ticker symbols and ETF names belong to their respective issuers.
                 </p>
                 <p>
@@ -147,9 +162,9 @@ export default function TermsPage() {
 
                 <h2 id="third-party-services">Third-party services and links</h2>
                 <p>
-                    The Site uses Calendly to schedule meetings. When you book a meeting you are using Calendly’s service
-                    under Calendly’s own terms and privacy policy; we do not control that service and are not responsible
-                    for it.
+                    Where online meeting booking is offered, the Site uses Calendly to schedule meetings. When you book a
+                    meeting you are using Calendly’s service under Calendly’s own terms and privacy policy; we do not
+                    control that service and are not responsible for it.
                 </p>
                 <p>
                     The Site describes exchange-traded funds through which Ari holds its digital-asset exposure, currently{' '}
@@ -170,10 +185,10 @@ export default function TermsPage() {
                     for a particular purpose, title, non-infringement, accuracy, and uninterrupted or error-free operation.
                 </p>
                 <p>
-                    We do not warrant that treasury figures, allocation targets, performance illustrations, or other
+                    We do not warrant that allocation targets, descriptions of strategy, Portal information, or other
                     information on the Site are complete, current, or free of error, or that the Site will be secure or
-                    available at any particular time. Digital-asset markets move quickly; the figures shown may differ
-                    materially from current values.
+                    available at any particular time. Digital-asset markets move quickly; any figure shown to verified
+                    investors in the Portal may differ materially from current values.
                 </p>
 
                 <h2 id="limitation-of-liability">Limitation of liability</h2>
@@ -205,10 +220,9 @@ export default function TermsPage() {
 
                 <h2 id="governing-law">Governing law</h2>
                 <p>
-                    These Terms, and any dispute or claim arising out of or relating to them or to the Site, are governed by
-                    the laws of the jurisdiction in which {SITE.legalName} is organized, without regard to its
-                    conflict-of-laws rules. You agree that the courts of that jurisdiction have exclusive jurisdiction over
-                    any such dispute, and you waive any objection to venue there. If you are a consumer, nothing in this
+                    These Terms, and any dispute or claim arising out of or relating to them or to the Site, are governed by{' '}
+                    {GOVERNING_LAW}, without regard to its conflict-of-laws rules. You agree that the courts of that
+                    state have exclusive jurisdiction over any such dispute, and you waive any objection to venue there. If you are a consumer, nothing in this
                     section deprives you of protections that the law of your place of residence grants and does not allow
                     to be waived.
                 </p>
@@ -224,8 +238,8 @@ export default function TermsPage() {
                 <h2 id="contact">Contact</h2>
                 <p>
                     Notices, questions, and security reports under these Terms go to {CONTACT.name}, {CONTACT.title}, at{' '}
-                    <a href={CONTACT.mailto}>{CONTACT.email}</a>. All correspondence with {SITE.shortName} is routed to the
-                    CTO. You can also use the <Link href="/contact">contact form</Link>.
+                    <a href={CONTACT.mailto}>{CONTACT.email}</a>. You can also use the{' '}
+                    <Link href="/contact">contact form</Link>.
                 </p>
                 <p>
                     See also our <Link href="/privacy">Privacy Policy</Link> and <Link href="/disclaimer">Disclaimer</Link>.

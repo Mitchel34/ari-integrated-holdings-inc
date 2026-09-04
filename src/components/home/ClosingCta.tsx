@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { CONTACT } from '@/lib/site';
+import { PRIMARY_CTA } from '@/lib/scheduling';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import styles from './HomeSections.module.css';
@@ -19,7 +20,7 @@ export function ClosingCta() {
             </p>
             <div className={styles.ctaActions}>
                 <Button asChild size="lg">
-                    <Link href="/contact">Contact us</Link>
+                    <Link href={PRIMARY_CTA.href}>{PRIMARY_CTA.label}</Link>
                 </Button>
                 <Button asChild variant="secondary" size="lg">
                     <a href={CONTACT.mailto} className={styles.ctaEmail}>
@@ -28,9 +29,6 @@ export function ClosingCta() {
                     </a>
                 </Button>
             </div>
-            <p className={styles.ctaNote}>
-                All correspondence is routed to {CONTACT.name}, {CONTACT.title}.
-            </p>
         </Card>
     );
 }

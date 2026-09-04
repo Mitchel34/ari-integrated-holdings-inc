@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { AlertTriangle, ArrowUpRight, BellRing, CalendarClock, CalendarX2, FileText, Mail } from 'lucide-react';
+import { ArrowUpRight, BellRing, CalendarClock, CalendarX2, FileText, Lock, Mail } from 'lucide-react';
 import { PageHero } from '../../components/layout/PageHero';
 import { Section } from '../../components/layout/Section';
 import { SectionHeader } from '../../components/ui/SectionHeader';
@@ -8,81 +8,79 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { AssetChip } from '../../components/brand/AssetChip';
 import { AlertSignupForm } from '../../components/investor/AlertSignupForm';
-import { TreasurySnapshot } from '../../components/treasury/TreasurySnapshot';
-import { formatDateIso, formatDateProse, formatUtcTime } from '@/lib/format';
-import { CONTACT } from '@/lib/site';
-import { getTreasuryFreshness, getTreasurySnapshot } from '@/lib/treasury/snapshot';
-import { getInvestorDocuments, getUpcomingInvestorEvents } from '@/lib/investor/disclosures';
+import { formatDateIso, formatUtcTime } from '@/lib/format';
+import { CONTACT, PRINCIPLES } from '@/lib/site';
+import { getInvestorDocuments, getUpcomingInvestorEvents } from '@/lib/investor/updates';
 import styles from './investors.module.css';
 
 export const metadata: Metadata = {
     title: 'Investor Relations',
     description:
-        'Public treasury summary, investor documents, events, and alert signup for Ari Integrated Holdings Inc. Every figure is exact, dated, and sourced from the CFO report.',
+        'Investor documents, events, and alert signup for Ari Integrated Holdings Inc. Detailed treasury information is available to verified investors through the secure portal.',
     alternates: { canonical: '/investors' },
 };
 
-/** Re-render hourly so the freshness age stays honest between deploys. */
+/** Re-render hourly so the upcoming-events filter stays current between deploys. */
 export const revalidate = 3600;
 
 function documentTone(type: string): 'gold' | 'neutral' {
-    return type === 'Treasury Update' ? 'gold' : 'neutral';
+    return type === 'Governance' ? 'gold' : 'neutral';
 }
 
 export default function InvestorsPage() {
-    const snapshot = getTreasurySnapshot();
-    const freshness = getTreasuryFreshness(snapshot);
     const documents = getInvestorDocuments();
     const now = new Date();
     const upcomingEvents = getUpcomingInvestorEvents(now);
-
-    const asOfIso = formatDateIso(snapshot.asOfIso);
-    const asOfProse = formatDateProse(snapshot.asOfIso);
     const [emailLocal, emailDomain] = CONTACT.email.split('@');
-    const isStale = freshness.status === 'stale';
 
     return (
         <>
             <PageHero
                 eyebrow="Investors"
                 title="Investor Relations"
-                lead="Transparency and disclosure discipline over promotion. The treasury is reported exactly as the CFO books it, every material update is published here, and all correspondence is routed to one accountable officer."
-                meta={
-                    <>
-                        <span>Treasury as of {asOfIso}</span>
-                        <span className={isStale ? styles.metaWarn : styles.metaOk}>
-                            {isStale ? <AlertTriangle aria-hidden="true" focusable="false" /> : null}
-                            {freshness.label}
-                        </span>
-                        <span>{snapshot.sourceLabel}</span>
-                    </>
-                }
+                lead="Transparency and disclosure discipline over promotion. Company updates are published here; detailed treasury information is available to verified investors through the secure portal."
                 actions={
                     <>
                         <Button asChild variant="secondary">
                             <a href="#alerts">Subscribe to alerts</a>
                         </Button>
                         <Button asChild variant="ghost">
-                            <Link href="/disclosures">Read disclosures</Link>
+                            <Link href="/updates">Read company updates</Link>
                         </Button>
                     </>
                 }
             />
 
             <Section compact aria-labelledby="treasury-heading">
-                <SectionHeader
-                    id="treasury-heading"
-                    className={styles.treasuryHeader}
-                    eyebrow="Treasury"
-                    title="Public treasury summary"
-                    lead="An early-stage treasury reported without adjustment. Holdings are ETF wrappers for BTC, ETH, and SOL, valued at the prices on the CFO balance sheet rather than a live feed."
-                    aside={
-                        <AssetChip tone={isStale ? 'warn' : 'pos'} size="md">
-                            {isStale ? 'Stale' : 'Current'} · as of {asOfIso}
-                        </AssetChip>
-                    }
-                />
-                <TreasurySnapshot snapshot={snapshot} freshness={freshness} headingId="treasury-heading" />
+                <Card variant="elevated" as="article" className={styles.portalCard}>
+                    <span className={styles.iconBox} aria-hidden="true">
+                        <Lock focusable="false" />
+                    </span>
+                    <p className="eyebrow">Treasury</p>
+                    <h2 id="treasury-heading" className={styles.portalTitle}>
+                        Detailed treasury information is available to verified investors through the secure portal.
+                    </h2>
+                    <p className={styles.portalText}>
+                        The portal contains current holdings, cash positions, and the full update history.
+                    </p>
+                    <div className={styles.portalActions}>
+                        <Button asChild variant="primary">
+                            <Link href="/login">Investor portal</Link>
+                        </Button>
+                        <Button asChild variant="secondary">
+                            <Link href="/contact">Request access</Link>
+                        </Button>
+                    </div>
+                </Card>
+
+                <ul className={styles.principles} aria-label="Treasury principles">
+                    {PRINCIPLES.map((principle) => (
+                        <li key={principle.id} className={`glass-1 ${styles.principle}`}>
+                            <h3 className={styles.principleTitle}>{principle.title}</h3>
+                            <p className={styles.principleText}>{principle.text}</p>
+                        </li>
+                    ))}
+                </ul>
             </Section>
 
             <Section tone="alt" hairline aria-label="Documents and events">
@@ -92,7 +90,7 @@ export default function InvestorsPage() {
                             id="documents-heading"
                             eyebrow="Documents"
                             title="Investor documents"
-                            lead="Reports and policies referenced by the disclosures, in reverse date order."
+                            lead="Reference documents describing the strategy, governance, and risk framework, in reverse date order."
                             compact
                         />
                         <ul className={styles.list} aria-labelledby="documents-heading">
@@ -167,8 +165,8 @@ export default function InvestorsPage() {
                 <SectionHeader
                     id="alerts-heading"
                     eyebrow="Stay informed"
-                    title="Alerts and correspondence"
-                    lead="One list for material updates, one officer for questions. No newsletters, no marketing sequences."
+                    title="Alerts and contact"
+                    lead="One list for company updates, one contact for questions. No newsletters, no marketing sequences."
                 />
                 <div className={styles.cards}>
                     <Card variant="glass" as="article" aria-labelledby="alerts-card-heading">
@@ -179,7 +177,7 @@ export default function InvestorsPage() {
                             <h3 id="alerts-card-heading">Email alerts</h3>
                         </div>
                         <p className={styles.cardLead}>
-                            Receive a notice when a treasury update, disclosure, or investor event is published.
+                            Receive a notice when a company update or investor event is published.
                         </p>
                         <AlertSignupForm source="investors-page" />
                     </Card>
@@ -189,15 +187,15 @@ export default function InvestorsPage() {
                             <span className={styles.iconBox} aria-hidden="true">
                                 <Mail focusable="false" />
                             </span>
-                            <h3 id="contact-card-heading">Investor correspondence</h3>
+                            <h3 id="contact-card-heading">Investor contact</h3>
                         </div>
                         <p className={styles.cardLead}>
-                            Diligence requests, partnership discussions, and shareholder questions are routed to the
-                            Chief Technology Officer, who responds {CONTACT.responseWindow}.
+                            Diligence requests, partnership discussions, and shareholder questions are welcome.
+                            Responses are sent {CONTACT.responseWindow}.
                         </p>
                         <dl className={styles.contact}>
                             <div>
-                                <dt>Officer</dt>
+                                <dt>Name</dt>
                                 <dd>{CONTACT.name}</dd>
                             </div>
                             <div>
@@ -215,16 +213,15 @@ export default function InvestorsPage() {
                         </dl>
                         <div className={styles.cardActions}>
                             <Button asChild variant="secondary">
-                                <Link href="/contact">Contact the CTO</Link>
+                                <Link href="/contact">Contact us</Link>
                             </Button>
                         </div>
                     </Card>
                 </div>
 
                 <p className={styles.disclosure}>
-                    Nothing on this page is an offer to sell or a solicitation to buy securities. Treasury figures are
-                    unaudited and reflect the CFO report dated {asOfProse}. Digital assets and the ETFs that hold them
-                    are volatile; unrealized results can change materially between reports.
+                    Nothing on this page is an offer to sell or a solicitation to buy securities. Digital assets and
+                    the ETFs that hold them are volatile. No performance information is published on the public site.
                 </p>
             </Section>
         </>

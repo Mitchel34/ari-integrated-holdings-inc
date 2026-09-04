@@ -203,11 +203,6 @@
     text-align: center;
 }
 
-.ctaNote {
-    font-size: var(--fs-small);
-    color: var(--text-3);
-}
-
 /* ── Breakpoints ──────────────────────────────────────────────────────── */
 
 @media (max-width: 640px) {
