@@ -1,7 +1,8 @@
 import { CalendarClock, DollarSign, FileText, TrendingUp, WalletCards } from 'lucide-react';
 import type { TreasuryFreshness, TreasurySnapshot } from '@/lib/treasury/snapshot';
-import type { InvestorDocument, InvestorEvent } from '@/lib/investor/disclosures';
+import type { InvestorDocument, InvestorEvent } from '@/lib/investor/updates';
 import { CONTACT } from '@/lib/site';
+import { HAS_PUBLIC_BOOKING } from '@/lib/scheduling';
 import { Container } from '@/components/ui/Container';
 import { AssetChip } from '@/components/brand/AssetChip';
 import { MeetingTypeSelector } from '@/components/scheduling/MeetingTypeSelector';
@@ -180,7 +181,7 @@ export function InvestorDashboardView({ firstName, snapshot, freshness, document
                 <DashboardPanel
                     eyebrow="Documents"
                     title="Document vault"
-                    description="Investor documents, disclosures, and governance materials."
+                    description="Investor documents, company updates, and governance materials."
                     action={<span className={styles.panelIcon} aria-hidden="true"><FileText size={18} /></span>}
                 >
                     <DataTable
@@ -236,13 +237,24 @@ export function InvestorDashboardView({ firstName, snapshot, freshness, document
                 <DashboardPanel
                     eyebrow="Scheduling"
                     title="Schedule a meeting"
-                    description="Book time directly with the Ari leadership team. Calendly sends you a confirmation with call details and adds the meeting to the executive calendar."
+                    description={
+                        HAS_PUBLIC_BOOKING
+                            ? 'Book time directly with the Ari leadership team. Calendly sends you a confirmation with call details and adds the meeting to the executive calendar.'
+                            : 'Online booking is not configured yet. Email the executive team to arrange a call.'
+                    }
                 >
-                    <MeetingTypeSelector />
+                    {HAS_PUBLIC_BOOKING ? (
+                        <MeetingTypeSelector />
+                    ) : (
+                        <EmptyState
+                            title="Request a meeting by email"
+                            copy={`Write to ${CONTACT.name}, ${CONTACT.title}, at ${CONTACT.email} and we will propose times.`}
+                        />
+                    )}
                 </DashboardPanel>
 
                 <p className={styles.footnote}>
-                    Questions about these figures or your holdings are routed to {CONTACT.name}, {CONTACT.title}, at{' '}
+                    Questions about these figures or your holdings? Email {CONTACT.name}, {CONTACT.title}, at{' '}
                     <a href={CONTACT.mailto} className={styles.footnoteLink}>{CONTACT.email}</a>.
                 </p>
             </DashboardShell>

@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { getTreasuryFreshness, getTreasurySnapshot } from '@/lib/treasury/snapshot';
-import { getInvestorDocuments, getNextInvestorEvent } from '@/lib/investor/disclosures';
+import { getInvestorDocuments, getNextInvestorEvent } from '@/lib/investor/updates';
 import { InvestorDashboardView } from './InvestorDashboardView';
 
 export const metadata: Metadata = {

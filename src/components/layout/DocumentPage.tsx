@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { PageHero } from './PageHero';
 import { Container } from '../ui/Container';
+import Link from 'next/link';
 import { CONTACT } from '@/lib/site';
 import styles from './DocumentPage.module.css';
 
@@ -79,7 +80,7 @@ export function DocumentPage({
                         </article>
                         <footer className={styles.footer}>
                             <span>
-                                Questions about this document? Contact {CONTACT.name}, {CONTACT.title}, at{' '}
+                                Questions about this document? <Link href="/contact">Contact us</Link> or email{' '}
                                 <a href={CONTACT.mailto}>{CONTACT.email}</a>.
                             </span>
                             {updated ? <span className={styles.footerMono}>Updated {updated}</span> : null}

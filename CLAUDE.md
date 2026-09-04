@@ -13,6 +13,14 @@ Corporate website and investor dashboard for Ari Integrated Holdings Inc., a dig
 - **Scheduling:** Calendly embeds
 - **Deployment:** Vercel (auto-deploy on push to main)
 
+## Public-Site Rules (important)
+- The public site publishes strategy and process only. Never render treasury values, holdings, units, prices, cost basis, cash, P&L, NAV, share counts, report dates, freshness badges, or performance/CAGR figures on a public page. Those belong to the authenticated dashboards only; `/api/treasury/snapshot` requires a session.
+- The 50 / 30 / 20 target allocation is public (it describes strategy). `TREASURY_FRAMEWORK` and `PRINCIPLES` in `src/lib/site.ts` are the public treasury copy.
+- Harmony is "Ari's internal technology platform for treasury research, risk analysis, and controlled strategy evaluation" (`HARMONY` in `src/lib/site.ts`). Never "operating subsidiary", "trading app", or any revenue/cost claim.
+- Public announcements live in `src/lib/investor/updates.ts` ("Company Updates", route `/updates`, feed `/api/updates`); keep only current, supportable items.
+- Meeting booking UI comes from `src/lib/scheduling.ts`; only configured Calendly types are shown and `PRIMARY_CTA` falls back to "Contact Us".
+- Say "email address", not "work email". State that correspondence is routed to the CTO only on `/contact` and in the Footer.
+
 ## Correspondence Routing (important)
 All inbound correspondence is routed to the CTO: **Mitchel Carson <mitchelcarson@ariintegratedholdings.com>**.
 - Single source of truth: `CONTACT` in `src/lib/site.ts`. Never hard-code another address.
@@ -24,11 +32,11 @@ All inbound correspondence is routed to the CTO: **Mitchel Carson <mitchelcarson
 ```
 src/
 ├── app/                          # App Router pages
-│   ├── api/                      # Route handlers (contact, disclosures, treasury, executive/*)
+│   ├── api/                      # Route handlers (contact, updates, treasury [auth], executive/*)
 │   ├── executive/                # Executive dashboard, settings, subscribers (protected)
 │   ├── investor/dashboard/       # Investor dashboard (protected)
 │   ├── login/                    # Sign-in
-│   ├── (public pages)            # thesis, harmony, team, investors, disclosures, contact, privacy, terms, disclaimer
+│   ├── (public pages)            # thesis, harmony, team, investors, updates, contact, privacy, terms, disclaimer
 │   ├── layout.tsx                # Fonts, metadata defaults, SiteBackground, Navbar, Footer
 │   ├── globals.css               # Design tokens + utilities (.eyebrow, .mono, .glass-1/2/3, .hairline)
 │   ├── sitemap.ts / robots.ts / manifest.ts / opengraph-image.tsx / not-found.tsx
@@ -41,22 +49,23 @@ src/
 │   ├── investor/                 # AlertSignupForm
 │   └── auth/                     # LoginForm, AuthSessionProvider
 └── lib/
-    ├── site.ts                   # SITE, CONTACT (CTO), ALLOCATION, PRIMARY_NAV, getSiteUrl()
+    ├── site.ts                   # SITE, CONTACT (CTO), ALLOCATION, PRINCIPLES, HARMONY, GOVERNING_LAW_STATE, PRIMARY_NAV
+    ├── scheduling.ts             # Configured Calendly meeting types, HAS_PUBLIC_BOOKING, PRIMARY_CTA
     ├── email.ts                  # Resend wrapper, templates, escapeHtml, CORRESPONDENCE_EMAIL
     ├── treasury/snapshot.ts      # ETF holdings, cash, share count (manual CFO data)
-    └── investor/disclosures.ts   # Disclosures, documents, events (static data)
+    └── investor/updates.ts       # Company updates, documents, events (static data)
 ```
 
 ## Design System ("institutional glass")
 - Flat navy ground (`--bg-0/1/2`), three glass tiers (`Card` variants `subtle` / `glass` / `elevated`, or `.glass-1/2/3`).
 - Gold (`--gold-300/500/700`) and silver are the only chrome accents. Eyebrows use `.eyebrow` (solid gold). At most one gradient-text element per page (`.text-gradient-silver` on the Home hero h1).
 - BTC / ETH / SOL colors (`--btc`, `--eth`, `--sol` + `-text/-a15/-a40`) are **data-only**: `AssetChip`, `AllocationRing`, `AllocationBar`, card `accent` rails, chart series. Never in backgrounds, buttons, headings, or glows.
-- All financial numbers use `--font-mono` with `tabular-nums`; show an "as of · source" line and the freshness state (`getTreasuryFreshness`) under live figures. No abbreviated values, no count-ups, no fabricated data.
+- All financial numbers (dashboards only) use `--font-mono` with `tabular-nums`; show an "as of · source" line and the freshness state (`getTreasuryFreshness`) under live figures. No abbreviated values, no count-ups, no fabricated data.
 - Interior pages start with `PageHero`; sections use `Section`; long-form legal/disclosure pages use `DocumentPage`.
 - Motion: `Reveal` for entrance, `--dur-*` / `--ease-*` tokens; everything respects `prefers-reduced-motion`.
 
 ## Key Files
-- `src/lib/treasury/snapshot.ts` — holdings and cash (as of 1 Mar 2026: $4,671.14 total assets, 300,008.7 shares outstanding). Update here when a new CFO report arrives.
+- `src/lib/treasury/snapshot.ts` — holdings and cash from the latest CFO report (dashboards only). Update here when a new report arrives.
 - `src/lib/site.ts` — brand strings, CTO contact, allocation targets, primary nav.
 - `src/lib/email.ts` — all email templates (user input must go through `escapeHtml`).
 - `src/app/api/contact/route.ts` — validated, rate-limited (5/hour/IP), honeypot field `website`.

@@ -9,7 +9,7 @@ import { Container } from '../ui/Container';
 import { Sheet } from '../ui/Sheet';
 import { Logo } from '../brand/Logo';
 import { NAV_ITEMS } from './nav-items';
-import { CONTACT } from '@/lib/site';
+import { PRIMARY_CTA } from '@/lib/scheduling';
 import styles from './Navbar.module.css';
 
 function isActivePath(pathname: string | null, href: string) {
@@ -101,7 +101,7 @@ export function SiteHeader() {
                                     {!isAuthPage ? (
                                         <Link href="/login" className={styles.ghostLink}>Investor Portal</Link>
                                     ) : null}
-                                    <Link href="/contact" className={styles.primaryLink}>Book a Meeting</Link>
+                                    <Link href={PRIMARY_CTA.href} className={styles.primaryLink}>{PRIMARY_CTA.label}</Link>
                                 </>
                             )}
 
@@ -176,18 +176,14 @@ export function SiteHeader() {
                             </>
                         ) : (
                             <>
-                                <Link href="/contact" className={`${styles.primaryLink} ${styles.sheetPrimary}`} onClick={closeMenu}>
-                                    Book a Meeting
+                                <Link href={PRIMARY_CTA.href} className={`${styles.primaryLink} ${styles.sheetPrimary}`} onClick={closeMenu}>
+                                    {PRIMARY_CTA.label}
                                 </Link>
                                 <Link href="/login" className={`${styles.ghostLink} ${styles.sheetGhost}`} onClick={closeMenu}>
                                     Investor Portal
                                 </Link>
                             </>
                         )}
-                        <p className={styles.sheetContact}>
-                            Correspondence:{' '}
-                            <a href={CONTACT.mailto}>{CONTACT.email}</a>
-                        </p>
                     </div>
                 </div>
             </Sheet>

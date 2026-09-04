@@ -8,14 +8,14 @@ import styles from './Footer.module.css';
 
 const COMPANY_LINKS = [
     { href: '/thesis', label: 'Investment Thesis' },
-    { href: '/harmony', label: 'Harmony Trading' },
+    { href: '/harmony', label: 'Harmony' },
     { href: '/team', label: 'Leadership' },
     { href: '/contact', label: 'Contact' },
 ];
 
 const INVESTOR_LINKS = [
     { href: '/investors', label: 'Investor Relations' },
-    { href: '/disclosures', label: 'Disclosures' },
+    { href: '/updates', label: 'Company Updates' },
     { href: '/investors#alerts', label: 'Investor Alerts' },
     { href: '/login', label: 'Investor Portal' },
 ];

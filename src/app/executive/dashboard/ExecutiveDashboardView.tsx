@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Bell, DollarSign, Settings, TrendingUp, Users } from 'lucide-react';
 import type { TreasuryFreshness, TreasurySnapshot } from '@/lib/treasury/snapshot';
 import { CONTACT } from '@/lib/site';
+import { HAS_PUBLIC_BOOKING } from '@/lib/scheduling';
 import { Container } from '@/components/ui/Container';
 import { Button } from '@/components/ui/Button';
 import { MeetingTypeSelector } from '@/components/scheduling/MeetingTypeSelector';
@@ -11,6 +12,7 @@ import {
     DashboardHeader,
     DashboardPanel,
     DashboardShell,
+    EmptyState,
     Delta,
     ErrorState,
     FreshnessBadge,
@@ -208,14 +210,25 @@ export function ExecutiveDashboardView({
                     <DashboardPanel
                         eyebrow="Scheduling"
                         title="Schedule investor meeting"
-                        description="Book investor meetings and partnership calls."
+                        description={
+                            HAS_PUBLIC_BOOKING
+                                ? 'Book investor meetings and partnership calls.'
+                                : 'Public booking is hidden until a NEXT_PUBLIC_CALENDLY_* URL is configured.'
+                        }
                     >
-                        <MeetingTypeSelector />
+                        {HAS_PUBLIC_BOOKING ? (
+                            <MeetingTypeSelector />
+                        ) : (
+                            <EmptyState
+                                title="No public meeting types configured"
+                                copy="Set NEXT_PUBLIC_CALENDLY_EXEC_INTRO_URL, NEXT_PUBLIC_CALENDLY_INVESTOR_BRIEFING_URL, or NEXT_PUBLIC_CALENDLY_PARTNERSHIP_URL to offer online booking on the public site."
+                            />
+                        )}
                     </DashboardPanel>
                 </div>
 
                 <p className={styles.footnote}>
-                    All inbound correspondence for this dashboard is routed to {CONTACT.name}, {CONTACT.title}, at{' '}
+                    Correspondence inbox: {CONTACT.name}, {CONTACT.title},{' '}
                     <a href={CONTACT.mailto} className={styles.footnoteLink}>{CONTACT.email}</a>.
                 </p>
             </DashboardShell>

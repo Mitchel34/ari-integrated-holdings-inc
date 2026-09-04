@@ -287,19 +287,6 @@
     border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
-.sheetContact {
-    flex: 1 1 100%;
-    margin: 0.5rem 0 0;
-    font-size: 0.78rem;
-    color: var(--text-3);
-    line-height: 1.5;
-    overflow-wrap: anywhere;
-}
-
-.sheetContact a {
-    color: var(--gold-300);
-}
-
 /* ── Breakpoints ───────────────────────────────────────────────────────── */
 
 @media (min-width: 1024px) {

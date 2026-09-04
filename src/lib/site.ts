@@ -87,7 +87,50 @@ export const PRIMARY_NAV = [
     { href: '/thesis', label: 'Thesis' },
     { href: '/harmony', label: 'Harmony' },
     { href: '/investors', label: 'Investors' },
-    { href: '/disclosures', label: 'Disclosures' },
+    { href: '/updates', label: 'Updates' },
     { href: '/team', label: 'Team' },
     { href: '/contact', label: 'Contact' },
 ] as const;
+
+/**
+ * Public positioning of the treasury. Describes strategy and process only;
+ * no current values, holdings, or performance are published on the public site.
+ */
+export const TREASURY_FRAMEWORK = {
+    title: 'A disciplined treasury framework',
+    summary:
+        'Ari maintains long-term digital-asset exposure through regulated investment vehicles, guided by defined allocation principles, risk monitoring, and board-level oversight.',
+} as const;
+
+/** The three qualitative principles shown wherever the treasury is introduced. */
+export const PRINCIPLES = [
+    {
+        id: 'horizon',
+        title: 'Long-term horizon',
+        text: 'A ten-year investment horizon focused on balance sheet strength and disciplined capital deployment rather than short-term trading.',
+    },
+    {
+        id: 'vehicles',
+        title: 'ETF-based exposure',
+        text: 'Exposure is held through regulated spot ETFs (ARKB, FETH, FSOL) rather than direct custody.',
+    },
+    {
+        id: 'governance',
+        title: 'Human governance',
+        text: 'AI-assisted analysis informs the work; allocation, risk, and disclosure decisions rest with the board and executive team.',
+    },
+] as const;
+
+/** Harmony: an internal technology platform, not a business line. */
+export const HARMONY = {
+    name: 'Harmony',
+    tagline: "Ari's internal technology platform for treasury research, risk analysis, and controlled strategy evaluation.",
+    positioning:
+        "Harmony is Ari's internal technology platform for treasury research, risk analysis, and controlled strategy evaluation. It supports human decision-making and operates within defined governance and risk boundaries.",
+} as const;
+
+/**
+ * Governing law named in the Terms of Service. Set by counsel (for example
+ * 'Delaware'); while null, the Terms refer to the state of organization.
+ */
+export const GOVERNING_LAW_STATE: string | null = null;
