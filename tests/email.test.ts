@@ -96,6 +96,12 @@ describe('missing configuration fails explicitly', () => {
 
         expect(outcome).toEqual({ status: 'dry-run' });
         expect(sendMock).not.toHaveBeenCalled();
+
+        // The dry-run log names the sender kind and reference but never user content.
+        const logged = vi.mocked(console.warn).mock.calls.map((call) => call.join(' ')).join('\n');
+        expect(logged).toContain('dry-run kind=contact_inquiry');
+        expect(logged).not.toContain(inquiry.name);
+        expect(logged).not.toContain(inquiry.email);
     });
 
     it('ignores EMAIL_DRY_RUN in production builds', async () => {
