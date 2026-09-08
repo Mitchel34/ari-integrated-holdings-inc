@@ -29,11 +29,24 @@
 }
 
 .formError {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
     padding: 0.7rem 0 0.7rem 1rem;
     border-left: 2px solid var(--neg);
     color: var(--text-1);
     font-size: var(--fs-small);
     line-height: 1.55;
+}
+
+.inlineLink {
+    color: var(--gold-300);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+.inlineLink:hover {
+    color: var(--text-1);
 }
 
 .footer {
@@ -98,4 +111,10 @@
     font-size: var(--fs-small);
     line-height: 1.6;
     color: var(--text-2);
+}
+
+.successReference {
+    margin-top: 0.35rem;
+    font-size: var(--fs-caption);
+    color: var(--text-3);
 }

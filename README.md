@@ -12,7 +12,7 @@ All inbound correspondence from the site is routed to the CTO, **Mitchel Carson 
 
 | Source | What happens |
 | --- | --- |
-| Contact form (`/contact` → `POST /api/contact`) | Emailed to the CTO with `Reply-To` set to the sender. Rate-limited and honeypot-protected. |
+| Contact form (`/contact` → `POST /api/contact`) | Emailed to the CTO with `Reply-To` set to the sender and a per-inquiry reference (`ARI-YYYYMMDD-XXXXXX`) in the subject. If the provider does not accept the message the visitor gets an error with that reference and a direct `mailto:` fallback, never a success screen. Rate-limited and honeypot-protected. |
 | Investor alert signup (`/investors#alerts`) | Subscriber gets a confirmation; the CTO gets a "new subscriber" notice. Rate-limited and honeypot-protected; addresses an executive deactivated are not silently re-enabled. |
 | Investor broadcasts (executive dashboard) | Sent as one email per subscriber (addresses are never shared), reply-to the CTO. |
 | Executive meeting notification (`POST /api/executive/meeting-notify`) | Sent to every executive in the database, with the CTO always included. |
@@ -40,9 +40,16 @@ Open `http://localhost:3000`.
 - `NEXT_PUBLIC_SITE_URL` — absolute public URL (used for email links, sitemap, Open Graph)
 - `DATABASE_URL` — Neon PostgreSQL connection string
 - `NEXTAUTH_SECRET`, `NEXTAUTH_URL`
-- `RESEND_API_KEY`, `RESEND_FROM_EMAIL` (domain must be verified in Resend), `RESEND_FROM_NAME`
+- `RESEND_API_KEY`, `RESEND_FROM_EMAIL` (domain must be verified in Resend), `RESEND_FROM_NAME` — required; when the key is missing nothing is sent and every sender reports an explicit failure
 - `NEXT_PUBLIC_CALENDLY_*` — Calendly event URLs used by the scheduling components
 - `CORRESPONDENCE_EMAIL` — optional override of the CTO routing default
+- `EMAIL_DRY_RUN=1` — local development only: logs outbound email instead of sending it and reports it as not delivered; ignored in production builds
+
+## Delivery diagnostics
+
+- `GET /api/executive/email-status` (executive session required) reports whether `RESEND_API_KEY` is present (never its value), the effective From header, where correspondence is routed, whether dry-run mode is active, and the commit and branch the deployment was built from.
+- Every send writes one log line: `[email] accepted|rejected|transport|not_configured|dry-run kind=<sender> ref=<reference> …` with the provider message id on success. Contact inquiries carry the same reference in the visitor's confirmation, the email subject and footer, and the provider tags.
+- "Accepted" means the provider queued the message; it is not confirmation that it reached an inbox. Check the provider's delivery events for the message id when a recipient reports nothing arrived.
 
 Database helpers:
 
@@ -57,8 +64,9 @@ npm run db:studio
 ```bash
 npm run typecheck
 npm run lint:src
+npm test           # vitest: email delivery outcomes and the contact API
 npm run build
-npm run verify     # all three
+npm run verify     # all four
 ```
 
 ## Design system

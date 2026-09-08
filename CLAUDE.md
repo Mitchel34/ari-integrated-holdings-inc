@@ -67,8 +67,9 @@ src/
 ## Key Files
 - `src/lib/treasury/snapshot.ts` — holdings and cash from the latest CFO report (dashboards only). Update here when a new report arrives.
 - `src/lib/site.ts` — brand strings, CTO contact, allocation targets, primary nav.
-- `src/lib/email.ts` — all email templates (user input must go through `escapeHtml`).
-- `src/app/api/contact/route.ts` — validated, rate-limited (5/hour/IP), honeypot field `website`.
+- `src/lib/email.ts` — all email templates (user input must go through `escapeHtml`). Sends return a `SendOutcome` (`accepted` / `dry-run` / `failed`), never a bare boolean; a missing `RESEND_API_KEY` is a `failed` outcome. `EMAIL_DRY_RUN` is honoured only outside production.
+- `src/app/api/contact/route.ts` — validated, rate-limited (5/hour/IP), honeypot field `website`, per-inquiry reference `ARI-YYYYMMDD-XXXXXX`; responds 503/502 (never `ok: true`) when the provider does not accept the message.
+- `src/app/api/executive/email-status/route.ts` — executive-only, presence-only view of the email configuration and the deployed commit.
 
 ## CSS Stacking Context Rules
 - `SiteBackground`: fixed, `z-index: var(--z-ambient)` (0), pointer-events none
@@ -86,8 +87,9 @@ src/
 NEXT_PUBLIC_SITE_URL=                 # https://ariintegratedholdings.com
 DATABASE_URL=                         # Neon PostgreSQL connection string
 NEXTAUTH_SECRET= / NEXTAUTH_URL=
-RESEND_API_KEY= / RESEND_FROM_EMAIL= / RESEND_FROM_NAME=
+RESEND_API_KEY= / RESEND_FROM_EMAIL= / RESEND_FROM_NAME=   # required for any delivery
 CORRESPONDENCE_EMAIL=                 # optional override; defaults to the CTO
+EMAIL_DRY_RUN=                        # local only: log instead of send, reported as not delivered
 NEXT_PUBLIC_CALENDLY_EXEC_ZOOM_URL=   # + EXEC_INTRO / INVESTOR_BRIEFING / PARTNERSHIP
 ```
 
@@ -95,16 +97,17 @@ NEXT_PUBLIC_CALENDLY_EXEC_ZOOM_URL=   # + EXEC_INTRO / INVESTOR_BRIEFING / PARTN
 - **Mobile menu content bleeding through:** check `.layout-wrapper` has no z-index.
 - **Calendly appears too small:** check the heights listed above.
 - **Login 401 errors:** usually `DATABASE_URL` misconfiguration or a Neon connection issue.
-- **Emails not delivered:** `RESEND_API_KEY` unset (emails are logged to the console instead) or the from-domain is not verified in Resend.
+- **Emails not delivered:** sign in as an executive and open `/api/executive/email-status`; `apiKeyConfigured: false` means `RESEND_API_KEY` is unset on that deployment (the contact form then returns 503 and shows an error). A 502 means the provider rejected the message, usually because the from-domain is not verified in Resend. Search the runtime logs for `[email]` lines by `ref=`; an `accepted` line carries the provider message id to look up in Resend's delivery events.
 - **ESLint React Compiler rules:** no `setState` directly inside `useEffect` bodies; no reassigning variables during render (use `reduce`/`map`).
 
 ## Commands
 ```bash
 npm run dev        # Start dev server
 npm run typecheck  # tsc --noEmit
-npm run lint:src   # ESLint on src + prisma
+npm run lint:src   # ESLint on src + prisma + tests
+npm test           # vitest (tests/)
 npm run build      # prisma generate && next build
-npm run verify     # typecheck + lint + build
+npm run verify     # typecheck + lint + test + build
 ```
 
 ## Git Workflow
