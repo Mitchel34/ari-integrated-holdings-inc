@@ -75,11 +75,20 @@ export async function subscribeInvestorAlertsAction(
     }
 
     // Confirmation to the subscriber and a routing notice to the CTO for new signups.
-    // Neither should block a successful signup.
-    await Promise.allSettled([
+    // The subscription is already recorded, so neither email blocks a successful
+    // signup, but the response must not claim a confirmation that was never sent.
+    const [confirmation] = await Promise.all([
         emailService.sendAlertConfirmation(email),
         ...(isNew ? [emailService.sendSubscriberNotification(email, source)] : []),
     ]);
+
+    if (confirmation.status !== 'accepted') {
+        return {
+            status: 'success',
+            message:
+                "You're on the list. We could not send a confirmation email right now, but you'll receive treasury updates, disclosures, and investor event announcements.",
+        };
+    }
 
     return {
         status: 'success',

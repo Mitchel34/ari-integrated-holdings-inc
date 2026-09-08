@@ -93,18 +93,30 @@ export async function POST(req: Request) {
 </body>
 </html>`;
 
-  const success = await emailService.sendMeetingNotification(recipients, subject, html);
+  const outcome = await emailService.sendMeetingNotification(recipients, subject, html);
 
-  if (!success) {
+  // Local opt-in mode only (never production): logged, not delivered.
+  if (outcome.status === "dry-run") {
+    return NextResponse.json({ ok: true, sent: 0, dryRun: true, recipients });
+  }
+
+  if (outcome.status === "failed") {
+    const notConfigured = outcome.reason === "not_configured";
     return NextResponse.json(
-      { error: "Failed to send email notifications" },
-      { status: 500 }
+      {
+        error: notConfigured
+          ? "Email delivery is not configured (RESEND_API_KEY is missing). No notification was sent."
+          : "The email provider did not accept the notification. Nothing was sent.",
+      },
+      { status: notConfigured ? 503 : 502 },
     );
   }
 
+  // `sent` counts provider acceptance, not confirmed inbox delivery.
   return NextResponse.json({
     ok: true,
     sent: recipients.length,
+    dryRun: false,
     recipients,
   });
 }

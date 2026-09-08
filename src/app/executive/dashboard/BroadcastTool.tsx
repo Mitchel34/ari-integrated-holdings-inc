@@ -26,6 +26,7 @@ export default function BroadcastTool({ subscriberCount, onSent }: BroadcastTool
     const [subject, setSubject] = useState('');
     const [message, setMessage] = useState('');
     const [sentCount, setSentCount] = useState(0);
+    const [failedCount, setFailedCount] = useState(0);
     const { addToast } = useToast();
 
     async function handleSend() {
@@ -36,12 +37,26 @@ export default function BroadcastTool({ subscriberCount, onSent }: BroadcastTool
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ subject, message }),
             });
-            const data = await res.json() as { ok?: boolean; sent?: number; error?: string };
+            const data = await res.json() as {
+                ok?: boolean;
+                sent?: number;
+                failed?: number;
+                dryRun?: boolean;
+                message?: string;
+                error?: string;
+            };
             if (!res.ok || !data.ok) throw new Error(data.error || 'Broadcast failed.');
+            if (data.dryRun) {
+                // Local dry run: nothing left the server, so never show the "sent" state.
+                addToast(data.message || 'Dry run: no emails were sent.', 'warning');
+                setSendState('idle');
+                return;
+            }
             setSentCount(data.sent ?? 0);
+            setFailedCount(data.failed ?? 0);
             setSendState('sent');
             onSent?.();
-            addToast(`Alert sent to ${plural(data.sent ?? 0, 'subscriber')}`, 'success');
+            addToast(`Alert accepted by the email provider for ${plural(data.sent ?? 0, 'subscriber')}`, 'success');
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Broadcast failed. Try again.';
             addToast(errorMessage, 'error');
@@ -72,7 +87,10 @@ export default function BroadcastTool({ subscriberCount, onSent }: BroadcastTool
                 </span>
                 <div className={styles.successText}>
                     <h3 className={styles.stateTitle}>Alert sent</h3>
-                    <p className={styles.stateCopy}>Delivered to {plural(sentCount, 'active subscriber')}.</p>
+                    <p className={styles.stateCopy}>
+                        Accepted by the email provider for {plural(sentCount, 'active subscriber')}.
+                        {failedCount > 0 ? ` ${plural(failedCount, 'address')} could not be sent; see the server logs.` : ''}
+                    </p>
                 </div>
                 <Button size="sm" variant="secondary" onClick={() => { setSendState('idle'); setSubject(''); setMessage(''); }}>
                     Send another

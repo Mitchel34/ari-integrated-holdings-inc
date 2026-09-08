@@ -9,7 +9,7 @@ import styles from './ExecMeetingBooking.module.css';
 
 const CALENDLY_EXEC_ZOOM_URL = process.env.NEXT_PUBLIC_CALENDLY_EXEC_ZOOM_URL ?? '';
 
-type NotifyStatus = 'idle' | 'sending' | 'sent' | 'error';
+type NotifyStatus = 'idle' | 'sending' | 'sent' | 'dry-run' | 'error';
 
 export function ExecMeetingBooking() {
     const [notifyStatus, setNotifyStatus] = useState<NotifyStatus>('idle');
@@ -25,9 +25,9 @@ export function ExecMeetingBooking() {
                     message: 'A new executive Zoom meeting has been scheduled via Calendly. Please check your email for the Calendly invitation and Zoom link.',
                 }),
             });
-            const data = (await res.json()) as { ok?: boolean; error?: string };
+            const data = (await res.json()) as { ok?: boolean; dryRun?: boolean; error?: string };
             if (!res.ok || !data.ok) throw new Error(data.error || 'Failed to notify.');
-            setNotifyStatus('sent');
+            setNotifyStatus(data.dryRun ? 'dry-run' : 'sent');
         } catch {
             setNotifyStatus('error');
         }
@@ -62,7 +62,12 @@ export function ExecMeetingBooking() {
                 </Button>
                 {notifyStatus === 'sent' ? (
                     <p className={`${styles.status} ${styles.statusOk}`} role="status">
-                        Meeting notification sent to all executives and the CTO correspondence inbox.
+                        Meeting notification handed to the email provider for all executives and the CTO correspondence inbox.
+                    </p>
+                ) : null}
+                {notifyStatus === 'dry-run' ? (
+                    <p className={`${styles.status} ${styles.statusError}`} role="status">
+                        Dry run: EMAIL_DRY_RUN is set in this environment, so no notification was sent.
                     </p>
                 ) : null}
                 {notifyStatus === 'error' ? (

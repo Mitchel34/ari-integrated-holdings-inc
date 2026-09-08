@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { emailService } from '@/lib/email';
+import { emailService, type SendOutcome } from '@/lib/email';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { CONTACT } from '@/lib/site';
 
 // Five inquiries per hour per client is generous for humans and blunts abuse.
 const RATE_LIMIT = 5;
@@ -17,10 +18,43 @@ const LIMITS = {
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+/** Unambiguous characters only (no 0/O or 1/I) so a reference can be read back over the phone. */
+const REFERENCE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+
+/**
+ * Per-submission correlation id. It is returned to the visitor, placed in the
+ * email subject and footer, tagged on the provider message, and written to the
+ * server log, so any one of them can be traced to the others.
+ */
+function newReference(): string {
+    const day = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const bytes = crypto.getRandomValues(new Uint8Array(6));
+    let code = '';
+    for (const byte of bytes) {
+        code += REFERENCE_ALPHABET[byte % REFERENCE_ALPHABET.length];
+    }
+    return `ARI-${day}-${code}`;
+}
+
 function clientKey(req: NextRequest): string {
     const forwarded = req.headers.get('x-forwarded-for');
     const ip = forwarded?.split(',')[0]?.trim() || req.headers.get('x-real-ip') || 'unknown';
     return `contact:${ip}`;
+}
+
+/** Non-success response: nothing was handed to the provider, so the visitor must retry or email directly. */
+function deliveryFailure(reference: string, status: number) {
+    return NextResponse.json(
+        {
+            ok: false,
+            delivery: 'failed',
+            reference,
+            error:
+                `We could not deliver your inquiry. Your message is still in the form; please try again, ` +
+                `or email ${CONTACT.email} directly and quote reference ${reference}.`,
+        },
+        { status },
+    );
 }
 
 export async function POST(req: NextRequest) {
@@ -41,9 +75,13 @@ export async function POST(req: NextRequest) {
 
     const fields = (body ?? {}) as Record<string, unknown>;
     const read = (key: keyof typeof LIMITS) => (typeof fields[key] === 'string' ? (fields[key] as string).trim() : '');
+    const reference = newReference();
 
-    // Honeypot: real users never see or fill this field. Pretend success for bots.
+    // Honeypot: real users never see or fill this field. Bots get a bare fake
+    // success (no reference, no delivery status) and nothing is sent. The log
+    // line keeps it distinguishable from a real accepted inquiry.
     if (typeof fields.website === 'string' && fields.website.trim().length > 0) {
+        console.info(`[contact] honeypot ref=${reference} outcome=fake_success (nothing sent)`);
         return NextResponse.json({ ok: true });
     }
 
@@ -68,19 +106,29 @@ export async function POST(req: NextRequest) {
         }
     }
 
+    let outcome: SendOutcome;
     try {
-        const sent = await emailService.sendContactInquiry({
+        outcome = await emailService.sendContactInquiry({
             name,
             email,
             company: company || undefined,
             investorType: investorType || undefined,
             message,
+            reference,
         });
-        if (!sent) {
-            throw new Error('Delivery failed');
-        }
-        return NextResponse.json({ ok: true });
-    } catch {
-        return NextResponse.json({ error: 'Unable to send your inquiry. Please try again.' }, { status: 500 });
+    } catch (err) {
+        console.error(`[contact] unexpected error ref=${reference}:`, err instanceof Error ? err.message : err);
+        return deliveryFailure(reference, 500);
+    }
+
+    switch (outcome.status) {
+        case 'accepted':
+            // Provider acceptance only: the message is queued, not confirmed in an inbox.
+            return NextResponse.json({ ok: true, delivery: 'accepted', reference });
+        case 'dry-run':
+            // Local opt-in mode (never production): logged, not delivered.
+            return NextResponse.json({ ok: true, delivery: 'dry-run', reference });
+        case 'failed':
+            return deliveryFailure(reference, outcome.reason === 'not_configured' ? 503 : 502);
     }
 }
