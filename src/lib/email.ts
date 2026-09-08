@@ -169,7 +169,7 @@ async function send(
     }
 
     if (isEmailDryRun()) {
-        logEmail('warn', 'dry-run', options, `to=${target} subject="${subject}" (EMAIL_DRY_RUN is set; nothing was sent)`);
+        logEmail('warn', 'dry-run', options, `to=${target} subject_length=${subject.length} (EMAIL_DRY_RUN is set; nothing was sent)`);
         return { status: 'dry-run' };
     }
 
@@ -240,7 +240,7 @@ async function sendEach(
     }
 
     if (isEmailDryRun()) {
-        logEmail('warn', 'dry-run', options, `recipients=${unique.length} subject="${subject}" (EMAIL_DRY_RUN is set; nothing was sent)`);
+        logEmail('warn', 'dry-run', options, `recipients=${unique.length} subject_length=${subject.length} (EMAIL_DRY_RUN is set; nothing was sent)`);
         return { sent: 0, failed: 0, dryRun: true };
     }
 
