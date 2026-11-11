@@ -4,6 +4,30 @@
     transition: border-color 0.26s ease-in-out, background-color 0.26s ease-in-out, box-shadow 0.26s ease-in-out, transform 0.26s ease-in-out, opacity 0.26s ease-in-out;
     position: relative;
     overflow: hidden;
+    /* Own stacking context so the spotlight can sit behind the content. */
+    isolation: isolate;
+}
+
+/* Soft gold light that follows the pointer (coordinates set in Card.tsx). */
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(280px circle at var(--spot-x, 50%) var(--spot-y, 0%), rgba(232, 200, 122, 0.18), transparent 70%);
+    transition: opacity 0.3s ease-in-out;
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+@media (hover: none) {
+    .card::before {
+        display: none;
+    }
 }
 
 .default {
@@ -26,7 +50,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .card {
+    .card,
+    .card::before {
         transition: none;
     }
 

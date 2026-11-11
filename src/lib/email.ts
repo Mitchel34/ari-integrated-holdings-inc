@@ -1,12 +1,14 @@
 import { Resend } from 'resend';
+import { CONTACT_EMAIL, NO_REPLY_EMAIL, SITE_URL } from '@/lib/contact';
 
 const resend = process.env.RESEND_API_KEY
     ? new Resend(process.env.RESEND_API_KEY)
     : null;
 
-const FROM = process.env.RESEND_FROM_EMAIL || 'no-reply@ariholdings.com';
+const FROM = process.env.RESEND_FROM_EMAIL || NO_REPLY_EMAIL;
 const FROM_NAME = process.env.RESEND_FROM_NAME || 'ARI Integrated Holdings Inc.';
-const IR_EMAIL = process.env.RESEND_IR_EMAIL || 'investor-relations@ariholdings.com';
+// Where contact form inquiries are delivered.
+const IR_EMAIL = process.env.RESEND_IR_EMAIL || CONTACT_EMAIL;
 
 async function send(to: string | string[], subject: string, html: string): Promise<boolean> {
     if (!resend) {
@@ -52,7 +54,7 @@ export const emailService = {
         If you have questions about our treasury strategy or would like to schedule a briefing with the team, reply to this email or visit our contact page.
       </p>
       <div style="text-align:center">
-        <a href="${process.env.NEXTAUTH_URL || 'https://ariholdings.com'}/investor/dashboard"
+        <a href="${process.env.NEXTAUTH_URL || SITE_URL}/investor/dashboard"
            style="display:inline-block;background:linear-gradient(135deg,#E8C87A,#9E7B36);color:#0A1324;font-weight:700;font-size:15px;padding:14px 32px;border-radius:8px;text-decoration:none">
           Access Your Portal
         </a>
@@ -113,7 +115,7 @@ export const emailService = {
       <div style="color:#94a3b8;font-size:16px;line-height:1.7;white-space:pre-wrap">${summary}</div>
     </div>
     <div style="text-align:center;margin-top:24px">
-      <a href="${process.env.NEXTAUTH_URL || 'https://ariholdings.com'}/disclosures"
+      <a href="${process.env.NEXTAUTH_URL || SITE_URL}/disclosures"
          style="display:inline-block;background:linear-gradient(135deg,#E8C87A,#9E7B36);color:#0A1324;font-weight:700;font-size:14px;padding:12px 28px;border-radius:8px;text-decoration:none">
         View Full Disclosures
       </a>

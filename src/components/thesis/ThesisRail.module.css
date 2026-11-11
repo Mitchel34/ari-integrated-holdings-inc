@@ -1,0 +1,193 @@
+/* Desktop: sticky chapter list beside the text. */
+.rail {
+    position: sticky;
+    top: 112px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    align-self: start;
+}
+
+.railLabel {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-accent-gold-bright);
+}
+
+.railBody {
+    position: relative;
+    padding-left: 1.1rem;
+}
+
+.track {
+    position: absolute;
+    left: 0;
+    top: 0.4rem;
+    bottom: 0.4rem;
+    width: 2px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    overflow: hidden;
+}
+
+.trackFill {
+    display: block;
+    width: 100%;
+    border-radius: 999px;
+    background: var(--gradient-gold);
+}
+
+.list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.15rem;
+}
+
+.item {
+    display: grid;
+    grid-template-columns: 1.9rem minmax(0, 1fr);
+    gap: 0.5rem;
+    align-items: baseline;
+    padding: 0.45rem 0.5rem;
+    border-radius: 8px;
+    color: rgba(214, 222, 233, 0.66);
+    font-size: 0.92rem;
+    line-height: 1.35;
+    transition: color 0.24s ease-in-out, background-color 0.24s ease-in-out;
+}
+
+.item:hover {
+    color: var(--color-text-main);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.itemNum {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+}
+
+.itemDone {
+    color: var(--color-text-muted);
+}
+
+.itemActive {
+    color: var(--color-text-main);
+    font-weight: 600;
+}
+
+.itemActive .itemNum {
+    color: var(--color-accent-gold-bright);
+}
+
+/* Small screens: sticky progress bar under the navbar. */
+.bar {
+    display: none;
+}
+
+@media (max-width: 899px) {
+    .rail {
+        display: none;
+    }
+
+    .bar {
+        display: block;
+        position: sticky;
+        top: 75px;
+        z-index: 60;
+        margin: 0 -1.5rem;
+        background: rgba(12, 20, 36, 0.94);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .barInner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0.35rem 1.5rem;
+    }
+
+    .barText {
+        margin: 0;
+        min-width: 0;
+        display: flex;
+        align-items: baseline;
+        gap: 0.65rem;
+        font-size: 0.9rem;
+    }
+
+    .barNum {
+        flex-shrink: 0;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        font-variant-numeric: tabular-nums;
+        color: var(--color-accent-gold-bright);
+    }
+
+    .barTitle {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-weight: 600;
+        color: var(--color-text-main);
+    }
+
+    .barButtons {
+        display: flex;
+        gap: 0.35rem;
+        flex-shrink: 0;
+    }
+
+    .barButton {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--color-text-main);
+        cursor: pointer;
+    }
+
+    .barButton:disabled {
+        opacity: 0.35;
+        cursor: default;
+    }
+
+    .barButton svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .barTrack {
+        display: block;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .barFill {
+        display: block;
+        height: 100%;
+        background: var(--gradient-gold);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .item {
+        transition: none;
+    }
+}

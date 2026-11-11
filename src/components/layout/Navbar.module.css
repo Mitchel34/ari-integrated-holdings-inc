@@ -354,12 +354,19 @@
 }
 
 @media (max-width: 1024px) and (min-width: 768px) {
+    /* Seven links: size the side columns to their content so the account button keeps one line. */
     .desktopBar {
+        grid-template-columns: auto 1fr auto;
         gap: 1rem;
     }
 
     .links {
-        gap: 0.65rem;
+        justify-content: center;
+        gap: 0.55rem;
+    }
+
+    .link {
+        font-size: 0.9rem;
     }
 
     .userName {

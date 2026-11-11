@@ -17,6 +17,7 @@ web/
 ├── src/
 │   ├── app/                    # Next.js App Router pages
 │   │   ├── api/               # API routes
+│   │   ├── assets/            # Target assets page (BTC/ETH/SOL)
 │   │   ├── executive/         # Executive dashboard (protected)
 │   │   ├── investor/          # Investor dashboard (protected)
 │   │   └── login/             # Authentication
@@ -34,19 +35,49 @@ web/
 - `src/lib/treasury/snapshot.ts` - ETF holdings (ARKB/FSOL/FETH), cash positions, share count
 - Current holdings: $4,671.14 total assets, 300,008.7 shares outstanding
 
+### Domain and Contact Email
+- `ariintegratedholdings.com` is the only active business domain, for the website and for email. The old `ariholdings.com` domain is not in use; do not add addresses or links on it.
+- `src/lib/contact.ts` holds them all: `SITE_DOMAIN`, `SITE_URL` (canonical `www` address), `CONTACT_EMAIL` (the one address shown on the site and the default destination for contact form inquiries), and `NO_REPLY_EMAIL` (default sender).
+- Render the contact address with `components/ui/ContactEmail.tsx`, which lets the long address wrap after the "@".
+- Outgoing mail is not set up yet: the sender domain must be verified in Resend, and `RESEND_*` env vars override the defaults.
+
 ### Authentication
 - NextAuth configured with Neon PostgreSQL
 - Executive accounts: mitchel@ariintegratedholdings.com, judy@..., curtis@...
 - Protected routes: /executive/*, /investor/*
 
 ### Scheduling Components
-- `CalendlyEmbed.tsx` - Responsive embed with clamp() heights
+- `src/lib/scheduling.ts` - Contact-page Zoom meeting link and duration
+- `CalendlyEmbed.tsx` - Inline Calendly widget, created with `Calendly.initInlineWidget` so it works in modals and when the URL changes
+- `ZoomMeetingScheduler.tsx` + `ZoomMeetingModal.tsx` - Contact page: topic cards open a native `<dialog>` with the Calendly scheduler (Zoom link created on booking)
 - `ExecMeetingBooking.tsx` - Executive Zoom meeting scheduler
-- `MeetingTypeSelector.tsx` - Meeting type selection for investors
+- `MeetingTypeSelector.tsx` - Inline meeting type selection on the investor and executive dashboards
 
 ### Layout Components
 - `Sheet.tsx/module.css` - Mobile slide-out menu (z-index: 80-81)
 - `Navbar.tsx/module.css` - Sticky header (z-index: 70)
+
+## Interactive Components (Nov 2026)
+
+### Target allocation
+- `src/lib/allocation.ts` - Single source for the BTC/ETH/SOL target (weights, roles, copy, illustrative CAGR). Feeds the ring, mixer, thesis, and `/assets`.
+- `components/allocation/AllocationRing.tsx` - Interactive 50/30/20 ring (Home hero, Thesis 01, `/assets`). Shows the **target**, not current holdings.
+- `components/allocation/AssetsNav.tsx` - Ring as scroll-tracking navigation on `/assets`.
+
+### Thesis guided read
+- `app/thesis/page.tsx` + `thesis.module.css` - Seven chapters in one column; `components/thesis/ThesisRail.tsx` is the sticky chapter rail (desktop) / progress bar (mobile, z-index 60, below the navbar).
+- `components/thesis/BasketMixer.tsx` - Weight sliders in section 06. Shows hypothetical performance; keep the disclosure text beside it.
+- `src/lib/useScrollSpy.ts` - Shared scroll tracking for the rail and `/assets`.
+
+### Other
+- `components/harmony/HarmonyLoop.tsx` - Four-step loop on the Harmony page.
+- `components/ui/Card.tsx` - Client component; pointer-following spotlight via `--spot-x/--spot-y`.
+- Team cards use CSS subgrid so rows line up; bios are native `<details>`.
+
+### Page transitions
+- `components/layout/PageTransitions.tsx` intercepts internal link clicks (capture phase on `window`) and replays them through `router.push` inside `document.startViewTransition`. Styles are the `::view-transition-*` rules in `globals.css`.
+- Skipped for: same-page hash links, `/api/*`, modified clicks, `prefers-reduced-motion`, and browsers without the View Transitions API.
+- The ring's SVG has `view-transition-name: allocation-ring`. Render at most one `AllocationRing` per page or the transition is skipped.
 
 ## Recent Fixes (Mar 2026)
 
@@ -69,6 +100,7 @@ web/
 DATABASE_URL=           # Neon PostgreSQL connection string
 NEXTAUTH_SECRET=        # NextAuth secret
 NEXT_PUBLIC_CALENDLY_EXEC_ZOOM_URL=  # Calendly executive meeting link
+NEXT_PUBLIC_CALENDLY_ZOOM_MEETING_URL=  # Optional: contact page Zoom modal (defaults to calendly.com/mitchel-carson/30min)
 ```
 
 ## Common Issues

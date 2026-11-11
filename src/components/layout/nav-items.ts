@@ -6,6 +6,7 @@ export interface NavItem {
 
 export const NAV_ITEMS: NavItem[] = [
     { href: '/thesis', label: 'Thesis' },
+    { href: '/assets', label: 'Assets' },
     { href: '/harmony', label: 'Harmony' },
     { href: '/disclosures', label: 'Disclosures' },
     { href: '/team', label: 'Team' },

@@ -1,5 +1,7 @@
 import { Container } from '../../components/ui/Container';
-import { MeetingTypeSelector } from '../../components/scheduling/MeetingTypeSelector';
+import { ZoomMeetingScheduler } from '../../components/scheduling/ZoomMeetingScheduler';
+import { ContactEmail } from '../../components/ui/ContactEmail';
+import { CONTACT_EMAIL } from '@/lib/contact';
 import ContactForm from './ContactForm';
 import styles from '../page.module.css';
 import contactStyles from './contact.module.css';
@@ -23,11 +25,11 @@ export default function ContactPage() {
                 <div className={contactStyles.scheduleSectionHeader}>
                     <h2>Schedule a Meeting</h2>
                     <p>
-                        Select a meeting type and book directly on our calendar. All meetings include
-                        a confirmation email with call details.
+                        Choose what you would like to discuss and book a Zoom meeting directly on our
+                        calendar. All meetings include a confirmation email with call details.
                     </p>
                 </div>
-                <MeetingTypeSelector />
+                <ZoomMeetingScheduler />
             </div>
 
             {/* Divider */}
@@ -51,8 +53,8 @@ export default function ContactPage() {
             <section className={contactStyles.fallbackPanel} aria-label="Direct contact">
                 <p>
                     Prefer email?{' '}
-                    <a href="mailto:investor-relations@ariholdings.com" className={contactStyles.emailLink}>
-                        investor-relations@ariholdings.com
+                    <a href={`mailto:${CONTACT_EMAIL}`} className={contactStyles.emailLink}>
+                        <ContactEmail />
                     </a>
                 </p>
             </section>

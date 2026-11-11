@@ -1,0 +1,231 @@
+.dialog {
+    width: min(1040px, calc(100vw - 2rem));
+    height: min(880px, calc(100dvh - 2rem));
+    max-width: none;
+    max-height: none;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    background: var(--color-primary-bg);
+    color: var(--color-text-main);
+    box-shadow: 0 30px 80px rgba(2, 6, 14, 0.7);
+    overflow: hidden;
+}
+
+.dialog::backdrop {
+    background: rgba(4, 8, 16, 0.74);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+.dialog[open] {
+    animation: dialogIn 0.26s cubic-bezier(0.22, 0.8, 0.2, 1);
+}
+
+.dialog[open]::backdrop {
+    animation: backdropIn 0.26s ease-out;
+}
+
+@keyframes dialogIn {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes backdropIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.panel {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    height: 100%;
+}
+
+.header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: start;
+    padding: 1.25rem 1.25rem 1.1rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    background:
+        radial-gradient(ellipse at 0% 0%, rgba(226, 192, 68, 0.14) 0%, transparent 60%),
+        var(--color-secondary-bg);
+}
+
+.icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--gradient-gold);
+    color: var(--color-primary-bg);
+}
+
+.icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.heading {
+    min-width: 0;
+}
+
+.eyebrow {
+    margin: 0 0 0.2rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-accent-gold-bright);
+}
+
+.title {
+    font-size: clamp(1.2rem, 2.6vw, 1.5rem);
+    line-height: 1.2;
+    color: var(--color-text-main);
+}
+
+.subtitle {
+    margin: 0.35rem 0 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+}
+
+.close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-text-main);
+    cursor: pointer;
+    transition: border-color 0.24s ease-in-out, background-color 0.24s ease-in-out;
+}
+
+.close:hover {
+    border-color: rgba(226, 192, 68, 0.6);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.close svg {
+    width: 18px;
+    height: 18px;
+}
+
+.body {
+    position: relative;
+    min-height: 0;
+    background: var(--color-primary-bg);
+}
+
+.loading {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+/* Sits above the loading note; Calendly's frame covers it once it paints. */
+.embed {
+    position: relative;
+    height: 100%;
+}
+
+.footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem 1.5rem;
+    padding: 0.85rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    background: var(--color-secondary-bg);
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+}
+
+.footer p {
+    margin: 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--color-accent-gold-bright);
+    font-weight: 600;
+}
+
+.link:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.link svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* Phones: the scheduler takes the whole screen. */
+@media (max-width: 600px) {
+    .dialog {
+        width: 100vw;
+        height: 100dvh;
+        border: 0;
+        border-radius: 0;
+    }
+
+    .header {
+        grid-template-columns: minmax(0, 1fr) auto;
+        padding: 1rem 0.9rem 0.9rem 1.1rem;
+    }
+
+    .icon {
+        display: none;
+    }
+
+    .subtitle {
+        font-size: 0.82rem;
+    }
+
+    .footer {
+        padding: 0.7rem 1.1rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dialog[open],
+    .dialog[open]::backdrop {
+        animation: none;
+    }
+
+    .close {
+        transition: none;
+    }
+}
