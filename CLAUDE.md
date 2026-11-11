@@ -35,9 +35,11 @@ web/
 - `src/lib/treasury/snapshot.ts` - ETF holdings (ARKB/FSOL/FETH), cash positions, share count
 - Current holdings: $4,671.14 total assets, 300,008.7 shares outstanding
 
-### Contact Email
-- `src/lib/contact.ts` - `CONTACT_EMAIL` is the one address shown anywhere on the site and the default destination for contact form inquiries. `ariintegratedholdings.com` is the only active business email domain; do not add `@ariholdings.com` addresses.
-- Render it with `components/ui/ContactEmail.tsx`, which lets the long address wrap after the "@".
+### Domain and Contact Email
+- `ariintegratedholdings.com` is the only active business domain, for the website and for email. The old `ariholdings.com` domain is not in use; do not add addresses or links on it.
+- `src/lib/contact.ts` holds them all: `SITE_DOMAIN`, `SITE_URL` (canonical `www` address), `CONTACT_EMAIL` (the one address shown on the site and the default destination for contact form inquiries), and `NO_REPLY_EMAIL` (default sender).
+- Render the contact address with `components/ui/ContactEmail.tsx`, which lets the long address wrap after the "@".
+- Outgoing mail is not set up yet: the sender domain must be verified in Resend, and `RESEND_*` env vars override the defaults.
 
 ### Authentication
 - NextAuth configured with Neon PostgreSQL

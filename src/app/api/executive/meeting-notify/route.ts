@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { emailService } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
+import { SITE_URL } from "@/lib/contact";
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
@@ -37,7 +38,7 @@ export async function POST(req: Request) {
   const customMessage =
     body.message || "A new executive meeting has been scheduled.";
 
-  const baseUrl = process.env.NEXTAUTH_URL || "https://ariholdings.com";
+  const baseUrl = process.env.NEXTAUTH_URL || SITE_URL;
 
   const subject = `New Meeting Scheduled: ${meetingType}`;
   const html = `
