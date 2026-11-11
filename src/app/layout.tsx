@@ -5,6 +5,7 @@ import { Footer } from "../components/layout/Footer";
 import { AuthSessionProvider } from "../components/auth/AuthSessionProvider";
 import { CryptoBackground } from "../components/auth/CryptoBackground";
 import { ToastProvider } from "../components/ui/Toast";
+import { PageTransitions } from "../components/layout/PageTransitions";
 import "./globals.css";
 
 const inter = Inter({
@@ -34,6 +35,7 @@ export default function RootLayout({
               <main>{children}</main>
               <Footer />
             </div>
+            <PageTransitions />
           </ToastProvider>
         </AuthSessionProvider>
       </body>

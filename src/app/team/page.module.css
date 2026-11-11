@@ -36,45 +36,62 @@
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
     gap: clamp(1rem, 3vw, 1.5rem);
 }
 
+/* Each card spans three shared rows (identity, facts, bio) so the same
+   element sits at the same height in every card, whatever the text length. */
+.memberShell,
 .memberCard {
+    display: grid;
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+    row-gap: 1.15rem;
+}
+
+.memberCard {
+    align-content: start;
+    padding: 0.5rem 0.25rem;
+}
+
+/* Once a bio is open, let each card take its own height so the others do not stretch with it. */
+.grid:has(.bio[open]) {
+    align-items: start;
+}
+
+.grid:has(.bio[open]) .memberShell,
+.grid:has(.bio[open]) .memberCard {
+    grid-row: auto;
+    grid-template-rows: none;
+}
+
+.identity {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    text-align: center;
-    padding: 2rem 1.5rem;
+    gap: 1rem;
+    min-width: 0;
 }
 
 .avatar {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 72px;
-    height: 72px;
+    width: 60px;
+    height: 60px;
     border-radius: 999px;
     background: var(--gradient-gold);
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: var(--color-primary-bg);
     box-shadow: 0 6px 20px rgba(194, 155, 78, 0.3);
-    margin-bottom: 1.25rem;
     flex-shrink: 0;
-}
-
-.divider {
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(194, 155, 78, 0.4), transparent);
-    margin-bottom: 1.25rem;
 }
 
 .name {
     font-size: 1.25rem;
     font-weight: 700;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.2rem;
     background: var(--gradient-gold);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -82,25 +99,92 @@
 }
 
 .role {
-    font-size: 0.875rem;
+    margin: 0;
+    font-size: 0.8rem;
     color: var(--color-text-muted);
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 0.75rem;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+}
+
+.facts {
+    list-style: none;
+    margin: 0;
+    padding: 1.1rem 0 0;
+    display: grid;
+    align-content: start;
+    gap: 0.6rem;
+    border-top: 1px solid rgba(194, 155, 78, 0.3);
+    color: var(--color-text-main);
+    font-size: 0.975rem;
+    line-height: 1.5;
+}
+
+.facts li {
+    position: relative;
+    padding-left: 1.2rem;
+}
+
+.facts li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--gradient-gold);
 }
 
 .bio {
+    align-self: start;
+}
+
+.bio summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    cursor: pointer;
+    list-style: none;
+    color: var(--color-accent-gold-bright);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.bio summary::-webkit-details-marker {
+    display: none;
+}
+
+.bio summary::after {
+    content: "+";
+    font-size: 1.1rem;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.bio[open] summary::after {
+    content: "\2212";
+}
+
+.bio summary:focus-visible {
+    outline: 2px solid var(--color-accent-gold);
+    outline-offset: 2px;
+    border-radius: 8px;
+}
+
+.bio p {
+    margin: 0.4rem 0 0;
     font-size: 0.9375rem;
     color: var(--color-text-muted);
     line-height: 1.7;
-    margin: 0;
 }
 
 @media (max-width: 767px) {
     .grid {
         grid-template-columns: 1fr;
-        max-width: 380px;
+        max-width: 440px;
         margin: 0 auto;
     }
 }

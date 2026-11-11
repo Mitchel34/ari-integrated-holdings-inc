@@ -11,6 +11,9 @@
   --color-accent-silver-bright: #E8EBF0;
   --color-accent-blue: #84b8ff;
   --color-accent-purple: #b49dff;
+  --color-asset-btc: var(--color-accent-gold-bright);
+  --color-asset-eth: var(--color-accent-blue);
+  --color-asset-sol: var(--color-accent-purple);
   --gradient-gold: linear-gradient(135deg, #E8C87A 0%, #C29B4E 50%, #9E7B36 100%);
   --gradient-silver: linear-gradient(135deg, #E8EBF0 0%, #C0C5CB 50%, #8F97A3 100%);
   --glass-bg: rgba(255, 255, 255, 0.08);
@@ -99,6 +102,48 @@ button:focus-visible {
 .motion-reduce-transition-none {
   transition: none !important;
   animation: none !important;
+}
+
+/* Page transitions (driven by components/layout/PageTransitions.tsx).
+   The new page is revealed by a script-driven circle, so the browser's
+   default cross-fade is switched off and the new page stacks on top. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  z-index: 1;
+}
+
+/* The allocation ring carries over between pages that both show it. */
+::view-transition-group(allocation-ring) {
+  z-index: 2;
+  animation-duration: 0.64s;
+  animation-timing-function: cubic-bezier(0.22, 0.8, 0.2, 1);
+}
+
+::view-transition-old(allocation-ring),
+::view-transition-new(allocation-ring) {
+  height: 100%;
+}
+
+.page-transition-rim {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.page-transition-rim circle {
+  fill: none;
+  stroke: var(--color-accent-gold-bright);
+  stroke-width: 5;
+  opacity: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

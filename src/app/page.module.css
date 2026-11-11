@@ -2,26 +2,40 @@
   min-height: calc(100dvh - 88px);
   display: grid;
   align-items: center;
-  text-align: center;
-  padding: clamp(3rem, 8vw, 6rem) 0;
+  padding: clamp(2.5rem, 6vw, 5rem) 0;
   background:
     radial-gradient(ellipse at 18% 26%, rgba(226, 192, 68, 0.12) 0%, transparent 54%),
     radial-gradient(ellipse at 82% 68%, rgba(132, 184, 255, 0.12) 0%, transparent 52%);
 }
 
-.heroContent {
+.heroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: center;
+}
+
+.heroCopy {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1.35rem;
-  max-width: 780px;
-  margin: 0 auto;
+  align-items: flex-start;
+  gap: 1.3rem;
+  min-width: 0;
+  text-align: left;
+}
+
+.heroCopy > p {
+  margin: 0;
+  max-width: 620px;
+}
+
+.heroRing {
+  min-width: 0;
 }
 
 .heroLogo {
   width: auto;
-  height: 180px;
+  height: 132px;
   object-fit: contain;
   border-radius: 16px;
   filter: drop-shadow(0 0 32px rgba(194, 155, 78, 0.35)) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.5));
@@ -41,19 +55,15 @@
 }
 
 .hero h1 {
-  font-size: clamp(2.05rem, 5.9vw, 3.7rem);
+  font-size: clamp(2.05rem, 4.6vw, 3.4rem);
   line-height: 1.08;
   margin: 0;
   letter-spacing: -0.03em;
+  text-wrap: balance;
   background: var(--gradient-silver);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-
-.hero p {
-  margin: 0;
-  max-width: 680px;
 }
 
 .heroLead {
@@ -61,25 +71,10 @@
   font-size: clamp(1.08rem, 2.6vw, 1.32rem);
 }
 
-.heroBullets {
-  list-style: disc;
-  text-align: left;
-  margin: 0;
-  padding-left: 1.4rem;
-  font-size: 1rem;
-  color: var(--color-text-muted);
-  line-height: 1.75;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  max-width: 600px;
-}
-
 .heroActions {
   margin-top: 0.4rem;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 0.9rem;
 }
 
@@ -216,6 +211,23 @@
 .cardIcon svg {
   width: 100%;
   height: 100%;
+  color: var(--color-accent-gold-bright);
+  stroke-width: 1.5;
+}
+
+/* Redraw the icon when its card is hovered. */
+div:hover > .cardIcon svg * {
+  animation: iconDraw 0.9s ease-in-out;
+}
+
+@keyframes iconDraw {
+  from {
+    stroke-dasharray: 0 80;
+  }
+
+  to {
+    stroke-dasharray: 80 0;
+  }
 }
 
 .cardTitle {
@@ -294,13 +306,28 @@
   border: 0;
 }
 
+@media (max-width: 899px) {
+  .heroGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .heroCopy {
+    align-items: center;
+    text-align: center;
+  }
+
+  .heroActions {
+    justify-content: center;
+  }
+}
+
 @media (max-width: 767px) {
   .hero {
     min-height: calc(100dvh - 76px);
   }
 
   .heroLogo {
-    height: 130px;
+    height: 112px;
   }
 
   .heroActions {
@@ -322,6 +349,10 @@
 @media (prefers-reduced-motion: reduce) {
   .textBlock {
     transition: none;
+  }
+
+  div:hover > .cardIcon svg * {
+    animation: none;
   }
 
   .textBlock:hover {

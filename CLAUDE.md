@@ -17,6 +17,7 @@ web/
 ├── src/
 │   ├── app/                    # Next.js App Router pages
 │   │   ├── api/               # API routes
+│   │   ├── assets/            # Target assets page (BTC/ETH/SOL)
 │   │   ├── executive/         # Executive dashboard (protected)
 │   │   ├── investor/          # Investor dashboard (protected)
 │   │   └── login/             # Authentication
@@ -47,6 +48,28 @@ web/
 ### Layout Components
 - `Sheet.tsx/module.css` - Mobile slide-out menu (z-index: 80-81)
 - `Navbar.tsx/module.css` - Sticky header (z-index: 70)
+
+## Interactive Components (Nov 2026)
+
+### Target allocation
+- `src/lib/allocation.ts` - Single source for the BTC/ETH/SOL target (weights, roles, copy, illustrative CAGR). Feeds the ring, mixer, thesis, and `/assets`.
+- `components/allocation/AllocationRing.tsx` - Interactive 50/30/20 ring (Home hero, Thesis 01, `/assets`). Shows the **target**, not current holdings.
+- `components/allocation/AssetsNav.tsx` - Ring as scroll-tracking navigation on `/assets`.
+
+### Thesis guided read
+- `app/thesis/page.tsx` + `thesis.module.css` - Seven chapters in one column; `components/thesis/ThesisRail.tsx` is the sticky chapter rail (desktop) / progress bar (mobile, z-index 60, below the navbar).
+- `components/thesis/BasketMixer.tsx` - Weight sliders in section 06. Shows hypothetical performance; keep the disclosure text beside it.
+- `src/lib/useScrollSpy.ts` - Shared scroll tracking for the rail and `/assets`.
+
+### Other
+- `components/harmony/HarmonyLoop.tsx` - Four-step loop on the Harmony page.
+- `components/ui/Card.tsx` - Client component; pointer-following spotlight via `--spot-x/--spot-y`.
+- Team cards use CSS subgrid so rows line up; bios are native `<details>`.
+
+### Page transitions
+- `components/layout/PageTransitions.tsx` intercepts internal link clicks (capture phase on `window`) and replays them through `router.push` inside `document.startViewTransition`. Styles are the `::view-transition-*` rules in `globals.css`.
+- Skipped for: same-page hash links, `/api/*`, modified clicks, `prefers-reduced-motion`, and browsers without the View Transitions API.
+- The ring's SVG has `view-transition-name: allocation-ring`. Render at most one `AllocationRing` per page or the transition is skipped.
 
 ## Recent Fixes (Mar 2026)
 

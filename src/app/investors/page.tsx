@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { BellRing, CalendarDays, FolderOpen, MessagesSquare, ScrollText } from 'lucide-react';
 import { Container } from '../../components/ui/Container';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
@@ -55,10 +56,7 @@ export default function InvestorsPage() {
                 <div className={styles.grid}>
                     <Card variant="glass">
                         <div className={styles.cardIcon}>
-                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" stroke="url(#investorGold1)" strokeWidth="1.5"/>
-                                <defs><linearGradient id="investorGold1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E8C87A"/><stop offset="100%" stopColor="#9E7B36"/></linearGradient></defs>
-                            </svg>
+                            <ScrollText aria-hidden="true" />
                         </div>
                         <h3>Latest Disclosures</h3>
                         <ul className={styles.infoList}>
@@ -76,10 +74,7 @@ export default function InvestorsPage() {
 
                     <Card variant="glass">
                         <div className={styles.cardIcon}>
-                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" stroke="url(#investorGold2)" strokeWidth="1.5"/>
-                                <defs><linearGradient id="investorGold2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E8C87A"/><stop offset="100%" stopColor="#9E7B36"/></linearGradient></defs>
-                            </svg>
+                            <FolderOpen aria-hidden="true" />
                         </div>
                         <h3>Investor Documents</h3>
                         <ul className={styles.infoList}>
@@ -96,10 +91,7 @@ export default function InvestorsPage() {
 
                     <Card variant="glass">
                         <div className={styles.cardIcon}>
-                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" stroke="url(#investorGold3)" strokeWidth="1.5"/>
-                                <defs><linearGradient id="investorGold3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E8C87A"/><stop offset="100%" stopColor="#9E7B36"/></linearGradient></defs>
-                            </svg>
+                            <CalendarDays aria-hidden="true" />
                         </div>
                         <h3>Upcoming Events</h3>
                         <ul className={styles.infoList}>
@@ -120,10 +112,7 @@ export default function InvestorsPage() {
                 <div className={styles.grid}>
                     <Card variant="glass">
                         <div className={styles.cardIcon}>
-                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" stroke="url(#investorGold4)" strokeWidth="1.5"/>
-                                <defs><linearGradient id="investorGold4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E8C87A"/><stop offset="100%" stopColor="#9E7B36"/></linearGradient></defs>
-                            </svg>
+                            <MessagesSquare aria-hidden="true" />
                         </div>
                         <h2 id="investor-contact-heading">Investor Contact</h2>
                         <p>
@@ -137,10 +126,7 @@ export default function InvestorsPage() {
 
                     <Card variant="glass">
                         <div className={styles.cardIcon}>
-                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" stroke="url(#investorGold5)" strokeWidth="1.5"/>
-                                <defs><linearGradient id="investorGold5" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E8C87A"/><stop offset="100%" stopColor="#9E7B36"/></linearGradient></defs>
-                            </svg>
+                            <BellRing aria-hidden="true" />
                         </div>
                         <h2>Email Alerts</h2>
                         <AlertSignupForm />

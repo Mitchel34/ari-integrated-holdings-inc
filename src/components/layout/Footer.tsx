@@ -40,6 +40,7 @@ export function Footer() {
                     <div className={styles.column}>
                         <h4>Company</h4>
                         <Link href="/thesis">Investment Thesis</Link>
+                        <Link href="/assets">Target Assets</Link>
                         <Link href="/harmony">Harmony Trading</Link>
                         <Link href="/disclosures">Disclosures</Link>
                         <Link href="/investors">Investor Relations</Link>
