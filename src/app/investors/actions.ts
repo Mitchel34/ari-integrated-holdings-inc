@@ -2,16 +2,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { emailService } from '@/lib/email';
-
-export interface AlertSignupState {
-    status: 'idle' | 'success' | 'error';
-    message: string;
-}
-
-export const INITIAL_ALERT_SIGNUP_STATE: AlertSignupState = {
-    status: 'idle',
-    message: '',
-};
+import type { AlertSignupState } from './alert-signup-state';
 
 function isValidEmailAddress(email: string) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
