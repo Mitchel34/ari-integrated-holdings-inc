@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { CalendlyEmbed } from './CalendlyEmbed';
+import { SCHEDULING_CONTACT_EMAIL } from '@/lib/scheduling';
 import styles from './MeetingTypeSelector.module.css';
 
-interface MeetingType {
+export interface MeetingType {
     id: string;
     label: string;
     duration: string;
@@ -12,7 +13,7 @@ interface MeetingType {
     envKey: string;
 }
 
-const MEETING_TYPES: MeetingType[] = [
+export const MEETING_TYPES: MeetingType[] = [
     {
         id: 'intro',
         label: 'Executive Introduction',
@@ -74,8 +75,8 @@ export function MeetingTypeSelector() {
                         <p>
                             Scheduling is not yet configured for this meeting type.
                             <br />
-                            <a href="mailto:investor-relations@ariholdings.com" className={styles.fallbackLink}>
-                                Email investor-relations@ariholdings.com
+                            <a href={`mailto:${SCHEDULING_CONTACT_EMAIL}`} className={styles.fallbackLink}>
+                                Email {SCHEDULING_CONTACT_EMAIL}
                             </a>{' '}
                             to request this meeting directly.
                         </p>

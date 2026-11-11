@@ -41,9 +41,11 @@ web/
 - Protected routes: /executive/*, /investor/*
 
 ### Scheduling Components
-- `CalendlyEmbed.tsx` - Responsive embed with clamp() heights
+- `src/lib/scheduling.ts` - Scheduling contact email and the contact-page Zoom meeting link
+- `CalendlyEmbed.tsx` - Inline Calendly widget, created with `Calendly.initInlineWidget` so it works in modals and when the URL changes
+- `ZoomMeetingScheduler.tsx` + `ZoomMeetingModal.tsx` - Contact page: topic cards open a native `<dialog>` with the Calendly scheduler (Zoom link created on booking)
 - `ExecMeetingBooking.tsx` - Executive Zoom meeting scheduler
-- `MeetingTypeSelector.tsx` - Meeting type selection for investors
+- `MeetingTypeSelector.tsx` - Inline meeting type selection on the investor and executive dashboards
 
 ### Layout Components
 - `Sheet.tsx/module.css` - Mobile slide-out menu (z-index: 80-81)
@@ -92,6 +94,7 @@ web/
 DATABASE_URL=           # Neon PostgreSQL connection string
 NEXTAUTH_SECRET=        # NextAuth secret
 NEXT_PUBLIC_CALENDLY_EXEC_ZOOM_URL=  # Calendly executive meeting link
+NEXT_PUBLIC_CALENDLY_ZOOM_MEETING_URL=  # Optional: contact page Zoom modal (defaults to calendly.com/mitchel-carson/30min)
 ```
 
 ## Common Issues

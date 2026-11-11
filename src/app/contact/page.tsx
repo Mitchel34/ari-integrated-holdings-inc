@@ -1,5 +1,5 @@
 import { Container } from '../../components/ui/Container';
-import { MeetingTypeSelector } from '../../components/scheduling/MeetingTypeSelector';
+import { ZoomMeetingScheduler } from '../../components/scheduling/ZoomMeetingScheduler';
 import ContactForm from './ContactForm';
 import styles from '../page.module.css';
 import contactStyles from './contact.module.css';
@@ -23,11 +23,11 @@ export default function ContactPage() {
                 <div className={contactStyles.scheduleSectionHeader}>
                     <h2>Schedule a Meeting</h2>
                     <p>
-                        Select a meeting type and book directly on our calendar. All meetings include
-                        a confirmation email with call details.
+                        Choose what you would like to discuss and book a Zoom meeting directly on our
+                        calendar. All meetings include a confirmation email with call details.
                     </p>
                 </div>
-                <MeetingTypeSelector />
+                <ZoomMeetingScheduler />
             </div>
 
             {/* Divider */}

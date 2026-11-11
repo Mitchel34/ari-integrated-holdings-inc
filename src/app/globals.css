@@ -104,6 +104,11 @@ button:focus-visible {
   animation: none !important;
 }
 
+/* Keep the page still behind an open modal dialog. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
 /* Page transitions (driven by components/layout/PageTransitions.tsx).
    The new page is revealed by a script-driven circle, so the browser's
    default cross-fade is switched off and the new page stacks on top. */
