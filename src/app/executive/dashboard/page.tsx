@@ -17,7 +17,6 @@ import {
     FreshnessBadge,
     MetricCard,
     MetricGrid,
-    StatusBadge,
     dashboardStyles,
 } from '../../../components/dashboard/Dashboard';
 import { ValueBarChart } from '../../../components/dashboard/DashboardCharts';

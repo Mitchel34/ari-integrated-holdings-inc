@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { Container } from '../ui/Container';
@@ -44,14 +44,19 @@ interface SessionUser {
 export function SiteHeader() {
     const pathname = usePathname();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [menuPathname, setMenuPathname] = useState(pathname);
     const { data: session, status } = useSession();
     const user = session?.user as SessionUser | undefined;
 
     const isExecutive = user?.role === 'EXECUTIVE' || user?.role === 'ADMIN';
 
-    useEffect(() => {
+    // Close the mobile menu on any navigation, including ones its own links do
+    // not trigger (browser back/forward, redirects). Resetting during render
+    // means the new route never commits with the menu still open.
+    if (menuPathname !== pathname) {
+        setMenuPathname(pathname);
         setMobileMenuOpen(false);
-    }, [pathname]);
+    }
 
     return (
         <>

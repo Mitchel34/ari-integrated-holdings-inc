@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useActionState } from 'react';
+import { useActionState, useEffect, useSyncExternalStore } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
@@ -11,6 +11,22 @@ import {
 import styles from './ThesisGate.module.css';
 
 const STORAGE_KEY = 'ari_thesis_access';
+
+function subscribeToStoredAccess(onStoreChange: () => void) {
+    window.addEventListener('storage', onStoreChange);
+    return () => window.removeEventListener('storage', onStoreChange);
+}
+
+function getStoredAccess() {
+    return localStorage.getItem(STORAGE_KEY) === 'true';
+}
+
+// localStorage does not exist on the server. Returning null there (and for the
+// hydration pass) renders the placeholder, so the first client render matches
+// the server HTML before the stored value is read.
+function getServerAccess() {
+    return null;
+}
 
 function SubmitButton() {
     const { pending } = useFormStatus();
@@ -26,19 +42,22 @@ interface ThesisGateProps {
 }
 
 export function ThesisGate({ children }: ThesisGateProps) {
-    const [granted, setGranted] = useState<boolean | null>(null);
+    const storedAccess = useSyncExternalStore<boolean | null>(
+        subscribeToStoredAccess,
+        getStoredAccess,
+        getServerAccess,
+    );
     const [state, formAction] = useActionState(subscribeInvestorAlertsAction, INITIAL_ALERT_SIGNUP_STATE);
+    const justUnlocked = state.status === 'success';
 
+    // Remember the unlock for future visits.
     useEffect(() => {
-        setGranted(localStorage.getItem(STORAGE_KEY) === 'true');
-    }, []);
-
-    useEffect(() => {
-        if (state.status === 'success') {
+        if (justUnlocked) {
             localStorage.setItem(STORAGE_KEY, 'true');
-            setGranted(true);
         }
-    }, [state.status]);
+    }, [justUnlocked]);
+
+    const granted = justUnlocked ? true : storedAccess;
 
     // Loading state — avoid layout shift
     if (granted === null) {
