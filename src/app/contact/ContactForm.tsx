@@ -3,6 +3,8 @@
 import { useState, FormEvent } from 'react';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
+import { ContactEmail } from '../../components/ui/ContactEmail';
+import { CONTACT_EMAIL } from '@/lib/contact';
 import styles from './ContactForm.module.css';
 
 const INVESTOR_TYPES = [
@@ -16,7 +18,9 @@ const INVESTOR_TYPES = [
     'Other',
 ];
 
-type FormState = 'idle' | 'submitting' | 'success' | 'error';
+// 'error' is a rejected entry the visitor can correct and resubmit.
+// 'undelivered' means the inquiry did not go out, so they are sent to the contact address.
+type FormState = 'idle' | 'submitting' | 'success' | 'error' | 'undelivered';
 
 export default function ContactForm() {
     const [state, setState] = useState<FormState>('idle');
@@ -36,21 +40,33 @@ export default function ContactForm() {
             message: (form.elements.namedItem('message') as HTMLTextAreaElement).value,
         };
 
+        let res: Response;
         try {
-            const res = await fetch('/api/contact', {
+            res = await fetch('/api/contact', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
             });
-            if (!res.ok) {
-                const body = await res.json().catch(() => ({}));
-                throw new Error((body as { error?: string }).error || 'Submission failed.');
-            }
-            setState('success');
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
-            setState('error');
+        } catch {
+            // The request never reached the server.
+            setState('undelivered');
+            return;
         }
+
+        if (res.ok) {
+            setState('success');
+            return;
+        }
+
+        if (res.status === 400) {
+            const body = await res.json().catch(() => ({}));
+            setError((body as { error?: string }).error || 'Submission failed.');
+            setState('error');
+            return;
+        }
+
+        // Any other failure means the inquiry was not delivered.
+        setState('undelivered');
     }
 
     if (state === 'success') {
@@ -104,6 +120,20 @@ export default function ContactForm() {
 
             {state === 'error' && error && (
                 <p className={styles.errorMsg} role="alert">{error}</p>
+            )}
+
+            {state === 'undelivered' && (
+                <div className={styles.undeliveredBox} role="alert">
+                    <h3>Inquiry Not Sent</h3>
+                    <p>
+                        We could not deliver your message, so it has not reached our team. Please
+                        email us directly at{' '}
+                        <a href={`mailto:${CONTACT_EMAIL}`} className={styles.undeliveredLink}>
+                            <ContactEmail />
+                        </a>
+                        . Your message is still in the form above if you would like to copy it.
+                    </p>
+                </div>
             )}
 
             <Button type="submit" size="lg" disabled={state === 'submitting'}>

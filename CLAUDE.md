@@ -40,6 +40,7 @@ web/
 - `src/lib/contact.ts` holds them all: `SITE_DOMAIN`, `SITE_URL` (canonical `www` address), `CONTACT_EMAIL` (the one address shown on the site and the default destination for contact form inquiries), and `NO_REPLY_EMAIL` (default sender).
 - Render the contact address with `components/ui/ContactEmail.tsx`, which lets the long address wrap after the "@".
 - Outgoing mail is not set up yet: the sender domain must be verified in Resend, and `RESEND_*` env vars override the defaults.
+- The contact form does not report success unless the inquiry was handed to Resend. `/api/contact` returns 502 when Resend rejects the message and 503 when `RESEND_API_KEY` is missing in a production build; the form then shows "Inquiry Not Sent" with a `mailto:` link to `CONTACT_EMAIL`. Under `npm run dev` a missing key still logs the inquiry to the console and shows the success state.
 
 ### Authentication
 - NextAuth configured with Neon PostgreSQL
@@ -112,6 +113,11 @@ Check that `layout-wrapper` in `globals.css` does NOT have z-index set.
 Check min-height values in:
 - `ExecMeetingBooking.module.css` (.embedContainer)
 - `MeetingTypeSelector.module.css` (.embedWrapper)
+
+### Contact form shows "Inquiry Not Sent"
+The inquiry was not delivered. Check the `/api/contact` response status:
+- 503: `RESEND_API_KEY` is not set in the deployment.
+- 502: Resend rejected the message (the server log has the `[Email] Resend error`), typically because the sender domain is not verified.
 
 ### Login 401 errors
 Usually indicates DATABASE_URL misconfiguration or Neon connection issue.

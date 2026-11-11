@@ -5,6 +5,13 @@ const resend = process.env.RESEND_API_KEY
     ? new Resend(process.env.RESEND_API_KEY)
     : null;
 
+/**
+ * Whether RESEND_API_KEY is set. Without it send() only logs to the console
+ * and still returns true, so a caller that must know whether mail really left
+ * has to check this first.
+ */
+export const isEmailConfigured = resend !== null;
+
 const FROM = process.env.RESEND_FROM_EMAIL || NO_REPLY_EMAIL;
 const FROM_NAME = process.env.RESEND_FROM_NAME || 'ARI Integrated Holdings Inc.';
 // Where contact form inquiries are delivered.
