@@ -10,7 +10,19 @@
 }
 
 .gridSection {
-    padding: clamp(3rem, 6vw, 4.5rem) 0;
+    padding-block: clamp(3rem, 6vw, 4.5rem);
+}
+
+/*
+ * .gridSection sits on <Container>, which has its own 1.5rem side gutter;
+ * setting only the block axis keeps it. From 1280px up the 1200px column is
+ * already clear of the viewport edges and the grid has always used its full
+ * width there, so that stays as it was.
+ */
+@media (min-width: 1280px) {
+    .gridSection {
+        padding-inline: 0;
+    }
 }
 
 .sectionHeader {
