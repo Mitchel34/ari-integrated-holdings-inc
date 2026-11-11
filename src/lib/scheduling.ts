@@ -1,8 +1,5 @@
 // Scheduling configuration shared by the contact page and the dashboards.
 
-/** Who to email about booking, rescheduling, or a meeting that will not schedule. */
-export const SCHEDULING_CONTACT_EMAIL = 'mitchelcarson@ariintegratedholdings.com';
-
 /**
  * Calendly event behind the Zoom meeting modal on the contact page. Calendly
  * creates the Zoom link when a time is booked. This is the same event the

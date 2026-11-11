@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { CalendlyEmbed } from './CalendlyEmbed';
-import { SCHEDULING_CONTACT_EMAIL } from '@/lib/scheduling';
+import { ContactEmail } from '@/components/ui/ContactEmail';
+import { CONTACT_EMAIL } from '@/lib/contact';
 import styles from './MeetingTypeSelector.module.css';
 
 export interface MeetingType {
@@ -75,8 +76,8 @@ export function MeetingTypeSelector() {
                         <p>
                             Scheduling is not yet configured for this meeting type.
                             <br />
-                            <a href={`mailto:${SCHEDULING_CONTACT_EMAIL}`} className={styles.fallbackLink}>
-                                Email {SCHEDULING_CONTACT_EMAIL}
+                            <a href={`mailto:${CONTACT_EMAIL}`} className={styles.fallbackLink}>
+                                Email <ContactEmail />
                             </a>{' '}
                             to request this meeting directly.
                         </p>

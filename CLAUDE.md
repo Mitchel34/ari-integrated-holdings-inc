@@ -35,13 +35,17 @@ web/
 - `src/lib/treasury/snapshot.ts` - ETF holdings (ARKB/FSOL/FETH), cash positions, share count
 - Current holdings: $4,671.14 total assets, 300,008.7 shares outstanding
 
+### Contact Email
+- `src/lib/contact.ts` - `CONTACT_EMAIL` is the one address shown anywhere on the site and the default destination for contact form inquiries. `ariintegratedholdings.com` is the only active business email domain; do not add `@ariholdings.com` addresses.
+- Render it with `components/ui/ContactEmail.tsx`, which lets the long address wrap after the "@".
+
 ### Authentication
 - NextAuth configured with Neon PostgreSQL
 - Executive accounts: mitchel@ariintegratedholdings.com, judy@..., curtis@...
 - Protected routes: /executive/*, /investor/*
 
 ### Scheduling Components
-- `src/lib/scheduling.ts` - Scheduling contact email and the contact-page Zoom meeting link
+- `src/lib/scheduling.ts` - Contact-page Zoom meeting link and duration
 - `CalendlyEmbed.tsx` - Inline Calendly widget, created with `Calendly.initInlineWidget` so it works in modals and when the URL changes
 - `ZoomMeetingScheduler.tsx` + `ZoomMeetingModal.tsx` - Contact page: topic cards open a native `<dialog>` with the Calendly scheduler (Zoom link created on booking)
 - `ExecMeetingBooking.tsx` - Executive Zoom meeting scheduler

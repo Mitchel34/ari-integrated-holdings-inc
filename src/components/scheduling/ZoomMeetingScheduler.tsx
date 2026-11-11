@@ -4,11 +4,9 @@ import { useState } from 'react';
 import { ArrowRight, Video } from 'lucide-react';
 import { MEETING_TYPES } from './MeetingTypeSelector';
 import { ZoomMeetingModal } from './ZoomMeetingModal';
-import {
-    SCHEDULING_CONTACT_EMAIL,
-    ZOOM_MEETING_DURATION,
-    zoomMeetingUrlForTopic,
-} from '@/lib/scheduling';
+import { ContactEmail } from '@/components/ui/ContactEmail';
+import { CONTACT_EMAIL } from '@/lib/contact';
+import { ZOOM_MEETING_DURATION, zoomMeetingUrlForTopic } from '@/lib/scheduling';
 import styles from './ZoomMeetingScheduler.module.css';
 
 /**
@@ -50,8 +48,8 @@ export function ZoomMeetingScheduler() {
 
             <p className={styles.note}>
                 Each meeting is {ZOOM_MEETING_DURATION} on Zoom. Questions about scheduling? Email{' '}
-                <a href={`mailto:${SCHEDULING_CONTACT_EMAIL}`} className={styles.email}>
-                    {SCHEDULING_CONTACT_EMAIL}
+                <a href={`mailto:${CONTACT_EMAIL}`} className={styles.email}>
+                    <ContactEmail />
                 </a>
                 .
             </p>

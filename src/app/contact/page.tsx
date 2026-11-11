@@ -1,5 +1,7 @@
 import { Container } from '../../components/ui/Container';
 import { ZoomMeetingScheduler } from '../../components/scheduling/ZoomMeetingScheduler';
+import { ContactEmail } from '../../components/ui/ContactEmail';
+import { CONTACT_EMAIL } from '@/lib/contact';
 import ContactForm from './ContactForm';
 import styles from '../page.module.css';
 import contactStyles from './contact.module.css';
@@ -51,8 +53,8 @@ export default function ContactPage() {
             <section className={contactStyles.fallbackPanel} aria-label="Direct contact">
                 <p>
                     Prefer email?{' '}
-                    <a href="mailto:investor-relations@ariholdings.com" className={contactStyles.emailLink}>
-                        investor-relations@ariholdings.com
+                    <a href={`mailto:${CONTACT_EMAIL}`} className={contactStyles.emailLink}>
+                        <ContactEmail />
                     </a>
                 </p>
             </section>

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Container } from '../ui/Container';
+import { ContactEmail } from '../ui/ContactEmail';
 import styles from './Footer.module.css';
 
 export function Footer() {
@@ -25,7 +26,7 @@ export function Footer() {
                                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                                     <polyline points="22,6 12,13 2,6"/>
                                 </svg>
-                                <span>contact@ariholdings.com</span>
+                                <span><ContactEmail /></span>
                             </li>
                             <li className={styles.contactItem}>
                                 <svg className={styles.contactIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
@@ -55,7 +56,9 @@ export function Footer() {
                     <div className={styles.column}>
                         <h4>Contact</h4>
                         <Link href="/contact">Contact Us</Link>
-                        <span className={styles.contactItem}>contact@ariholdings.com</span>
+                        <span className={styles.contactItem}>
+                            <span><ContactEmail /></span>
+                        </span>
                     </div>
                 </div>
                 <div className={styles.copyright}>

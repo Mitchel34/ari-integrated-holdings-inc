@@ -3,7 +3,9 @@
 import { useEffect, useRef } from 'react';
 import { ExternalLink, Video, X } from 'lucide-react';
 import { CalendlyEmbed } from './CalendlyEmbed';
-import { SCHEDULING_CONTACT_EMAIL, ZOOM_MEETING_DURATION } from '@/lib/scheduling';
+import { ContactEmail } from '@/components/ui/ContactEmail';
+import { CONTACT_EMAIL } from '@/lib/contact';
+import { ZOOM_MEETING_DURATION } from '@/lib/scheduling';
 import styles from './ZoomMeetingModal.module.css';
 
 interface ZoomMeetingModalProps {
@@ -71,8 +73,8 @@ export function ZoomMeetingModal({ open, onClose, topic, url }: ZoomMeetingModal
                 <footer className={styles.footer}>
                     <p>
                         Trouble booking? Email{' '}
-                        <a href={`mailto:${SCHEDULING_CONTACT_EMAIL}`} className={styles.link}>
-                            {SCHEDULING_CONTACT_EMAIL}
+                        <a href={`mailto:${CONTACT_EMAIL}`} className={styles.link}>
+                            <ContactEmail />
                         </a>
                     </p>
                     <a href={url} target="_blank" rel="noopener noreferrer" className={styles.link}>

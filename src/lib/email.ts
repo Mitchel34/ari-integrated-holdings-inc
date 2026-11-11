@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { CONTACT_EMAIL } from '@/lib/contact';
 
 const resend = process.env.RESEND_API_KEY
     ? new Resend(process.env.RESEND_API_KEY)
@@ -6,7 +7,8 @@ const resend = process.env.RESEND_API_KEY
 
 const FROM = process.env.RESEND_FROM_EMAIL || 'no-reply@ariholdings.com';
 const FROM_NAME = process.env.RESEND_FROM_NAME || 'ARI Integrated Holdings Inc.';
-const IR_EMAIL = process.env.RESEND_IR_EMAIL || 'investor-relations@ariholdings.com';
+// Where contact form inquiries are delivered.
+const IR_EMAIL = process.env.RESEND_IR_EMAIL || CONTACT_EMAIL;
 
 async function send(to: string | string[], subject: string, html: string): Promise<boolean> {
     if (!resend) {
