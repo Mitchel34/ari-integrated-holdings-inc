@@ -10,10 +10,7 @@ export async function scheduleMeetingAction(topic: string, startTime: string) {
 
 export async function endMeetingAndSendSummaryAction(meetingId: string, topic: string) {
     const summary = await zoomService.getMeetingSummary(meetingId);
-    await emailService.sendEmail(
-        "executives@ari.com",
-        `Meeting Summary: ${topic}`,
-        summary
-    );
-    return { success: true, summary };
+    // Goes to the correspondence inbox; report honestly whether the provider took it.
+    const outcome = await emailService.sendMeetingSummary(topic, summary);
+    return { success: outcome.status === "accepted", summary };
 }

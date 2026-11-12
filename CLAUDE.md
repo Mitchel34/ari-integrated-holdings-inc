@@ -39,7 +39,17 @@ web/
 - `ariintegratedholdings.com` is the only active business domain, for the website and for email. The old `ariholdings.com` domain is not in use; do not add addresses or links on it.
 - `src/lib/contact.ts` holds them all: `SITE_DOMAIN`, `SITE_URL` (canonical `www` address), `CONTACT_EMAIL` (the one address shown on the site and the default destination for contact form inquiries), and `NO_REPLY_EMAIL` (default sender).
 - Render the contact address with `components/ui/ContactEmail.tsx`, which lets the long address wrap after the "@".
-- Outgoing mail is not set up yet: the sender domain must be verified in Resend, and `RESEND_*` env vars override the defaults.
+- Outgoing mail needs `RESEND_API_KEY` and a sender domain verified in Resend; `RESEND_FROM_EMAIL` / `RESEND_FROM_NAME` override the default sender.
+
+### Email Delivery
+- `src/lib/email.ts` - Resend wrapper and all email templates. User input must go through `escapeHtml`. Every send returns a `SendOutcome` (`accepted` / `dry-run` / `failed`), never a bare boolean; a missing `RESEND_API_KEY` is a `failed` outcome, not a logged "success". `accepted` means the provider queued the message, not that it reached an inbox.
+- `CORRESPONDENCE_EMAIL` (exported from `email.ts`) is where inquiries and internal notices go: env `CORRESPONDENCE_EMAIL`, else the older `RESEND_IR_EMAIL`, else `CONTACT_EMAIL`.
+- Contact form → correspondence inbox with Reply-To set to the sender. Alert signup → confirmation to the subscriber plus a notice to the correspondence inbox. Meeting notifications → all executives plus the correspondence inbox. Investor broadcasts → one email per subscriber, so addresses are never shared.
+- `src/app/api/contact/route.ts` - validated, rate-limited (5/hour/IP), honeypot field `website`, per-inquiry reference `ARI-YYYYMMDD-XXXXXX`. Responds 503 (delivery not configured) or 502 (provider refused), never `ok: true`, when the message was not accepted; `ContactForm.tsx` keeps the visitor's text and offers a direct-email link with the reference.
+- `src/app/api/executive/email-status/route.ts` - executive-only, presence-only view of the email configuration and the deployed commit.
+- `EMAIL_DRY_RUN=1` logs instead of sending and is reported everywhere as not delivered; it is ignored in production builds.
+- `src/app/investors/actions.ts` - alert signup: 5 valid signups per client per 15 minutes (in memory), 30 new subscriptions per hour site-wide (counted in the database), one confirmation per address.
+- Tests: `tests/email.test.ts`, `tests/contact-route.test.ts`, `tests/alert-signup.test.ts` (vitest).
 
 ### Authentication
 - NextAuth configured with Neon PostgreSQL
@@ -99,6 +109,11 @@ web/
 ```
 DATABASE_URL=           # Neon PostgreSQL connection string
 NEXTAUTH_SECRET=        # NextAuth secret
+RESEND_API_KEY=         # Required for any email delivery
+RESEND_FROM_EMAIL=      # Optional sender override (defaults to no-reply@ariintegratedholdings.com)
+RESEND_FROM_NAME=       # Optional sender name override
+CORRESPONDENCE_EMAIL=   # Optional: where inquiries and notices go (defaults to CONTACT_EMAIL; RESEND_IR_EMAIL still works)
+EMAIL_DRY_RUN=          # Local only: log instead of send, reported as not delivered
 NEXT_PUBLIC_CALENDLY_EXEC_ZOOM_URL=  # Calendly executive meeting link
 NEXT_PUBLIC_CALENDLY_ZOOM_MEETING_URL=  # Optional: contact page Zoom modal (defaults to calendly.com/mitchel-carson/30min)
 ```
@@ -116,12 +131,17 @@ Check min-height values in:
 ### Login 401 errors
 Usually indicates DATABASE_URL misconfiguration or Neon connection issue.
 
+### Emails not delivered
+Sign in as an executive and open `/api/executive/email-status`. `apiKeyConfigured: false` means `RESEND_API_KEY` is unset on that deployment (the contact form then returns 503 and shows an error). A 502 means the provider refused the message, usually because the sender domain is not verified in Resend. Search the runtime logs for `[email]` lines by `ref=`; an `accepted` line carries the provider message id to look up in Resend's delivery events.
+
 ## Commands
 ```bash
 cd web
 npm run dev      # Start dev server
 npm run build    # Build for production
-npm run lint     # Run ESLint
+npm run lint     # Run ESLint (src, prisma, tests)
+npm test         # Run the vitest suite (tests/)
+npm run verify   # typecheck + lint + test + build
 ```
 
 ## Git Workflow

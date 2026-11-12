@@ -63,10 +63,29 @@ export async function POST(req: NextRequest) {
     }
 
     const emails = activeSubscribers.map((s) => s.email);
-    const ok = await emailService.sendTreasuryUpdateAlert(emails, subject.trim(), message.trim());
+    const delivery = await emailService.sendTreasuryUpdateAlert(emails, subject.trim(), message.trim());
 
-    if (!ok) {
-        return NextResponse.json({ error: 'Email delivery failed. Check RESEND_API_KEY configuration.' }, { status: 500 });
+    // Local opt-in mode only (never production): nothing was sent, so do not log a broadcast.
+    if (delivery.dryRun) {
+        return NextResponse.json({
+            ok: true,
+            sent: 0,
+            failed: 0,
+            dryRun: true,
+            message: 'Dry run: EMAIL_DRY_RUN is set, so no emails were sent.',
+        });
+    }
+
+    if (delivery.sent === 0) {
+        const notConfigured = delivery.reason === 'not_configured';
+        return NextResponse.json(
+            {
+                error: notConfigured
+                    ? 'Email delivery is not configured (RESEND_API_KEY is missing). No alerts were sent.'
+                    : 'The email provider did not accept the broadcast. No alerts were sent.',
+            },
+            { status: notConfigured ? 503 : 502 },
+        );
     }
 
     // Log the broadcast for audit trail
@@ -78,7 +97,7 @@ export async function POST(req: NextRequest) {
                     message: message.trim(),
                     sentBy: token.id,
                     sentByEmail: token.email || 'unknown',
-                    recipientCount: emails.length,
+                    recipientCount: delivery.sent,
                 },
             });
         } catch (err) {
@@ -87,5 +106,6 @@ export async function POST(req: NextRequest) {
         }
     }
 
-    return NextResponse.json({ ok: true, sent: emails.length });
+    // `sent` counts provider acceptances, not confirmed inbox deliveries.
+    return NextResponse.json({ ok: true, sent: delivery.sent, failed: delivery.failed, dryRun: false });
 }

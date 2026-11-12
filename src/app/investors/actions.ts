@@ -23,13 +23,20 @@ const SUBSCRIBED: AlertSignupState = {
     message: 'Confirmed. You\'ll receive treasury updates, disclosures, and investor event announcements.',
 };
 
+// The address is on the list, but the confirmation email was not accepted by
+// the provider, so the message must not claim that one is on its way.
+const SUBSCRIBED_UNCONFIRMED: AlertSignupState = {
+    status: 'success',
+    message: 'You\'re on the list. We could not send a confirmation email right now, but you\'ll receive treasury updates, disclosures, and investor event announcements.',
+};
+
 const RATE_LIMITED: AlertSignupState = {
     status: 'error',
     message: 'Too many signup requests right now. Please try again later.',
 };
 
 function isValidEmailAddress(email: string) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    return email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 async function getClientKey() {
@@ -60,6 +67,9 @@ export async function subscribeInvestorAlertsAction(
         return RATE_LIMITED;
     }
 
+    const signupSource = source ?? 'investors-page';
+    let isNewSubscription = false;
+
     try {
         // Checked before looking the address up, so the answer is the same
         // whether or not it is already subscribed.
@@ -75,7 +85,7 @@ export async function subscribeInvestorAlertsAction(
         // count of 1, so an address that is already subscribed, or submitted
         // twice at once, is not emailed again.
         const created = await prisma.investorAlert.createMany({
-            data: [{ email, source: source ?? 'investors-page', isActive: true }],
+            data: [{ email, source: signupSource, isActive: true }],
             skipDuplicates: true,
         });
         const reactivated = created.count === 0
@@ -85,15 +95,27 @@ export async function subscribeInvestorAlertsAction(
             })
             : { count: 0 };
 
-        if (created.count > 0 || reactivated.count > 0) {
-            await emailService.sendAlertConfirmation(email);
-        }
-
-        return SUBSCRIBED;
+        isNewSubscription = created.count > 0 || reactivated.count > 0;
     } catch {
         return {
             status: 'error',
             message: 'Unable to submit signup right now. Please try again shortly.',
         };
     }
+
+    if (!isNewSubscription) {
+        // Already subscribed: same answer, no repeat confirmation.
+        return SUBSCRIBED;
+    }
+
+    // The subscription is recorded, so neither email decides whether the
+    // signup succeeded: a confirmation to the subscriber and a notice to the
+    // correspondence inbox. The answer only reports whether the confirmation
+    // was actually handed to the provider.
+    const [confirmation] = await Promise.all([
+        emailService.sendAlertConfirmation(email),
+        emailService.sendSubscriberNotification(email, signupSource),
+    ]);
+
+    return confirmation.status === 'accepted' ? SUBSCRIBED : SUBSCRIBED_UNCONFIRMED;
 }

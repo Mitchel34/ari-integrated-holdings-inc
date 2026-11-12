@@ -21,8 +21,10 @@ Use `env.local.example` as the canonical template. Required production-style val
 - `DATABASE_URL`
 - `NEXTAUTH_SECRET`
 - `NEXTAUTH_URL`
-- `RESEND_API_KEY`
+- `RESEND_API_KEY` (without it nothing is sent, and the contact form reports the failure instead of faking success)
 - Calendly URLs used by scheduling components
+
+Inquiries and internal notices go to the contact address in `src/lib/contact.ts`; `CORRESPONDENCE_EMAIL` overrides it per deployment. `EMAIL_DRY_RUN=1` logs messages instead of sending them in local development and is always reported as not delivered. Executives can check a deployment's email configuration at `/api/executive/email-status`.
 
 Database helpers:
 
@@ -37,11 +39,12 @@ npm run db:studio
 ```bash
 npm run typecheck
 npm run lint:src
+npm test
 npm run build
 npm run verify
 ```
 
-`npm run lint` is scoped to `src` and `prisma` so generated build artifacts are not linted.
+`npm run lint` is scoped to `src`, `prisma`, and `tests` so generated build artifacts are not linted. `npm test` runs the vitest suite in `tests/` (email delivery outcomes, the contact route, and the alert signup).
 
 ## Dashboard Architecture
 

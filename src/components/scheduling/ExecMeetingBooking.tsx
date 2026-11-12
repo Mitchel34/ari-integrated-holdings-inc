@@ -8,7 +8,8 @@ import styles from './ExecMeetingBooking.module.css';
 const CALENDLY_EXEC_ZOOM_URL = process.env.NEXT_PUBLIC_CALENDLY_EXEC_ZOOM_URL ?? '';
 
 export function ExecMeetingBooking() {
-    const [notifyStatus, setNotifyStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+    const [notifyStatus, setNotifyStatus] = useState<'idle' | 'sending' | 'sent' | 'dry-run' | 'error'>('idle');
+    const [notifyError, setNotifyError] = useState('');
 
     async function handleNotifyAll() {
         setNotifyStatus('sending');
@@ -21,10 +22,13 @@ export function ExecMeetingBooking() {
                     message: 'A new executive Zoom meeting has been scheduled via Calendly. Please check your email for the Calendly invitation and Zoom link.',
                 }),
             });
-            const data = (await res.json()) as { ok?: boolean; error?: string };
+            const data = (await res.json()) as { ok?: boolean; dryRun?: boolean; error?: string };
             if (!res.ok || !data.ok) throw new Error(data.error || 'Failed to notify.');
-            setNotifyStatus('sent');
-        } catch {
+            // A dry run logs the message locally and sends nothing, so it must not read as "Notified!".
+            setNotifyStatus(data.dryRun ? 'dry-run' : 'sent');
+        } catch (err) {
+            // The API says why nothing was sent (delivery not configured, or the provider refused).
+            setNotifyError(err instanceof Error ? err.message : '');
             setNotifyStatus('error');
         }
     }
@@ -66,9 +70,14 @@ export function ExecMeetingBooking() {
                     Meeting notification sent to all executives.
                 </div>
             )}
+            {notifyStatus === 'dry-run' && (
+                <div className={styles.errorMsg} role="status">
+                    Dry run: EMAIL_DRY_RUN is set in this environment, so no notification was sent.
+                </div>
+            )}
             {notifyStatus === 'error' && (
-                <div className={styles.errorMsg}>
-                    Failed to send notifications. Please try again.
+                <div className={styles.errorMsg} role="alert">
+                    {notifyError || 'Failed to send notifications. Please try again.'}
                 </div>
             )}
 

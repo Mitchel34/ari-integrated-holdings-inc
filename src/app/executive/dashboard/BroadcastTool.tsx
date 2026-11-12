@@ -21,6 +21,7 @@ export default function BroadcastTool({ subscriberCount, onSent }: BroadcastTool
     const [subject, setSubject] = useState('');
     const [message, setMessage] = useState('');
     const [sentCount, setSentCount] = useState(0);
+    const [failedCount, setFailedCount] = useState(0);
     const { addToast } = useToast();
 
     async function handleSend() {
@@ -31,12 +32,27 @@ export default function BroadcastTool({ subscriberCount, onSent }: BroadcastTool
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ subject, message }),
             });
-            const data = await res.json() as { ok?: boolean; sent?: number; error?: string };
+            const data = await res.json() as {
+                ok?: boolean;
+                sent?: number;
+                failed?: number;
+                dryRun?: boolean;
+                message?: string;
+                error?: string;
+            };
             if (!res.ok || !data.ok) throw new Error(data.error || 'Broadcast failed.');
-            setSentCount(data.sent ?? 0);
+            if (data.dryRun) {
+                // Local dry run: nothing left the server, so never show the "sent" state.
+                addToast(data.message || 'Dry run: no emails were sent.', 'warning');
+                setSendState('idle');
+                return;
+            }
+            const sent = data.sent ?? 0;
+            setSentCount(sent);
+            setFailedCount(data.failed ?? 0);
             setSendState('sent');
             onSent?.();
-            addToast(`Alert sent to ${data.sent ?? 0} subscribers`, 'success');
+            addToast(`Alert accepted by the email provider for ${sent} subscriber${sent !== 1 ? 's' : ''}`, 'success');
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Broadcast failed. Try again.';
             addToast(errorMessage, 'error');
@@ -67,7 +83,10 @@ export default function BroadcastTool({ subscriberCount, onSent }: BroadcastTool
                 </div>
                 <div>
                     <h3>Alert Sent</h3>
-                    <p>Delivered to {sentCount} active subscriber{sentCount !== 1 ? 's' : ''}.</p>
+                    <p>
+                        Accepted by the email provider for {sentCount} active subscriber{sentCount !== 1 ? 's' : ''}.
+                        {failedCount > 0 ? ` ${failedCount} could not be sent.` : ''}
+                    </p>
                 </div>
                 <Button size="sm" variant="outline" onClick={() => { setSendState('idle'); setSubject(''); setMessage(''); }}>
                     Send Another
