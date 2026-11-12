@@ -1,12 +1,12 @@
 "use client";
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { Container } from '../ui/Container';
 import { Sheet } from '../ui/Sheet';
+import { AriLogo } from '../brand/AriLogo';
 import { NAV_ITEMS } from './nav-items';
 import styles from './Navbar.module.css';
 
@@ -17,10 +17,19 @@ function isActivePath(pathname: string | null, href: string) {
 
 function MenuIcon() {
     return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" aria-hidden="true">
             <line x1="4" y1="7" x2="20" y2="7" />
             <line x1="4" y1="12" x2="20" y2="12" />
-            <line x1="4" y1="17" x2="20" y2="17" />
+            <line x1="10" y1="17" x2="20" y2="17" />
+        </svg>
+    );
+}
+
+function CloseIcon() {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18" />
+            <line x1="18" y1="6" x2="6" y2="18" />
         </svg>
     );
 }
@@ -34,11 +43,46 @@ function LockIcon() {
     );
 }
 
+function SignOutIcon() {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16,17 21,12 16,7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+        </svg>
+    );
+}
+
+function ChevronIcon() {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <polyline points="9,6 15,12 9,18" />
+        </svg>
+    );
+}
+
 interface SessionUser {
     name?: string | null;
     email?: string | null;
     image?: string | null;
     role?: string;
+}
+
+// The header firms up once the page has moved under it. Read from the scroll
+// position directly, so there is no state to keep in step with it.
+const SCROLLED_AFTER_PX = 8;
+
+function subscribeToScroll(onChange: () => void) {
+    window.addEventListener('scroll', onChange, { passive: true });
+    return () => window.removeEventListener('scroll', onChange);
+}
+
+function getIsScrolled() {
+    return window.scrollY > SCROLLED_AFTER_PX;
+}
+
+function getIsScrolledOnServer() {
+    return false;
 }
 
 export function SiteHeader() {
@@ -47,8 +91,10 @@ export function SiteHeader() {
     const [menuPathname, setMenuPathname] = useState(pathname);
     const { data: session, status } = useSession();
     const user = session?.user as SessionUser | undefined;
+    const scrolled = useSyncExternalStore(subscribeToScroll, getIsScrolled, getIsScrolledOnServer);
 
     const isExecutive = user?.role === 'EXECUTIVE' || user?.role === 'ADMIN';
+    const dashboardHref = isExecutive ? '/executive/dashboard' : '/investor/dashboard';
 
     // Close the mobile menu on any navigation, including ones its own links do
     // not trigger (browser back/forward, redirects). Resetting during render
@@ -60,28 +106,11 @@ export function SiteHeader() {
 
     return (
         <>
-            <header className={styles.navbar}>
+            <header className={styles.navbar} data-scrolled={scrolled ? 'true' : undefined}>
                 <Container className={styles.container}>
-                    <div className={styles.mobileBar}>
-                        <button
-                            className={styles.menuButton}
-                            type="button"
-                            aria-label="Open navigation menu"
-                            aria-expanded={mobileMenuOpen}
-                            aria-controls="mobile-nav"
-                            onClick={() => setMobileMenuOpen(true)}
-                        >
-                            <MenuIcon />
-                        </button>
-                        <Link href="/" className={styles.mobileBrand}>
-                            <Image src="/logo.jpeg" alt="Ari Integrated Holdings Inc. Logo" width={110} height={50} className={styles.navLogo} />
-                        </Link>
-                        <span className={styles.mobileSpacer} aria-hidden="true" />
-                    </div>
-
-                    <div className={styles.desktopBar}>
-                        <Link href="/" className={styles.logo}>
-                            <Image src="/logo.jpeg" alt="Ari Integrated Holdings Inc. Logo" width={140} height={60} className={styles.navLogo} />
+                    <div className={styles.bar}>
+                        <Link href="/" className={styles.brand} aria-label="Ari Integrated Holdings Inc. home">
+                            <AriLogo variant="full" markSize={48} priority className={styles.brandLogo} />
                         </Link>
 
                         <nav className={styles.links} aria-label="Primary">
@@ -109,14 +138,11 @@ export function SiteHeader() {
 
                         <div className={styles.actions}>
                             {status === 'loading' ? (
-                                <div className={styles.loadingPill}>Loading...</div>
+                                <div className={styles.loadingPill} role="status" aria-label="Loading account" />
                             ) : session ? (
                                 <div className={styles.userMenu}>
-                                    <Link
-                                        href={isExecutive ? '/executive/dashboard' : '/investor/dashboard'}
-                                        className={styles.dashboardLink}
-                                    >
-                                        <span className={styles.userAvatar}>
+                                    <Link href={dashboardHref} className={styles.dashboardLink}>
+                                        <span className={styles.userAvatar} aria-hidden="true">
                                             {user?.name?.charAt(0) || 'U'}
                                         </span>
                                         <span className={styles.userName}>
@@ -124,21 +150,32 @@ export function SiteHeader() {
                                         </span>
                                     </Link>
                                     <button
+                                        type="button"
                                         onClick={() => signOut({ callbackUrl: '/' })}
                                         className={styles.signOutBtn}
                                         aria-label="Sign out"
                                     >
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                                            <polyline points="16,17 21,12 16,7" />
-                                            <line x1="21" y1="12" x2="9" y2="12" />
-                                        </svg>
+                                        <SignOutIcon />
                                     </button>
                                 </div>
                             ) : (
-                                <Link href="/login" className={styles.loginBtn}>Investor Portal</Link>
+                                <Link href="/login" className={styles.loginBtn}>
+                                    <LockIcon />
+                                    <span>Investor Portal</span>
+                                </Link>
                             )}
                         </div>
+
+                        <button
+                            className={styles.menuButton}
+                            type="button"
+                            aria-label="Open navigation menu"
+                            aria-expanded={mobileMenuOpen}
+                            aria-controls="mobile-nav"
+                            onClick={() => setMobileMenuOpen(true)}
+                        >
+                            <MenuIcon />
+                        </button>
                     </div>
                 </Container>
             </header>
@@ -146,14 +183,21 @@ export function SiteHeader() {
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} title="Primary navigation">
                 <div id="mobile-nav" className={styles.sheetContent}>
                     <div className={styles.sheetHeader}>
-                        <p className={styles.sheetBrand}>Ari Integrated Holdings Inc.</p>
+                        <Link
+                            href="/"
+                            className={styles.sheetBrand}
+                            aria-label="Ari Integrated Holdings Inc. home"
+                            onClick={() => setMobileMenuOpen(false)}
+                        >
+                            <AriLogo variant="full" markSize={40} />
+                        </Link>
                         <button
                             type="button"
                             className={styles.sheetCloseButton}
                             aria-label="Close navigation menu"
                             onClick={() => setMobileMenuOpen(false)}
                         >
-                            Close
+                            <CloseIcon />
                         </button>
                     </div>
 
@@ -174,28 +218,34 @@ export function SiteHeader() {
                                             {item.label}
                                         </span>
                                     ) : (
-                                        item.label
+                                        <span>{item.label}</span>
                                     )}
+                                    <span className={styles.sheetLinkChevron}>
+                                        <ChevronIcon />
+                                    </span>
                                 </Link>
                             );
                         })}
                     </nav>
 
                     {status === 'loading' ? (
-                        <div className={styles.loadingPill}>Loading...</div>
+                        <div className={styles.sheetAccount}>
+                            <div className={styles.loadingPill} role="status" aria-label="Loading account" />
+                        </div>
                     ) : session ? (
                         <div className={styles.sheetAccount}>
                             <Link
-                                href={isExecutive ? '/executive/dashboard' : '/investor/dashboard'}
+                                href={dashboardHref}
                                 className={styles.dashboardLink}
                                 onClick={() => setMobileMenuOpen(false)}
                             >
-                                <span className={styles.userAvatar}>
+                                <span className={styles.userAvatar} aria-hidden="true">
                                     {user?.name?.charAt(0) || 'U'}
                                 </span>
                                 <span className={styles.userName}>Dashboard</span>
                             </Link>
                             <button
+                                type="button"
                                 onClick={() => {
                                     setMobileMenuOpen(false);
                                     void signOut({ callbackUrl: '/' });
@@ -203,21 +253,18 @@ export function SiteHeader() {
                                 className={styles.signOutBtn}
                                 aria-label="Sign out"
                             >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                                    <polyline points="16,17 21,12 16,7" />
-                                    <line x1="21" y1="12" x2="9" y2="12" />
-                                </svg>
+                                <SignOutIcon />
                             </button>
                         </div>
                     ) : (
                         <div className={styles.sheetAccount}>
                             <Link
                                 href="/login"
-                                className={styles.loginBtn}
+                                className={`${styles.loginBtn} ${styles.loginBtnBlock}`}
                                 onClick={() => setMobileMenuOpen(false)}
                             >
-                                Investor Portal
+                                <LockIcon />
+                                <span>Investor Portal</span>
                             </Link>
                         </div>
                     )}

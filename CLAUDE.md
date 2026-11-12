@@ -65,9 +65,16 @@ web/
 - `ExecMeetingBooking.tsx` - Executive Zoom meeting scheduler
 - `MeetingTypeSelector.tsx` - Inline meeting type selection on the investor and executive dashboards
 
+### Brand
+- `public/brand/ari-mark.svg` - The lion mark: one vector file for every size. No text, filters, or external references inside it.
+- `components/brand/AriLogo.tsx` - `AriMark` (the lion alone) and `AriLogo` (the lockup: mark, "ARI" in Cinzel capitals with a metallic gradient, and "Integrated Holdings" behind a hairline). The lockup scales from one number, the mark's height: pass `markSize`, or set `--ari-logo-size` on an ancestor so it can change per breakpoint. `--ari-logo-descriptor: none` hides "Integrated Holdings" where space is short.
+- The lettering is `aria-hidden`; give the link or element around the logo its accessible name.
+- `src/app/icon.svg`, `apple-icon.png`, and `favicon.ico` are the mark on a navy tile. They are generated from the mark, so regenerate all three if the mark changes.
+- Used in: the header and mobile menu, the home hero (`AriMark`), the footer, and the sign-in card.
+
 ### Layout Components
 - `Sheet.tsx/module.css` - Mobile slide-out menu (z-index: 80-81)
-- `Navbar.tsx/module.css` - Sticky header (z-index: 70)
+- `Navbar.tsx/module.css` - Sticky header (z-index: 70). Its height is fixed at 75px, and 88px from 768px up; sticky elements on the thesis and assets pages are offset against those numbers, so change them together. Links and account controls appear from 900px; below that they live in the menu. The full lockup shows from 1140px, and the links sit on the page's centre line from 1280px. `data-scrolled` (set once the page has moved 8px) fades in a near-solid backing plate.
 
 ## Interactive Components (Nov 2026)
 

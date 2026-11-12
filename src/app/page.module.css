@@ -34,11 +34,9 @@
 }
 
 .heroLogo {
-  width: auto;
+  width: 132px;
   height: 132px;
-  object-fit: contain;
-  border-radius: 16px;
-  filter: drop-shadow(0 0 32px rgba(194, 155, 78, 0.35)) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 0 32px rgba(194, 155, 78, 0.3)) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.5));
 }
 
 .heroEyebrow {
@@ -339,6 +337,7 @@ div:hover > .cardIcon svg * {
   }
 
   .heroLogo {
+    width: 112px;
     height: 112px;
   }
 

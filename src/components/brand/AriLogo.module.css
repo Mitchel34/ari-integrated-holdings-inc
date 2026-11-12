@@ -1,0 +1,79 @@
+/*
+ * The lockup scales from one number, the height of the mark: --ari-logo-size.
+ * It becomes the font-size here, and every measurement below is in em.
+ */
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25em;
+    font-size: var(--ari-logo-size, 48px);
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.mark {
+    display: block;
+    flex: none;
+}
+
+/* Inside the lockup the mark follows the lockup's size; on its own it uses its width and height. */
+.logo .mark {
+    width: 1em;
+    height: 1em;
+}
+
+.lettering {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.27em;
+}
+
+/* "ARI": polished silver with a soft horizon band, warming to champagne at the foot. */
+.name {
+    font-size: 0.6em;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    /* Tracking adds space after the last letter too; pull it back so the rule sits evenly. */
+    margin-right: -0.2em;
+    text-transform: uppercase;
+    color: #e8ebf0;
+    background: linear-gradient(180deg, #ffffff 0%, #eef1f5 30%, #b4bcc8 52%, #e6e9ee 66%, #d9c08a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/*
+ * "Integrated Holdings" on two lines behind a champagne hairline. Its own
+ * font-size is a fifth of the lockup's, so the em values here are relative to
+ * that smaller size.
+ */
+.descriptor {
+    display: none;
+    flex-direction: column;
+    gap: 0.5em;
+    padding-left: 1.35em;
+    border-left: 1px solid rgba(232, 200, 122, 0.55);
+    font-size: 0.2em;
+    font-weight: 600;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: #d8bd7c;
+}
+
+.descriptor span {
+    display: block;
+}
+
+/* A parent can hide the descriptor where space is short: --ari-logo-descriptor: none. */
+.logo[data-variant='full'] .descriptor {
+    display: var(--ari-logo-descriptor, inline-flex);
+}
+
+@media (forced-colors: active) {
+    .name {
+        background: none;
+        -webkit-text-fill-color: currentColor;
+        color: CanvasText;
+    }
+}

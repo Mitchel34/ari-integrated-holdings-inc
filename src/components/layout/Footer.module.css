@@ -12,14 +12,20 @@
     margin-bottom: 3rem;
 }
 
-.footerLogo {
-    width: auto;
-    max-height: 80px;
-    object-fit: contain;
-    background: var(--color-primary-bg);
-    border-radius: 10px;
-    margin-bottom: 0.85rem;
-    display: block;
+/* Two classes so this wins over the generic `.column a` link rule below. */
+.column .footerLogo {
+    --ari-logo-size: 44px;
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+}
+
+/* Four columns on a tablet leave the first too narrow for "Integrated Holdings". */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .column .footerLogo {
+        --ari-logo-descriptor: none;
+    }
 }
 
 .contactList {

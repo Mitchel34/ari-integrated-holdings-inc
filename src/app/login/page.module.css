@@ -5,7 +5,9 @@
   justify-content: center;
   position: relative;
   overflow: hidden;
-  padding: 2rem;
+  /* The page is pulled up behind the header, so the top padding adds that height back
+     and the card can never slide under the bar on a short screen. */
+  padding: calc(80px + 1.5rem) 2rem 2rem;
   margin-top: -80px; /* Offset navbar height */
 }
 
@@ -49,13 +51,10 @@
 
 .loginLogo {
   display: block;
-  width: auto;
-  height: 100px;
-  object-fit: contain;
+  width: 96px;
+  height: 96px;
   margin: 0 auto 1.25rem;
-  background: var(--color-primary-bg);
-  border-radius: 14px;
-  filter: drop-shadow(0 0 20px rgba(194, 155, 78, 0.28)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.45));
+  filter: drop-shadow(0 0 20px rgba(194, 155, 78, 0.26)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.45));
 }
 
 .title {
@@ -109,7 +108,7 @@
 
 @media (max-width: 480px) {
   .loginPage {
-    padding: 1rem;
+    padding: calc(80px + 1rem) 1rem 1rem;
   }
 
   .loginCard {
@@ -118,6 +117,7 @@
   }
 
   .loginLogo {
+    width: 80px;
     height: 80px;
   }
 

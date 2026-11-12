@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { Container } from '../ui/Container';
 import { ContactEmail } from '../ui/ContactEmail';
+import { AriLogo } from '../brand/AriLogo';
 import { SITE_DOMAIN } from '@/lib/contact';
 import styles from './Footer.module.css';
 
@@ -11,14 +11,8 @@ export function Footer() {
             <Container>
                 <div className={styles.content}>
                     <div className={styles.column}>
-                        <Link href="/">
-                            <Image
-                                src="/logo.jpeg"
-                                alt="Ari Integrated Holdings Inc."
-                                width={90}
-                                height={90}
-                                className={styles.footerLogo}
-                            />
+                        <Link href="/" className={styles.footerLogo} aria-label="Ari Integrated Holdings Inc. home">
+                            <AriLogo variant="full" />
                         </Link>
                         <p>Building the Strategic Reserve of the Digital Age.</p>
                         <ul className={styles.contactList}>
