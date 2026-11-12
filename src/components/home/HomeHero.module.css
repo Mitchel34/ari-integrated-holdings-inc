@@ -91,88 +91,41 @@
     color: var(--text-3);
 }
 
+/* ── Allocation panel ─────────────────────────────────────────────────── */
+
 .panel {
     width: 100%;
     max-width: 460px;
     min-width: 0;
 }
 
-.ringHolder {
-    display: grid;
-    place-items: center;
-    padding: 0.25rem 0 1.25rem;
+/* The explorer fills the panel; the ring caps itself at the panel width. */
+.explorer {
+    width: 100%;
+    gap: 1.1rem;
 }
 
-.ringHolder .ring {
-    width: min(var(--ring-size), 100%);
-    height: auto;
-    aspect-ratio: 1 / 1;
+.explorer > :first-child {
+    padding: 0.25rem 0 0.25rem;
 }
 
-.legend {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
+.explorer > :last-child {
+    width: 100%;
+    max-width: none;
 }
 
-.legendRow {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.7rem 0;
-    border-top: 1px solid var(--line-1);
-    text-align: left;
-}
-
-.legendChips {
-    display: inline-flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-}
-
-.legendName {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    font-size: var(--fs-small);
-    font-weight: 500;
-    color: var(--text-1);
-    line-height: 1.3;
-}
-
-.legendRole {
-    font-size: var(--fs-caption);
-    font-weight: 400;
-    color: var(--text-3);
-}
-
-.legendWeight {
-    font-size: 1rem;
-    color: var(--text-1);
-}
-
-.panelNote {
-    margin-top: 0.9rem;
+/* The caption reads as the panel footnote it replaced. */
+.explorer > :last-child > p:last-child {
+    width: 100%;
+    margin-top: 0.4rem;
     padding-top: 0.9rem;
     border-top: 1px solid var(--line-1);
-    font-size: var(--fs-caption);
-    color: var(--text-3);
     text-align: left;
 }
 
 @media (max-width: 640px) {
     .actions > * {
         flex: 1 1 100%;
-    }
-
-    .legendRow {
-        grid-template-columns: minmax(0, 1fr) auto;
-    }
-
-    .legendChips {
-        grid-column: 1 / -1;
     }
 }
 

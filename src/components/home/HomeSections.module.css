@@ -85,6 +85,29 @@
     font-size: var(--fs-h3);
 }
 
+/* The icon redraws itself when its card is hovered (pointer devices only). */
+@media (hover: hover) {
+    .pillarCard:hover .iconBox svg > * {
+        animation: iconDraw 0.9s var(--ease-out);
+    }
+}
+
+@keyframes iconDraw {
+    from {
+        stroke-dasharray: 0 80;
+    }
+
+    to {
+        stroke-dasharray: 80 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pillarCard:hover .iconBox svg > * {
+        animation: none;
+    }
+}
+
 /* ── Engines ──────────────────────────────────────────────────────────── */
 
 .engineCard {

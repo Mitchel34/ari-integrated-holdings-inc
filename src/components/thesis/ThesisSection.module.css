@@ -3,7 +3,8 @@
     grid-template-columns: 1fr;
     gap: 0.5rem 1.5rem;
     padding: clamp(2rem, 4vw, 3rem) 0;
-    scroll-margin-top: calc(var(--nav-h) + 1rem);
+    /* Pages with a sticky reading aid set --chapter-offset so anchors clear it. */
+    scroll-margin-top: var(--chapter-offset, calc(var(--nav-h) + 1rem));
 }
 
 .section + .section {
@@ -99,5 +100,28 @@
 
     .numeral {
         font-size: 0.875rem;
+    }
+}
+
+/* Chapters rise into place as they enter the viewport, where the browser supports it. */
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .section {
+            animation: chapterIn linear both;
+            animation-timeline: view();
+            animation-range: entry 0% entry 220px;
+        }
+    }
+}
+
+@keyframes chapterIn {
+    from {
+        opacity: 0.3;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

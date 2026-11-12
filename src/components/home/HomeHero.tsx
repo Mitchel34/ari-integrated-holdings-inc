@@ -1,10 +1,9 @@
 import Link from 'next/link';
-import { ALLOCATION, PRINCIPLES } from '@/lib/site';
+import { PRINCIPLES } from '@/lib/site';
 import { Container } from '@/components/ui/Container';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { AllocationRing } from '@/components/brand/AllocationRing';
-import { AssetChip } from '@/components/brand/AssetChip';
+import { AllocationExplorer } from '@/components/brand/AllocationExplorer';
 import styles from './HomeHero.module.css';
 
 export function HomeHero() {
@@ -47,32 +46,14 @@ export function HomeHero() {
                     </div>
 
                     <Card variant="elevated" className={styles.panel}>
-                        <div className={styles.ringHolder}>
-                            <AllocationRing
-                                size={300}
-                                label="50 / 30 / 20"
-                                sublabel="Target allocation"
-                                className={styles.ring}
-                            />
-                        </div>
-                        <ul className={styles.legend} aria-label="Target allocation by asset">
-                            {ALLOCATION.map((asset) => (
-                                <li key={asset.symbol} className={styles.legendRow}>
-                                    <span className={styles.legendChips}>
-                                        <AssetChip symbol={asset.symbol} />
-                                        <AssetChip symbol={asset.etf} title={asset.etfName} />
-                                    </span>
-                                    <span className={styles.legendName}>
-                                        {asset.name}
-                                        <span className={styles.legendRole}>{asset.role}</span>
-                                    </span>
-                                    <span className={`${styles.legendWeight} mono`}>{asset.weight}%</span>
-                                </li>
-                            ))}
-                        </ul>
-                        <p className={styles.panelNote}>
-                            Target weights. Exposure is held through spot ETFs rather than direct custody.
-                        </p>
+                        <AllocationExplorer
+                            layout="stacked"
+                            size={260}
+                            autoCycle
+                            transitionName="allocation-ring"
+                            caption="Target weights. Exposure is held through spot ETFs rather than direct custody."
+                            className={styles.explorer}
+                        />
                     </Card>
                 </div>
             </Container>

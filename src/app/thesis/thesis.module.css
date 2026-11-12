@@ -9,32 +9,33 @@
     margin-top: clamp(2rem, 4vw, 3rem);
 }
 
-.allocationGrid {
+/* Intro row: heading beside the interactive ring; the rationale table sits below. */
+.allocationIntro {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 2rem;
+    gap: 1.75rem;
     align-items: center;
+    padding-bottom: 1.75rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--line-1);
 }
 
-.ringCol {
+.allocationHead {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
+    min-width: 0;
 }
 
-/* The ring fixes its own pixel size; cap it so a 320px viewport never overflows. */
-.ringCol > :first-child {
-    width: min(260px, 100%) !important;
-    height: auto !important;
-    aspect-ratio: 1 / 1;
-}
-
-.ringCaption {
-    font-size: var(--fs-caption);
+.allocationLead {
+    max-width: 40ch;
+    font-size: var(--fs-small);
+    line-height: 1.6;
     color: var(--text-3);
-    letter-spacing: 0.02em;
-    text-align: center;
+}
+
+.explorer {
+    min-width: 0;
 }
 
 .tableCol {
@@ -46,7 +47,6 @@
 
 .allocationTitle {
     font-size: var(--fs-h2);
-    margin-bottom: 0.5rem;
 }
 
 .tableWrap {
@@ -202,33 +202,15 @@ li.railSol { border-left-color: var(--sol); }
     white-space: nowrap;
 }
 
-/* ── Jump list ────────────────────────────────────────────────────────── */
+/* ── Guided read: rail + reading column ───────────────────────────────── */
 
-.jump {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem 0.75rem;
-    margin-top: 1.25rem;
-}
-
-.jumpLink {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    min-height: 44px;
-    padding: 0 0.5rem;
-    font-size: 0.8125rem;
-    color: var(--text-3);
-    border-radius: var(--r-sm);
-}
-
-.jumpLink:hover {
-    color: var(--text-1);
-}
-
-.jumpIdx {
-    color: var(--gold-500);
-    letter-spacing: 0.08em;
+.reader {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+    /* Below 1024px the sticky progress bar sits under the navbar; chapters clear both. */
+    --chapter-offset: calc(var(--nav-h-mobile) + 68px);
 }
 
 /* ── Reading column ───────────────────────────────────────────────────── */
@@ -236,6 +218,8 @@ li.railSol { border-left-color: var(--sol); }
 .reading {
     display: flex;
     flex-direction: column;
+    min-width: 0;
+    max-width: var(--container-narrow);
 }
 
 .weights {
@@ -269,6 +253,179 @@ li.railSol { border-left-color: var(--sol); }
 .assetList > li > :first-child {
     flex-shrink: 0;
     margin-top: 0.2rem;
+}
+
+/* ── 02: asset tiles ──────────────────────────────────────────────────── */
+
+/* `.reading .tiles` outranks ThesisSection's generic `.content ul` list styling. */
+.reading .tiles {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.9rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    max-width: none;
+}
+
+.tiles > .tileItem {
+    padding-left: 0 !important;
+    min-width: 0;
+}
+
+.tiles > .tileItem::before {
+    display: none;
+}
+
+.tile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    height: 100%;
+}
+
+/* Badge mirrors the AssetChip treatment: tinted fill, asset-tinted glyph, never a solid asset background. */
+.tileBadge {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--r-full);
+    border: 1px solid var(--badge-border);
+    background: var(--badge-bg);
+    color: var(--badge-text);
+    font-family: var(--font-mono);
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.badge-btc { --badge-border: var(--btc-a40); --badge-bg: var(--btc-a15); --badge-text: var(--btc-text); }
+.badge-eth { --badge-border: var(--eth-a40); --badge-bg: var(--eth-a15); --badge-text: var(--eth-text); }
+.badge-sol { --badge-border: var(--sol-a40); --badge-bg: var(--sol-a15); --badge-text: var(--sol-text); }
+
+.tileHead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-1);
+}
+
+.tileWeight {
+    font-weight: 500;
+    color: var(--text-2);
+}
+
+.tileText {
+    font-size: var(--fs-small);
+    line-height: 1.6;
+    color: var(--text-2);
+}
+
+/* The link's pseudo-element stretches over the card so the whole tile is the target. */
+.tileMore {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    align-self: flex-start;
+    margin-top: auto;
+    min-height: 44px;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--gold-300);
+}
+
+.tileMore::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+}
+
+.tileMore svg {
+    width: 15px;
+    height: 15px;
+    transition: transform var(--dur-base) var(--ease-out);
+}
+
+.tile:hover .tileMore {
+    color: var(--text-1);
+}
+
+.tile:hover .tileMore svg {
+    transform: translateX(3px);
+}
+
+/* ── 03: layer stack (bar width is proportional to target weight) ─────── */
+
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    margin: 0;
+    min-width: 0;
+}
+
+.axisLabel {
+    margin: 0;
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-3);
+}
+
+.layers {
+    display: grid;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0 0 0 1rem;
+    list-style: none;
+    border-left: 1px solid var(--line-2);
+}
+
+.layer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.4rem 1rem;
+    align-items: center;
+    min-width: 0;
+}
+
+.layerBar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 0;
+    min-height: 28px;
+}
+
+.layerFill {
+    display: block;
+    flex-shrink: 1;
+    height: 20px;
+    min-width: 8px;
+    border-radius: var(--r-xs);
+    opacity: 0.9;
+}
+
+.fill-btc { background: var(--btc); }
+.fill-eth { background: var(--eth); }
+.fill-sol { background: var(--sol); }
+
+.layerValue {
+    flex-shrink: 0;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-1);
+}
+
+.layerText {
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: var(--text-2);
 }
 
 /* ── Risk profile ─────────────────────────────────────────────────────── */
@@ -488,11 +645,35 @@ li.railSol { border-left-color: var(--sol); }
     .riskGrid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .reading .tiles {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .layer {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
 }
 
 @media (min-width: 1024px) {
-    .allocationGrid {
-        grid-template-columns: auto minmax(0, 1fr);
+    .allocationIntro {
+        grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
         gap: 3rem;
+    }
+
+    .reader {
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: clamp(2.5rem, 5vw, 4.5rem);
+        --chapter-offset: calc(var(--nav-h) + 1rem);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tileMore svg {
+        transition: none;
+    }
+
+    .tile:hover .tileMore svg {
+        transform: none;
     }
 }

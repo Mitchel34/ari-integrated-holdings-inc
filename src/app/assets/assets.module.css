@@ -1,0 +1,431 @@
+/* ── Explorer: sticky ring nav + one section per asset ────────────────── */
+
+.explorer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    align-items: start;
+}
+
+.aside {
+    min-width: 0;
+}
+
+.navCard {
+    display: grid;
+    justify-items: center;
+}
+
+/* Compact chips so all three sit on one row beside the 220px ring. */
+.navCard button {
+    padding-left: 0.65rem;
+    padding-right: 0.65rem;
+    font-size: 0.75rem;
+}
+
+.sections {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.25rem, 3vw, 2rem);
+    min-width: 0;
+}
+
+.asset {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    /* Clear the sticky navbar when linked to by hash (/assets#eth). */
+    scroll-margin-top: calc(var(--nav-h-mobile) + 1rem);
+}
+
+/* ── Asset header ─────────────────────────────────────────────────────── */
+
+.assetHeader {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.9rem 1rem;
+    align-items: center;
+}
+
+/* Glyph in a glass circle; the asset color appears only as the small dot. */
+.badge {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--r-full);
+    color: var(--text-1);
+    flex-shrink: 0;
+}
+
+.glyph {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.badgeDot {
+    position: absolute;
+    right: 1px;
+    bottom: 1px;
+    width: 9px;
+    height: 9px;
+    border-radius: var(--r-full);
+    box-shadow: 0 0 0 2px var(--bg-1);
+}
+
+.dotBtc { background: var(--btc); }
+.dotEth { background: var(--eth); }
+.dotSol { background: var(--sol); }
+
+.assetTitle {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 0;
+}
+
+.assetName {
+    font-size: var(--fs-h2);
+    line-height: var(--lh-tight);
+    letter-spacing: -0.02em;
+    color: var(--text-1);
+}
+
+.symbol {
+    margin-left: 0.2rem;
+    font-size: 0.55em;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    vertical-align: 0.25em;
+}
+
+.weight {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin: 0;
+    line-height: 1.1;
+}
+
+.weightValue {
+    font-size: var(--fs-metric);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--text-1);
+}
+
+.weightLabel {
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-3);
+}
+
+/* ── Facts ────────────────────────────────────────────────────────────── */
+
+.facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem 1.5rem;
+    margin: 0;
+    padding: 1rem 0;
+    border-top: 1px solid var(--line-1);
+    border-bottom: 1px solid var(--line-1);
+}
+
+.fact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+}
+
+.factWide {
+    grid-column: 1 / -1;
+}
+
+.fact dt {
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-3);
+}
+
+.fact dd {
+    margin: 0;
+    font-size: var(--fs-small);
+    font-weight: 500;
+    color: var(--text-1);
+}
+
+.heldCell {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0.6rem;
+}
+
+.heldName {
+    font-size: var(--fs-small);
+    font-weight: 400;
+    color: var(--text-2);
+}
+
+/* ── Three short columns ──────────────────────────────────────────────── */
+
+.columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem 1.75rem;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    min-width: 0;
+}
+
+.columnTitle {
+    font-size: var(--fs-h4);
+    color: var(--text-1);
+}
+
+.columnText {
+    margin: 0;
+    font-size: var(--fs-small);
+    line-height: 1.65;
+    color: var(--text-2);
+}
+
+/* ── Comparison table (≥768px) ────────────────────────────────────────── */
+
+.tableCard {
+    display: none;
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.tableWrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+}
+
+.table {
+    width: 100%;
+    min-width: 640px;
+    border-collapse: collapse;
+    font-size: var(--fs-small);
+}
+
+.table th,
+.table td {
+    padding: 0.9rem 1.1rem;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--line-1);
+}
+
+.table thead th {
+    padding-top: 1.1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--line-2);
+}
+
+.assetHead {
+    width: 24%;
+}
+
+.assetHead > * {
+    vertical-align: middle;
+}
+
+.assetHeadName {
+    display: block;
+    margin-top: 0.4rem;
+    font-family: var(--font-sans);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--text-1);
+}
+
+.table tbody th {
+    width: 11rem;
+    font-family: var(--font-sans);
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    white-space: nowrap;
+}
+
+.table tbody td {
+    color: var(--text-2);
+    line-height: 1.5;
+}
+
+.table tbody tr:last-child th,
+.table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.num {
+    color: var(--text-1);
+    white-space: nowrap;
+}
+
+/* ── Stacked comparison (<768px) ──────────────────────────────────────── */
+
+.stackList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: clamp(1.5rem, 3vw, 2.25rem) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stackCard {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.stackHead {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.stackName {
+    font-family: var(--font-display);
+    font-size: var(--fs-h4);
+    font-weight: 600;
+    color: var(--text-1);
+}
+
+.stackFacts {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.stackRow {
+    display: grid;
+    grid-template-columns: minmax(0, 7.5rem) minmax(0, 1fr);
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-top: 1px solid var(--line-1);
+}
+
+.stackRow dt {
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    line-height: 1.5;
+}
+
+.stackRow dd {
+    margin: 0;
+    font-size: var(--fs-small);
+    color: var(--text-1);
+    line-height: 1.5;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+/* ── Closing ──────────────────────────────────────────────────────────── */
+
+.next {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 1.5rem;
+    margin-top: clamp(2rem, 4vw, 3rem);
+    padding-top: clamp(1.5rem, 3vw, 2rem);
+    border-top: 1px solid var(--line-1);
+}
+
+.nextText {
+    margin: 0;
+    font-size: var(--fs-lead);
+    color: var(--text-1);
+    max-width: 40ch;
+}
+
+.risk {
+    margin: 1.25rem 0 0;
+    font-size: var(--fs-caption);
+    color: var(--text-3);
+}
+
+/* ── Breakpoints ──────────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+    .next > * {
+        flex: 1 1 100%;
+    }
+}
+
+@media (min-width: 640px) {
+    .assetHeader {
+        grid-template-columns: auto minmax(0, 1fr) auto;
+    }
+
+    .weight {
+        grid-column: auto;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.35rem;
+        text-align: right;
+    }
+
+    .facts {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .factWide {
+        grid-column: auto;
+    }
+}
+
+@media (min-width: 768px) {
+    .asset {
+        scroll-margin-top: calc(var(--nav-h) + 1.5rem);
+    }
+
+    .columns {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .tableCard {
+        display: block;
+    }
+
+    .stackList {
+        display: none;
+    }
+}
+
+@media (min-width: 1024px) {
+    .explorer {
+        grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+        gap: clamp(2rem, 4vw, 3.5rem);
+    }
+
+    .aside {
+        position: sticky;
+        top: calc(var(--nav-h) + 1.5rem);
+    }
+}

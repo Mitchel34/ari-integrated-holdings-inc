@@ -6,8 +6,10 @@ import { Section } from '@/components/layout/Section';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { AssetChip } from '@/components/brand/AssetChip';
-import { AllocationRing } from '@/components/brand/AllocationRing';
+import { AllocationExplorer } from '@/components/brand/AllocationExplorer';
 import { ThesisSection } from '@/components/thesis/ThesisSection';
+import { ThesisRail } from '@/components/thesis/ThesisRail';
+import { BasketMixer } from '@/components/thesis/BasketMixer';
 import { ALLOCATION, type AssetSymbol } from '@/lib/site';
 import styles from './thesis.module.css';
 
@@ -94,6 +96,9 @@ const RAIL_CLASS: Record<string, string> = {
     SOL: styles.railSol,
 };
 
+/** Construction lens stack: the most volatile layer on top, BTC as the base. */
+const LAYERS = [...ALLOCATION].reverse();
+
 export default function ThesisPage() {
     return (
         <>
@@ -106,206 +111,225 @@ export default function ThesisPage() {
 
             <Section flush className={styles.allocationSection} aria-labelledby="allocation-title">
                 <Card variant="elevated" as="article" className={styles.allocationCard}>
-                    <div className={styles.allocationGrid}>
-                        <div className={styles.ringCol}>
-                            <AllocationRing
-                                size={260}
-                                label="50 / 30 / 20"
-                                sublabel="Target allocation"
-                                ariaLabel="Target allocation ring: Bitcoin 50 percent, Ethereum 30 percent, Solana 20 percent"
-                            />
-                            <p className={styles.ringCaption}>Target weights, not live holdings.</p>
-                        </div>
-
-                        <div className={styles.tableCol}>
+                    <div className={styles.allocationIntro}>
+                        <div className={styles.allocationHead}>
                             <p className="eyebrow">Allocation framework</p>
                             <h2 id="allocation-title" className={styles.allocationTitle}>
                                 Three assets, one discipline
                             </h2>
-                            <div className={styles.tableWrap}>
-                                <table className={styles.rationaleTable}>
-                                    <caption className="sr-only">
-                                        Target allocation by asset: target weight, role in the portfolio, and ETF wrapper
-                                    </caption>
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Asset</th>
-                                            <th scope="col" className={styles.num}>Target</th>
-                                            <th scope="col">Role in portfolio</th>
-                                            <th scope="col">ETF wrapper</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {ALLOCATION.map((asset) => (
-                                            <tr key={asset.symbol} className={RAIL_CLASS[asset.symbol]}>
-                                                <th scope="row">
-                                                    <span className={styles.assetCell}>
-                                                        <AssetChip symbol={asset.symbol} />
-                                                        <span className={styles.assetName}>{asset.name}</span>
-                                                    </span>
-                                                </th>
-                                                <td className={`${styles.num} mono`}>{asset.weight}%</td>
-                                                <td>
-                                                    <span className={styles.role}>{asset.role}</span>
-                                                    <span className={styles.roleSub}>{asset.summary}</span>
-                                                </td>
-                                                <td>
-                                                    <span className={styles.etfCell}>
-                                                        <AssetChip symbol={asset.etf} />
-                                                        <span className={styles.etfName}>{asset.etfName}</span>
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                            <p className={styles.allocationLead}>
+                                Select a slice or a chip to read what each position is for. Target weights, not live
+                                holdings.
+                            </p>
+                        </div>
+                        <AllocationExplorer
+                            layout="split"
+                            size={240}
+                            transitionName="allocation-ring"
+                            showLink
+                            className={styles.explorer}
+                        />
+                    </div>
 
-                            <ul className={styles.stackList} aria-label="Target allocation by asset">
-                                {ALLOCATION.map((asset) => (
-                                    <li key={asset.symbol} className={`${styles.stackItem} ${RAIL_CLASS[asset.symbol]}`}>
-                                        <div className={styles.stackHead}>
-                                            <span className={styles.assetCell}>
-                                                <AssetChip symbol={asset.symbol} />
-                                                <span className={styles.assetName}>{asset.name}</span>
-                                            </span>
-                                            <span className={`${styles.stackWeight} mono`}>{asset.weight}%</span>
-                                        </div>
-                                        <span className={styles.role}>{asset.role}</span>
-                                        <span className={styles.roleSub}>{asset.summary}</span>
-                                        <span className={styles.etfCell}>
-                                            <AssetChip symbol={asset.etf} />
-                                            <span className={styles.etfName}>{asset.etfName}</span>
+                    <div className={styles.tableCol}>
+                        <div className={styles.tableWrap}>
+                            <table className={styles.rationaleTable}>
+                                <caption className="sr-only">
+                                    Target allocation by asset: target weight, role in the portfolio, and ETF wrapper
+                                </caption>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Asset</th>
+                                        <th scope="col" className={styles.num}>Target</th>
+                                        <th scope="col">Role in portfolio</th>
+                                        <th scope="col">ETF wrapper</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {ALLOCATION.map((asset) => (
+                                        <tr key={asset.symbol} className={RAIL_CLASS[asset.symbol]}>
+                                            <th scope="row">
+                                                <span className={styles.assetCell}>
+                                                    <AssetChip symbol={asset.symbol} />
+                                                    <span className={styles.assetName}>{asset.name}</span>
+                                                </span>
+                                            </th>
+                                            <td className={`${styles.num} mono`}>{asset.weight}%</td>
+                                            <td>
+                                                <span className={styles.role}>{asset.role}</span>
+                                                <span className={styles.roleSub}>{asset.summary}</span>
+                                            </td>
+                                            <td>
+                                                <span className={styles.etfCell}>
+                                                    <AssetChip symbol={asset.etf} />
+                                                    <span className={styles.etfName}>{asset.etfName}</span>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <ul className={styles.stackList} aria-label="Target allocation by asset">
+                            {ALLOCATION.map((asset) => (
+                                <li key={asset.symbol} className={`${styles.stackItem} ${RAIL_CLASS[asset.symbol]}`}>
+                                    <div className={styles.stackHead}>
+                                        <span className={styles.assetCell}>
+                                            <AssetChip symbol={asset.symbol} />
+                                            <span className={styles.assetName}>{asset.name}</span>
                                         </span>
+                                        <span className={`${styles.stackWeight} mono`}>{asset.weight}%</span>
+                                    </div>
+                                    <span className={styles.role}>{asset.role}</span>
+                                    <span className={styles.roleSub}>{asset.summary}</span>
+                                    <span className={styles.etfCell}>
+                                        <AssetChip symbol={asset.etf} />
+                                        <span className={styles.etfName}>{asset.etfName}</span>
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </Card>
+            </Section>
+
+            <Section hairline aria-label="Thesis">
+                <div className={styles.reader}>
+                    <ThesisRail chapters={SECTIONS} />
+                    <div className={styles.reading}>
+                        <ThesisSection index={1} id="target-allocation" title="Target allocation">
+                            <p className={`${styles.weights} mono`}>50% BTC / 30% ETH / 20% SOL</p>
+                            <p>
+                                This target structure is designed for long-duration treasury construction, emphasizing
+                                discipline across market cycles instead of reactive allocation changes.
+                            </p>
+                        </ThesisSection>
+
+                        <ThesisSection index={2} id="why-this-mix" title="Why this mix">
+                            <ul className={styles.tiles} aria-label="Why each asset is in the mix">
+                                {ALLOCATION.map((asset) => (
+                                    <li key={asset.key} className={styles.tileItem}>
+                                        <Card
+                                            variant="subtle"
+                                            interactive
+                                            accent={asset.key}
+                                            padding="sm"
+                                            as="article"
+                                            className={styles.tile}
+                                        >
+                                            <span className={`${styles.tileBadge} ${styles[`badge-${asset.key}`]}`} aria-hidden="true">
+                                                {asset.glyph}
+                                            </span>
+                                            <p className={`${styles.tileHead} mono`}>
+                                                <span>{asset.symbol}</span>
+                                                <span className={styles.tileWeight}>{asset.weight}%</span>
+                                            </p>
+                                            <p className={styles.tileText}>{asset.whyThisMix}</p>
+                                            <Link href={`/assets#${asset.key}`} className={styles.tileMore}>
+                                                More on {asset.name}
+                                                <ArrowRight aria-hidden="true" />
+                                            </Link>
+                                        </Card>
                                     </li>
                                 ))}
                             </ul>
-                        </div>
-                    </div>
-                </Card>
+                        </ThesisSection>
 
-                <nav className={styles.jump} aria-label="Thesis sections">
-                    {SECTIONS.map((section, index) => (
-                        <a key={section.id} href={`#${section.id}`} className={`${styles.jumpLink} mono`}>
-                            <span className={styles.jumpIdx}>{String(index + 1).padStart(2, '0')}</span>
-                            <span>{section.title}</span>
-                        </a>
-                    ))}
-                </nav>
-            </Section>
+                        <ThesisSection
+                            index={3}
+                            id="construction-lens"
+                            title="Portfolio construction lens"
+                            lead="With BTC, ETH, and SOL, allocation is not only about percentage weights. It is about volatility hierarchy, correlation structure, and asymmetric payoff potential."
+                        >
+                            <figure className={styles.stack}>
+                                <figcaption className={styles.axisLabel}>Higher beta and volatility</figcaption>
+                                <ol className={styles.layers} aria-label="Portfolio layers, most volatile first">
+                                    {LAYERS.map((asset) => (
+                                        <li key={asset.key} className={styles.layer}>
+                                            <span className={styles.layerBar}>
+                                                <span
+                                                    className={`${styles.layerFill} ${styles[`fill-${asset.key}`]}`}
+                                                    style={{ width: `${asset.weight * 2}%` }}
+                                                    aria-hidden="true"
+                                                />
+                                                <span className={`${styles.layerValue} mono`}>
+                                                    {asset.symbol} {asset.weight}%
+                                                </span>
+                                            </span>
+                                            <span className={styles.layerText}>{asset.layer}.</span>
+                                        </li>
+                                    ))}
+                                </ol>
+                                <p className={styles.axisLabel}>Monetary base and deepest liquidity</p>
+                            </figure>
+                        </ThesisSection>
 
-            <Section narrow hairline aria-label="Thesis">
-                <div className={styles.reading}>
-                    <ThesisSection index={1} id="target-allocation" title="Target allocation">
-                        <p className={`${styles.weights} mono`}>50% BTC / 30% ETH / 20% SOL</p>
-                        <p>
-                            This target structure is designed for long-duration treasury construction, emphasizing
-                            discipline across market cycles instead of reactive allocation changes.
-                        </p>
-                    </ThesisSection>
+                        <ThesisSection index={4} id="why-it-works" title="Why it works">
+                            <ul>
+                                <li>BTC anchors the portfolio and dampens relative protocol risk.</li>
+                                <li>ETH contributes utility exposure and potential staking-driven return support.</li>
+                                <li>SOL offers growth convexity if high-throughput chains win AI, gaming, and consumer rails.</li>
+                                <li>The blend seeks asymmetric upside without becoming a single high-beta bet.</li>
+                            </ul>
+                        </ThesisSection>
 
-                    <ThesisSection index={2} id="why-this-mix" title="Why this mix">
-                        <ul className={styles.assetList}>
-                            <li>
-                                <AssetChip symbol="BTC" />
-                                <span>Monetary core with the lowest protocol risk and deepest liquidity.</span>
-                            </li>
-                            <li>
-                                <AssetChip symbol="ETH" />
-                                <span>Programmable settlement layer with institutional finance relevance.</span>
-                            </li>
-                            <li>
-                                <AssetChip symbol="SOL" />
-                                <span>High-throughput execution exposure with AI-adjacent optionality.</span>
-                            </li>
-                        </ul>
-                    </ThesisSection>
-
-                    <ThesisSection
-                        index={3}
-                        id="construction-lens"
-                        title="Portfolio construction lens"
-                        lead="With BTC, ETH, and SOL, allocation is not only about percentage weights. It is about volatility hierarchy, correlation structure, and asymmetric payoff potential."
-                    >
-                        <ul className={styles.assetList}>
-                            <li>
-                                <AssetChip symbol="BTC" />
-                                <span>Monetary asset and digital collateral layer.</span>
-                            </li>
-                            <li>
-                                <AssetChip symbol="ETH" />
-                                <span>Settlement and programmable finance layer.</span>
-                            </li>
-                            <li>
-                                <AssetChip symbol="SOL" />
-                                <span>High-beta, high-volatility execution layer.</span>
-                            </li>
-                        </ul>
-                    </ThesisSection>
-
-                    <ThesisSection index={4} id="why-it-works" title="Why it works">
-                        <ul>
-                            <li>BTC anchors the portfolio and dampens relative protocol risk.</li>
-                            <li>ETH contributes utility exposure and potential staking-driven return support.</li>
-                            <li>SOL offers growth convexity if high-throughput chains win AI, gaming, and consumer rails.</li>
-                            <li>The blend seeks asymmetric upside without becoming a single high-beta bet.</li>
-                        </ul>
-                    </ThesisSection>
-
-                    <ThesisSection index={5} id="risk-profile" title="Risk profile">
-                        <div className={styles.riskGrid}>
-                            <Card variant="subtle" padding="sm" className={styles.riskCol} as="section" aria-labelledby="risk-accept">
-                                <h3 id="risk-accept" className={styles.riskTitle}>
-                                    <span className={`${styles.riskIcon} ${styles.riskIconAccept}`} aria-hidden="true">
-                                        <Check size={16} strokeWidth={2} />
-                                    </span>
-                                    What we accept
-                                </h3>
-                                <ul className={styles.riskList}>
-                                    <li>Expected drawdowns that are moderate-to-high in absolute terms, because this is crypto.</li>
-                                    <li>Upside capture that can be strong during sustained bull cycles.</li>
-                                    <li>Volatility that remains acceptable relative to expected long-term return.</li>
-                                </ul>
-                            </Card>
-                            <Card variant="subtle" padding="sm" className={styles.riskCol} as="section" aria-labelledby="risk-avoid">
-                                <h3 id="risk-avoid" className={styles.riskTitle}>
-                                    <span className={`${styles.riskIcon} ${styles.riskIconAvoid}`} aria-hidden="true">
-                                        <X size={16} strokeWidth={2} />
-                                    </span>
-                                    What we avoid
-                                </h3>
-                                <ul className={styles.riskList}>
-                                    <li>Volatility that is not acceptable relative to expected long-term return.</li>
-                                    <li>Becoming a single high-beta bet.</li>
-                                    <li>Reactive allocation changes across market cycles.</li>
-                                </ul>
-                            </Card>
-                        </div>
-                    </ThesisSection>
-
-                    <ThesisSection
-                        index={6}
-                        id="evaluation-criteria"
-                        title="How each asset is evaluated"
-                        lead="Every asset in the framework is reviewed against the same five criteria. The review is qualitative and ongoing; it informs target weights and is revisited by the board and executive team rather than by a formula."
-                    >
-                        <ol className={styles.criteria} aria-label="Evaluation criteria">
-                            {CRITERIA.map((criterion) => (
-                                <li key={criterion.id} className={styles.criterion} id={`criterion-${criterion.id}`}>
-                                    <h3 className={styles.criterionTitle}>{criterion.title}</h3>
-                                    <p className={styles.criterionSummary}>{criterion.summary}</p>
-                                    <ul className={styles.assetList}>
-                                        {ALLOCATION.map((asset) => (
-                                            <li key={asset.symbol}>
-                                                <AssetChip symbol={asset.symbol} />
-                                                <span>{criterion.assets[asset.symbol]}</span>
-                                            </li>
-                                        ))}
+                        <ThesisSection index={5} id="risk-profile" title="Risk profile">
+                            <div className={styles.riskGrid}>
+                                <Card variant="subtle" padding="sm" className={styles.riskCol} as="section" aria-labelledby="risk-accept">
+                                    <h3 id="risk-accept" className={styles.riskTitle}>
+                                        <span className={`${styles.riskIcon} ${styles.riskIconAccept}`} aria-hidden="true">
+                                            <Check size={16} strokeWidth={2} />
+                                        </span>
+                                        What we accept
+                                    </h3>
+                                    <ul className={styles.riskList}>
+                                        <li>Expected drawdowns that are moderate-to-high in absolute terms, because this is crypto.</li>
+                                        <li>Upside capture that can be strong during sustained bull cycles.</li>
+                                        <li>Volatility that remains acceptable relative to expected long-term return.</li>
                                     </ul>
-                                </li>
-                            ))}
-                        </ol>
-                    </ThesisSection>
+                                </Card>
+                                <Card variant="subtle" padding="sm" className={styles.riskCol} as="section" aria-labelledby="risk-avoid">
+                                    <h3 id="risk-avoid" className={styles.riskTitle}>
+                                        <span className={`${styles.riskIcon} ${styles.riskIconAvoid}`} aria-hidden="true">
+                                            <X size={16} strokeWidth={2} />
+                                        </span>
+                                        What we avoid
+                                    </h3>
+                                    <ul className={styles.riskList}>
+                                        <li>Volatility that is not acceptable relative to expected long-term return.</li>
+                                        <li>Becoming a single high-beta bet.</li>
+                                        <li>Reactive allocation changes across market cycles.</li>
+                                    </ul>
+                                </Card>
+                            </div>
+                            <BasketMixer />
+                        </ThesisSection>
+
+                        <ThesisSection
+                            index={6}
+                            id="evaluation-criteria"
+                            title="How each asset is evaluated"
+                            lead="Every asset in the framework is reviewed against the same five criteria. The review is qualitative and ongoing; it informs target weights and is revisited by the board and executive team rather than by a formula."
+                        >
+                            <ol className={styles.criteria} aria-label="Evaluation criteria">
+                                {CRITERIA.map((criterion) => (
+                                    <li key={criterion.id} className={styles.criterion} id={`criterion-${criterion.id}`}>
+                                        <h3 className={styles.criterionTitle}>{criterion.title}</h3>
+                                        <p className={styles.criterionSummary}>{criterion.summary}</p>
+                                        <ul className={styles.assetList}>
+                                            {ALLOCATION.map((asset) => (
+                                                <li key={asset.symbol}>
+                                                    <AssetChip symbol={asset.symbol} />
+                                                    <span>{criterion.assets[asset.symbol]}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </li>
+                                ))}
+                            </ol>
+                        </ThesisSection>
+                    </div>
                 </div>
             </Section>
 

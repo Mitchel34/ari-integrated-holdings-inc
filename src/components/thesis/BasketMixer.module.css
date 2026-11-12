@@ -1,0 +1,191 @@
+.mixer {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    min-width: 0;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.title {
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: var(--text-1);
+}
+
+.hint {
+    margin: 0;
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: var(--text-3);
+}
+
+/* ── Sliders ──────────────────────────────────────────────────────────── */
+
+.sliders {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.sliderRow {
+    display: grid;
+    grid-template-columns: 4.75rem minmax(0, 1fr) 3.25rem;
+    gap: 0.75rem;
+    align-items: center;
+    min-height: 44px;
+}
+
+.sliderLabel {
+    display: inline-flex;
+    align-items: center;
+}
+
+.slider {
+    width: 100%;
+    min-width: 0;
+    height: 44px;
+    margin: 0;
+    accent-color: var(--asset-color);
+    cursor: pointer;
+}
+
+.slider:focus-visible {
+    outline: 2px solid var(--gold-300);
+    outline-offset: 4px;
+    border-radius: var(--r-sm);
+}
+
+.sliderValue {
+    text-align: right;
+    font-size: var(--fs-mono);
+    font-weight: 500;
+    color: var(--text-1);
+}
+
+/* ── Stacked bars ─────────────────────────────────────────────────────── */
+
+.bars {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.barRow {
+    display: grid;
+    grid-template-columns: 4.75rem minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.barLabel {
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--text-3);
+}
+
+.bar {
+    display: flex;
+    height: 12px;
+    border-radius: var(--r-full);
+    overflow: hidden;
+    background: var(--glass-1-bg);
+    box-shadow: inset 0 0 0 1px var(--line-1);
+}
+
+.barSegment {
+    display: block;
+    height: 100%;
+    opacity: 0.9;
+    transition: width var(--dur-base) var(--ease-out);
+}
+
+.barSegment + .barSegment {
+    box-shadow: -1px 0 0 rgba(10, 19, 36, 0.8);
+}
+
+/* ── Stats ────────────────────────────────────────────────────────────── */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+    gap: 0.75rem;
+    margin: 0;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.9rem 1rem;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line-1);
+    background: var(--glass-1-bg);
+}
+
+.statLabel {
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-3);
+}
+
+.statValue {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--text-1);
+}
+
+.statUnit {
+    font-size: 0.875rem;
+    color: var(--text-2);
+}
+
+/* ── Message, reset, fine print ───────────────────────────────────────── */
+
+.message {
+    margin: 0;
+    min-height: 3em;
+    font-size: var(--fs-small);
+    line-height: 1.55;
+    color: var(--text-2);
+}
+
+.reset {
+    align-self: flex-start;
+}
+
+.fine {
+    margin: 0;
+    font-size: var(--fs-caption);
+    line-height: 1.55;
+    color: var(--text-3);
+}
+
+@media (max-width: 400px) {
+    .sliderRow {
+        grid-template-columns: 4.25rem minmax(0, 1fr) 3rem;
+        gap: 0.5rem;
+    }
+
+    .barRow {
+        grid-template-columns: 4.25rem minmax(0, 1fr);
+        gap: 0.5rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .barSegment {
+        transition: none;
+    }
+}
