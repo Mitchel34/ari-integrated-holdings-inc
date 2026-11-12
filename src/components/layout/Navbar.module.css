@@ -447,13 +447,6 @@
     gap: 0.75rem;
 }
 
-/* Narrow phones: the mark and "ARI" only. */
-@media (max-width: 379px) {
-    .brand {
-        --ari-logo-descriptor: none;
-    }
-}
-
 /* Tablet: same bar as phones, at the taller height the rest of the site expects. */
 @media (min-width: 768px) {
     .bar {
@@ -465,7 +458,7 @@
     }
 }
 
-/* Links and account controls join the bar. The short lockup leaves room for all seven links. */
+/* Links and account controls join the bar. "ARI" alone leaves room for all seven links. */
 @media (min-width: 900px) {
     .bar {
         display: grid;
@@ -474,7 +467,7 @@
     }
 
     .brand {
-        --ari-logo-size: 42px;
+        --ari-logo-size: 44px;
         --ari-logo-descriptor: none;
     }
 
@@ -524,9 +517,17 @@
     }
 }
 
+/* Room for the full wordmark. */
+@media (min-width: 960px) {
+    .brand {
+        --ari-logo-descriptor: inline-flex;
+    }
+}
+
+/* Room for the first name. */
 @media (min-width: 1024px) {
     .links {
-        gap: 0.8rem;
+        gap: 0.7rem;
     }
 
     .userName {
@@ -543,11 +544,20 @@
     }
 }
 
-/* Room for the full lockup. */
+/* Equal side columns put the links on the page's centre line. */
 @media (min-width: 1140px) {
+    .bar {
+        grid-template-columns: 1fr auto 1fr;
+        gap: 1.25rem;
+    }
+
     .brand {
         --ari-logo-size: 46px;
-        --ari-logo-descriptor: inline-flex;
+        justify-self: start;
+    }
+
+    .links {
+        gap: 0.9rem;
     }
 
     .loginBtn {
@@ -559,16 +569,13 @@
     }
 }
 
-/* Equal side columns put the links on the page's centre line. */
 @media (min-width: 1280px) {
     .bar {
-        grid-template-columns: 1fr auto 1fr;
         gap: 1.5rem;
     }
 
     .brand {
         --ari-logo-size: 48px;
-        justify-self: start;
     }
 
     .links {

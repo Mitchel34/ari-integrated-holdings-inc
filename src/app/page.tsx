@@ -4,7 +4,6 @@ import { Container } from '../components/ui/Container';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { AllocationRing } from '../components/allocation/AllocationRing';
-import { AriMark } from '../components/brand/AriLogo';
 import styles from './page.module.css';
 
 export default function Home() {
@@ -14,7 +13,6 @@ export default function Home() {
         <Container>
           <div className={styles.heroGrid}>
             <div className={styles.heroCopy}>
-              <AriMark size={132} priority className={styles.heroLogo} />
               <p className={styles.heroEyebrow}>Leadership &amp; Strength</p>
               <h1>Building the Strategic Reserve of the Digital Age</h1>
               <p className={styles.heroLead}>

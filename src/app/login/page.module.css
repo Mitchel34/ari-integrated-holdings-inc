@@ -50,11 +50,10 @@
 }
 
 .loginLogo {
-  display: block;
-  width: 96px;
-  height: 96px;
-  margin: 0 auto 1.25rem;
-  filter: drop-shadow(0 0 20px rgba(194, 155, 78, 0.26)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.45));
+  --ari-logo-size: 52px;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto 1.75rem;
 }
 
 .title {
@@ -117,8 +116,7 @@
   }
 
   .loginLogo {
-    width: 80px;
-    height: 80px;
+    --ari-logo-size: 44px;
   }
 
   .title {

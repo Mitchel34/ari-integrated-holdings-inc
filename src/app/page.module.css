@@ -33,12 +33,6 @@
   min-width: 0;
 }
 
-.heroLogo {
-  width: 132px;
-  height: 132px;
-  filter: drop-shadow(0 0 32px rgba(194, 155, 78, 0.3)) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.5));
-}
-
 .heroEyebrow {
   display: block;
   margin: 0 0 0.6rem;
@@ -334,11 +328,6 @@ div:hover > .cardIcon svg * {
 @media (max-width: 767px) {
   .hero {
     min-height: calc(100dvh - 76px);
-  }
-
-  .heroLogo {
-    width: 112px;
-    height: 112px;
   }
 
   .heroActions {

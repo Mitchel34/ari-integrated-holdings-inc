@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import { AriMark } from "../../components/brand/AriLogo";
+import { AriLogo } from "../../components/brand/AriLogo";
 import { Container } from "../../components/ui/Container";
 import { LoginForm } from "../../components/auth/LoginForm";
 import styles from "./page.module.css";
@@ -16,7 +16,9 @@ export default function LoginPage() {
       <Container className={styles.loginContainer}>
         <div className={styles.loginCard}>
           <div className={styles.loginHeader}>
-            <AriMark size={96} priority alt="Ari Integrated Holdings Inc." className={styles.loginLogo} />
+            <span className={styles.loginLogo} role="img" aria-label="Ari Integrated Holdings Inc.">
+              <AriLogo variant="full" />
+            </span>
             <h1 className={styles.title}>Investor Portal</h1>
             <p className={styles.subtitle}>
               Secure access to your investment dashboard

@@ -1,31 +1,14 @@
 /*
- * The lockup scales from one number, the height of the mark: --ari-logo-size.
- * It becomes the font-size here, and every measurement below is in em.
+ * The wordmark scales from one number: --ari-logo-size. It becomes the
+ * font-size here, and every measurement below is in em.
  */
 .logo {
     display: inline-flex;
     align-items: center;
-    gap: 0.25em;
+    gap: 0.27em;
     font-size: var(--ari-logo-size, 48px);
     line-height: 1;
     white-space: nowrap;
-}
-
-.mark {
-    display: block;
-    flex: none;
-}
-
-/* Inside the lockup the mark follows the lockup's size; on its own it uses its width and height. */
-.logo .mark {
-    width: 1em;
-    height: 1em;
-}
-
-.lettering {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.27em;
 }
 
 /* "ARI": polished silver with a soft horizon band, warming to champagne at the foot. */
@@ -45,8 +28,8 @@
 
 /*
  * "Integrated Holdings" on two lines behind a champagne hairline. Its own
- * font-size is a fifth of the lockup's, so the em values here are relative to
- * that smaller size.
+ * font-size is a fifth of the wordmark's, so the em values here are relative
+ * to that smaller size.
  */
 .descriptor {
     display: none;

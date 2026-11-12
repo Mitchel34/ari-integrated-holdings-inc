@@ -110,7 +110,7 @@ export function SiteHeader() {
                 <Container className={styles.container}>
                     <div className={styles.bar}>
                         <Link href="/" className={styles.brand} aria-label="Ari Integrated Holdings Inc. home">
-                            <AriLogo variant="full" markSize={48} priority className={styles.brandLogo} />
+                            <AriLogo variant="full" className={styles.brandLogo} />
                         </Link>
 
                         <nav className={styles.links} aria-label="Primary">
@@ -189,7 +189,7 @@ export function SiteHeader() {
                             aria-label="Ari Integrated Holdings Inc. home"
                             onClick={() => setMobileMenuOpen(false)}
                         >
-                            <AriLogo variant="full" markSize={40} />
+                            <AriLogo variant="full" size={40} />
                         </Link>
                         <button
                             type="button"
