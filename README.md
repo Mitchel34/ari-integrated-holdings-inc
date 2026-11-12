@@ -44,7 +44,7 @@ npm run build
 npm run verify
 ```
 
-`npm run lint` is scoped to `src`, `prisma`, and `tests` so generated build artifacts are not linted. `npm test` runs the vitest suite in `tests/` (email delivery outcomes, the contact route, and the alert signup).
+`npm run lint` is scoped to `src`, `prisma`, and `tests` so generated build artifacts are not linted. `npm test` runs the vitest suite in `tests/` (email delivery outcomes, address validation, the contact route, the alert signup, and the executive email routes).
 
 ## Dashboard Architecture
 

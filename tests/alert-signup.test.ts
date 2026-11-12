@@ -90,31 +90,59 @@ describe('subscribeInvestorAlertsAction', () => {
         const result = await submit('investor@example.com');
 
         expect(result.status).toBe('success');
+        // Stamped as a new subscription so it counts toward the site-wide hourly cap.
         expect(updateManyMock).toHaveBeenCalledWith({
             where: { email: 'investor@example.com', isActive: false },
-            data: { isActive: true },
+            data: { isActive: true, subscribedAt: expect.any(Date) },
         });
         expect(confirmMock).toHaveBeenCalledTimes(1);
         expect(notifyMock).toHaveBeenCalledTimes(1);
     });
 
-    it('says so when the confirmation email was not accepted, and still counts the signup', async () => {
+    it('gives one answer whether the address is new, already listed, or the confirmation failed', async () => {
+        const fresh = await submit('new@example.com');
+
+        createManyMock.mockResolvedValue({ count: 0 });
+        const existing = await submit('listed@example.com');
+
+        createManyMock.mockResolvedValue({ count: 1 });
         confirmMock.mockResolvedValue({ status: 'failed', reason: 'not_configured', message: 'no key' });
+        const unconfirmed = await submit('unconfirmed@example.com');
 
-        const result = await submit('investor@example.com');
+        confirmMock.mockResolvedValue({ status: 'dry-run' });
+        const dryRun = await submit('dryrun@example.com');
 
-        expect(result.status).toBe('success');
-        expect(result.message).toMatch(/could not send a confirmation/i);
-        expect(result.message).not.toMatch(/^Confirmed\./);
+        // A different answer per case would reveal who is on the list.
+        expect(existing).toEqual(fresh);
+        expect(unconfirmed).toEqual(fresh);
+        expect(dryRun).toEqual(fresh);
+        expect(fresh.status).toBe('success');
     });
 
-    it('does not claim a confirmation in a dry run either', async () => {
-        confirmMock.mockResolvedValue({ status: 'dry-run' });
+    it('records an unknown source as the default instead of storing or mailing caller text', async () => {
+        await submit('investor@example.com', 'click https://evil.example now');
 
-        const result = await submit('investor@example.com');
+        expect(createManyMock).toHaveBeenCalledWith(
+            expect.objectContaining({ data: [{ email: 'investor@example.com', source: 'investors-page', isActive: true }] }),
+        );
+        expect(notifyMock).toHaveBeenCalledWith('investor@example.com', 'investors-page');
+    });
 
-        expect(result.status).toBe('success');
-        expect(result.message).toMatch(/could not send a confirmation/i);
+    it('rejects an "address" that carries a second recipient or mailto fields', async () => {
+        for (const value of ['a@example.com,b@example.com', 'a@example.com?bcc=x%40evil.example', 'a..b@example.com']) {
+            const result = await submit(value);
+            expect(result.status).toBe('error');
+        }
+        expect(createManyMock).not.toHaveBeenCalled();
+    });
+
+    it('hands the typed address back on an error so the form can keep it', async () => {
+        const invalid = await submit('  not-an-address ');
+        expect(invalid).toMatchObject({ status: 'error', email: 'not-an-address' });
+
+        createManyMock.mockRejectedValue(new Error('connection refused'));
+        const failed = await submit('Investor@Example.com');
+        expect(failed).toMatchObject({ status: 'error', email: 'Investor@Example.com' });
     });
 
     it('stops when the site-wide hourly cap is reached, before touching the address', async () => {

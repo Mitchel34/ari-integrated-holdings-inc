@@ -194,4 +194,63 @@ describe('acceptance 4: validation, honeypot, and rate limit', () => {
         expect(Number(blocked.headers.get('Retry-After'))).toBeGreaterThan(0);
         expect(sendMock).toHaveBeenCalledTimes(5);
     });
+
+    it('does not spend the allowance on typos, honeypot hits, or malformed requests', async () => {
+        vi.stubEnv('RESEND_API_KEY', 're_test_key');
+        providerAccepts();
+        const ip = nextIp();
+
+        for (let i = 0; i < 6; i += 1) {
+            expect((await post({ ...legit, email: 'not-an-address' }, ip)).status).toBe(400);
+            expect((await post({ ...legit, website: 'http://spam.example' }, ip)).status).toBe(200);
+            expect((await post('{not json', ip)).status).toBe(400);
+        }
+
+        // All five real inquiries are still available to the same client.
+        for (let i = 0; i < 5; i += 1) {
+            expect((await post(legit, ip)).status).toBe(200);
+        }
+        expect((await post(legit, ip)).status).toBe(429);
+        expect(sendMock).toHaveBeenCalledTimes(5);
+    });
+
+    it('never locks a visitor out while delivery is not configured', async () => {
+        const ip = nextIp();
+
+        for (let i = 0; i < 8; i += 1) {
+            const res = await post(legit, ip);
+            expect(res.status).toBe(503);
+        }
+        expect(sendMock).not.toHaveBeenCalled();
+    });
+
+    it('counts attempts the provider refused, so retries cannot hammer it', async () => {
+        vi.stubEnv('RESEND_API_KEY', 're_test_key');
+        sendMock.mockResolvedValue({
+            data: null,
+            error: { name: 'validation_error', statusCode: 403, message: 'domain not verified' },
+            headers: null,
+        });
+        const ip = nextIp();
+
+        for (let i = 0; i < 5; i += 1) {
+            expect((await post(legit, ip)).status).toBe(502);
+        }
+        const blocked = await post(legit, ip);
+
+        expect(blocked.status).toBe(429);
+        expect(blocked.headers.get('Retry-After')).toMatch(/^\d+$/);
+        expect(sendMock).toHaveBeenCalledTimes(5);
+    });
+
+    it('rejects an address that carries a second recipient or mailto fields', async () => {
+        vi.stubEnv('RESEND_API_KEY', 're_test_key');
+        providerAccepts();
+
+        for (const email of ['a@example.com,b@example.com', 'x?bcc=attacker%40evil.example&subject=a@b.co']) {
+            const res = await post({ ...legit, email });
+            expect(res.status).toBe(400);
+        }
+        expect(sendMock).not.toHaveBeenCalled();
+    });
 });

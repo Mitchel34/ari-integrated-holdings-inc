@@ -3,8 +3,9 @@
 import { headers } from 'next/headers';
 import { prisma } from '@/lib/prisma';
 import { emailService } from '@/lib/email';
+import { isValidEmailAddress } from '@/lib/email-address';
 import { checkRateLimit } from '@/lib/rate-limit';
-import type { AlertSignupState } from './alert-signup-state';
+import { ALERT_SIGNUP_SOURCES, type AlertSignupState } from './alert-signup-state';
 
 // This action is public and sends email, so it is throttled in two ways.
 //
@@ -18,26 +19,19 @@ const CLIENT_WINDOW_MS = 15 * 60 * 1000;
 const SITE_LIMIT = 30;
 const SITE_WINDOW_MS = 60 * 60 * 1000;
 
+// One answer for every successful signup, whether the address is new, already
+// on the list, or the confirmation email could not be sent. A different answer
+// per case would let anyone test whether a given address is subscribed; a
+// confirmation that fails is recorded in the server log instead.
 const SUBSCRIBED: AlertSignupState = {
     status: 'success',
     message: 'Confirmed. You\'ll receive treasury updates, disclosures, and investor event announcements.',
-};
-
-// The address is on the list, but the confirmation email was not accepted by
-// the provider, so the message must not claim that one is on its way.
-const SUBSCRIBED_UNCONFIRMED: AlertSignupState = {
-    status: 'success',
-    message: 'You\'re on the list. We could not send a confirmation email right now, but you\'ll receive treasury updates, disclosures, and investor event announcements.',
 };
 
 const RATE_LIMITED: AlertSignupState = {
     status: 'error',
     message: 'Too many signup requests right now. Please try again later.',
 };
-
-function isValidEmailAddress(email: string) {
-    return email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
 
 async function getClientKey() {
     const requestHeaders = await headers();
@@ -56,18 +50,25 @@ export async function subscribeInvestorAlertsAction(
 ): Promise<AlertSignupState> {
     const email = String(formData.get('email') ?? '').trim().toLowerCase();
 
+    // Errors hand the typed address back so the form can keep it for a retry.
+    const typed = String(formData.get('email') ?? '').trim().slice(0, 254);
+
     if (!isValidEmailAddress(email)) {
         return {
             status: 'error',
             message: 'Enter a valid email address to receive investor alerts.',
+            email: typed,
         };
     }
 
     if (!checkRateLimit(await getClientKey(), CLIENT_LIMIT, CLIENT_WINDOW_MS).allowed) {
-        return RATE_LIMITED;
+        return { ...RATE_LIMITED, email: typed };
     }
 
-    const signupSource = source ?? 'investors-page';
+    // `source` arrives with the request, so only known values are stored or mailed.
+    const signupSource = (ALERT_SIGNUP_SOURCES as readonly string[]).includes(source ?? '')
+        ? (source as string)
+        : 'investors-page';
     let isNewSubscription = false;
 
     try {
@@ -78,7 +79,7 @@ export async function subscribeInvestorAlertsAction(
         });
 
         if (recentSignups >= SITE_LIMIT) {
-            return RATE_LIMITED;
+            return { ...RATE_LIMITED, email: typed };
         }
 
         // Only the request that actually creates or reactivates the row gets a
@@ -88,10 +89,12 @@ export async function subscribeInvestorAlertsAction(
             data: [{ email, source: signupSource, isActive: true }],
             skipDuplicates: true,
         });
+        // A reactivation is stamped as a new subscription so it counts toward
+        // the site-wide limit above, like any other signup that sends mail.
         const reactivated = created.count === 0
             ? await prisma.investorAlert.updateMany({
                 where: { email, isActive: false },
-                data: { isActive: true },
+                data: { isActive: true, subscribedAt: new Date() },
             })
             : { count: 0 };
 
@@ -100,6 +103,7 @@ export async function subscribeInvestorAlertsAction(
         return {
             status: 'error',
             message: 'Unable to submit signup right now. Please try again shortly.',
+            email: typed,
         };
     }
 
@@ -108,14 +112,13 @@ export async function subscribeInvestorAlertsAction(
         return SUBSCRIBED;
     }
 
-    // The subscription is recorded, so neither email decides whether the
-    // signup succeeded: a confirmation to the subscriber and a notice to the
-    // correspondence inbox. The answer only reports whether the confirmation
-    // was actually handed to the provider.
-    const [confirmation] = await Promise.all([
+    // The subscription is recorded, so neither email decides the answer: a
+    // confirmation to the subscriber and a notice to the correspondence inbox.
+    // Each send logs its own outcome ([email] ... kind=alert_confirmation).
+    await Promise.all([
         emailService.sendAlertConfirmation(email),
         emailService.sendSubscriberNotification(email, signupSource),
     ]);
 
-    return confirmation.status === 'accepted' ? SUBSCRIBED : SUBSCRIBED_UNCONFIRMED;
+    return SUBSCRIBED;
 }

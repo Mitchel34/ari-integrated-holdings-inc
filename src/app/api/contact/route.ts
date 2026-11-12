@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { emailService, type SendOutcome } from '@/lib/email';
+import { emailService, getEmailConfigStatus, type SendOutcome } from '@/lib/email';
+import { isValidEmailAddress } from '@/lib/email-address';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { CONTACT_EMAIL } from '@/lib/contact';
 
 // Five inquiries per hour per client is generous for humans and blunts abuse.
+// Only submissions that are about to be handed to the email provider count:
+// a typo, a honeypot hit, or a deployment with no delivery configured never
+// uses up a visitor's allowance.
 const RATE_LIMIT = 5;
 const RATE_WINDOW_MS = 60 * 60 * 1000;
 
@@ -15,8 +19,6 @@ const LIMITS = {
     investorType: 80,
     message: 5000,
 } as const;
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /** Unambiguous characters only (no 0/O or 1/I) so a reference can be read back over the phone. */
 const REFERENCE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
@@ -58,14 +60,6 @@ function deliveryFailure(reference: string, status: number) {
 }
 
 export async function POST(req: NextRequest) {
-    const rateLimit = checkRateLimit(clientKey(req), RATE_LIMIT, RATE_WINDOW_MS);
-    if (!rateLimit.allowed) {
-        return NextResponse.json(
-            { error: 'Too many inquiries from this connection. Please try again later.' },
-            { status: 429, headers: { 'Retry-After': String(Math.ceil((rateLimit.resetAt.getTime() - Date.now()) / 1000)) } },
-        );
-    }
-
     let body: unknown;
     try {
         body = await req.json();
@@ -95,7 +89,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Name, email, and message are required.' }, { status: 400 });
     }
 
-    if (!EMAIL_PATTERN.test(email)) {
+    if (!isValidEmailAddress(email)) {
         return NextResponse.json({ error: 'Enter a valid email address.' }, { status: 400 });
     }
 
@@ -103,6 +97,19 @@ export async function POST(req: NextRequest) {
         const value = { name, email, company, investorType, message }[key];
         if (value.length > max) {
             return NextResponse.json({ error: `The ${key} field is too long.` }, { status: 400 });
+        }
+    }
+
+    // Counted here, after validation and only when a send will really be
+    // attempted, so the limit bounds provider calls and mail to the inbox.
+    const delivery = getEmailConfigStatus();
+    if (delivery.apiKeyConfigured || delivery.dryRun) {
+        const rateLimit = checkRateLimit(clientKey(req), RATE_LIMIT, RATE_WINDOW_MS);
+        if (!rateLimit.allowed) {
+            return NextResponse.json(
+                { error: 'Too many inquiries from this connection. Please try again later.' },
+                { status: 429, headers: { 'Retry-After': String(Math.ceil((rateLimit.resetAt.getTime() - Date.now()) / 1000)) } },
+            );
         }
     }
 

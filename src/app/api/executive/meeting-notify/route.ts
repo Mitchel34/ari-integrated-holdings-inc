@@ -17,9 +17,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  // Executive recipients come from the database; the CTO is always included
-  // so that every meeting notification reaches the correspondence inbox.
-  let executiveEmails: string[] = [];
+  // Executive recipients come from the database; the correspondence inbox is
+  // always included. If the list cannot be loaded the notification would reach
+  // the inbox alone, so say so instead of reporting "all executives notified".
+  let executiveEmails: string[];
   try {
     const executives = await prisma.user.findMany({
       where: { role: { in: ["EXECUTIVE", "ADMIN"] } },
@@ -27,7 +28,11 @@ export async function POST(req: Request) {
     });
     executiveEmails = executives.map((e) => e.email).filter((e): e is string => Boolean(e));
   } catch (error) {
-    console.error("[meeting-notify] Could not load executive emails:", error);
+    console.error("[meeting-notify] Could not load executive emails:", error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: "The executive list could not be loaded, so no notification was sent. Please try again." },
+      { status: 503 },
+    );
   }
 
   const recipients = Array.from(

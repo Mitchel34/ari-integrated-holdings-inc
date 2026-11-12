@@ -9,6 +9,7 @@ import {
     NO_REPLY_EMAIL,
     SITE_URL,
 } from '@/lib/contact';
+import { isValidEmailAddress } from '@/lib/email-address';
 
 const SITE = { name: COMPANY_NAME, shortName: COMPANY_SHORT_NAME, tagline: COMPANY_TAGLINE } as const;
 const CONTACT = {
@@ -145,12 +146,19 @@ export function escapeHtml(value: string): string {
         .replace(/'/g, '&#39;');
 }
 
-const EMAIL_ADDRESS = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 /** A validated Reply-To address, or undefined when the value is not usable as one. */
 function safeReplyTo(address: string | undefined): string | undefined {
     const value = address?.trim() ?? '';
-    return value.length > 0 && value.length <= 254 && EMAIL_ADDRESS.test(value) ? value : undefined;
+    return isValidEmailAddress(value) ? value : undefined;
+}
+
+/**
+ * `mailto:` link for an address, safe to place in an href attribute. Anything
+ * that could start a mailto field (`?`, `&`, `%`, ...) is percent-encoded, so
+ * the link can only ever address the one mailbox.
+ */
+function mailtoHref(address: string): string {
+    return escapeHtml(`mailto:${encodeURIComponent(address).replace(/%40/g, '@')}`);
 }
 
 /** Keep mailboxes out of logs while still showing where a message went. */
@@ -246,11 +254,74 @@ async function send(
 }
 
 const BATCH_SIZE = 100;
+/** Pause before the single retry of a batch the provider did not answer, throttled, or failed on its side. */
+const BATCH_RETRY_DELAY_MS = 1000;
+
+type BatchPayload = Parameters<Resend['batch']['send']>[0];
+
+/** Worth one more try: no answer at all, throttling, or a provider-side fault. A plain refusal is final. */
+function isTransientStatus(statusCode: number | null | undefined): boolean {
+    return statusCode === null || statusCode === undefined || statusCode === 429 || statusCode >= 500;
+}
+
+/**
+ * Hand one batch to the provider and report how many messages it took.
+ *
+ * - Validation is permissive, so one address the provider refuses does not
+ *   sink the other messages in the batch; refused ones are counted as failed.
+ * - The idempotency key makes the single retry safe: if the first attempt was
+ *   in fact accepted (for example the answer was lost to a timeout), the
+ *   provider returns that result instead of sending the batch again.
+ * - There is no per-recipient fallback. A batch that cannot be handed over is
+ *   reported as failed rather than re-sent message by message, which could
+ *   duplicate mail and trip the provider's rate limit.
+ */
+async function sendBatch(
+    client: Resend,
+    payload: BatchPayload,
+    idempotencyKey: string,
+    options: SendOptions,
+): Promise<{ sent: number; failed: number }> {
+    const total = payload.length;
+
+    for (let attempt = 1; attempt <= 2; attempt += 1) {
+        let problem: string;
+        let transient = true;
+
+        try {
+            const { data, error } = await client.batch.send(payload, { batchValidation: 'permissive', idempotencyKey });
+            if (!error) {
+                const refused = Array.isArray(data?.errors) ? data.errors : [];
+                for (const item of refused) {
+                    const to = payload[item.index]?.to;
+                    const address = Array.isArray(to) ? to[0] : to;
+                    logEmail('error', 'batch_item_refused', options, `to=${address ? maskAddress(address) : '-'} message="${item.message}"`);
+                }
+                const failed = Math.min(refused.length, total);
+                logEmail('log', 'batch_accepted', options, `count=${total - failed} refused=${failed} first_id=${data?.data?.[0]?.id ?? '-'}`);
+                return { sent: total - failed, failed };
+            }
+            problem = error.message;
+            transient = isTransientStatus(error.statusCode);
+        } catch (err) {
+            problem = err instanceof Error ? err.message : String(err);
+        }
+
+        const willRetry = transient && attempt === 1;
+        logEmail('error', 'batch_failed', options, `count=${total} attempt=${attempt} message="${problem}"${willRetry ? ' (retrying once)' : ''}`);
+        if (!willRetry) {
+            break;
+        }
+        await new Promise((resolve) => setTimeout(resolve, BATCH_RETRY_DELAY_MS));
+    }
+
+    return { sent: 0, failed: total };
+}
 
 /**
  * Deliver the same message to many recipients as SEPARATE emails, so no
- * subscriber ever sees another subscriber's address. Uses Resend's batch API
- * in chunks and falls back to individual sends if a batch is rejected.
+ * subscriber ever sees another subscriber's address. Uses the provider's
+ * batch API in chunks of {@link BATCH_SIZE}.
  */
 async function sendEach(
     recipients: string[],
@@ -276,6 +347,8 @@ async function sendEach(
     }
 
     const replyTo = safeReplyTo(options.replyTo);
+    // One id per call; with the chunk number it identifies a batch to the provider.
+    const runId = crypto.randomUUID();
     let sent = 0;
     let failed = 0;
 
@@ -290,28 +363,9 @@ async function sendEach(
             ...(replyTo ? { replyTo } : {}),
         }));
 
-        let batchError: string;
-        try {
-            const { data, error } = await client.batch.send(payload);
-            if (!error) {
-                sent += chunk.length;
-                logEmail('log', 'batch_accepted', options, `count=${chunk.length} first_id=${data.data[0]?.id ?? '-'}`);
-                continue;
-            }
-            batchError = error.message;
-        } catch (err) {
-            batchError = err instanceof Error ? err.message : String(err);
-        }
-
-        logEmail('error', 'batch_failed', options, `count=${chunk.length} message="${batchError}" (retrying individually)`);
-        for (const to of chunk) {
-            const outcome = await send(to, subject, html, options);
-            if (outcome.status === 'accepted') {
-                sent += 1;
-            } else {
-                failed += 1;
-            }
-        }
+        const result = await sendBatch(client, payload, `${options.kind}-${runId}-${i / BATCH_SIZE}`, options);
+        sent += result.sent;
+        failed += result.failed;
     }
 
     return { sent, failed, dryRun: false };
@@ -418,7 +472,7 @@ export const emailService = {
             heading('Investor Alerts', 'New Subscriber') +
             panel(`
               <table style="width:100%;border-collapse:collapse">
-                ${row('Email', `<a href="mailto:${escapeHtml(subscriberEmail)}" style="color:${BRAND_GOLD};text-decoration:none">${escapeHtml(subscriberEmail)}</a>`)}
+                ${row('Email', `<a href="${mailtoHref(subscriberEmail)}" style="color:${BRAND_GOLD};text-decoration:none">${escapeHtml(subscriberEmail)}</a>`)}
                 ${row('Source', escapeHtml(source || 'website'))}
                 ${row('Received', escapeHtml(new Date().toUTCString()))}
               </table>
@@ -483,7 +537,7 @@ export const emailService = {
             panel(`
               <table style="width:100%;border-collapse:collapse">
                 ${row('Name', `<strong>${safe.name}</strong>`)}
-                ${row('Email', `<a href="mailto:${safe.email}" style="color:${BRAND_GOLD};text-decoration:none">${safe.email}</a>`)}
+                ${row('Email', `<a href="${mailtoHref(opts.email)}" style="color:${BRAND_GOLD};text-decoration:none">${safe.email}</a>`)}
                 ${safe.company ? row('Company', safe.company) : ''}
                 ${safe.investorType ? row('Investor type', safe.investorType) : ''}
                 ${row('Reference', `<span style="font-family:monospace">${safe.reference}</span>`)}

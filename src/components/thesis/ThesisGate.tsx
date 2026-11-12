@@ -92,6 +92,8 @@ export function ThesisGate({ children }: ThesisGateProps) {
                             placeholder="investor@example.com"
                             required
                             autoComplete="email"
+                            // React clears the form when the action settles; on an error, put the address back.
+                            defaultValue={state.status === 'error' ? state.email : undefined}
                         />
                         <SubmitButton />
                         {state.status === 'error' && (

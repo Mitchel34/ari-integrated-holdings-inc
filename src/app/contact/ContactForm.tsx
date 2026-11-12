@@ -27,8 +27,8 @@ const LIMITS = {
     message: 5000,
 } as const;
 
-/** Keep mailto links well under browser and mail-client URL limits. */
-const MAILTO_BODY_MAX = 1500;
+/** Longest mailto link to build; some mail handlers ignore links much beyond 2,000 characters. */
+const MAILTO_MAX = 1800;
 
 /** Shape of a /api/contact response. */
 interface ContactResponse {
@@ -55,16 +55,32 @@ interface Submission {
     message: string;
 }
 
-/** mailto: link carrying the reference and the visitor's own message, for when the form cannot deliver. */
+/**
+ * mailto: link carrying the reference and the visitor's own message, for when
+ * the form cannot deliver. The message is added one whole character at a time
+ * until the encoded link would pass MAILTO_MAX, so the limit holds for any
+ * script and no character is cut in half.
+ */
 function directEmailHref(reference: string | undefined, submission: Submission | null): string {
     const subject = `Website inquiry${submission?.name ? ` from ${submission.name}` : ''}${reference ? ` [${reference}]` : ''}`;
-    const params = new URLSearchParams();
-    params.set('subject', subject);
-    if (submission?.message) {
-        params.set('body', submission.message.slice(0, MAILTO_BODY_MAX));
+    const base = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}`;
+    const room = MAILTO_MAX - base.length - '&body='.length;
+
+    let body = '';
+    for (const character of submission?.message ?? '') {
+        let encoded: string;
+        try {
+            encoded = encodeURIComponent(character);
+        } catch {
+            continue; // an unpaired surrogate cannot be encoded; leave it out
+        }
+        if (body.length + encoded.length > room) {
+            break;
+        }
+        body += encoded;
     }
-    // URLSearchParams encodes spaces as "+", which mail clients do not decode.
-    return `mailto:${CONTACT_EMAIL}?${params.toString().replace(/\+/g, '%20')}`;
+
+    return body ? `${base}&body=${body}` : base;
 }
 
 export default function ContactForm() {
@@ -106,22 +122,25 @@ export default function ContactForm() {
 
         const body = (await res.json().catch(() => ({}))) as ContactResponse;
 
-        if (res.ok && body.ok) {
-            setSuccess({ delivery: body.delivery === 'dry-run' ? 'dry-run' : 'accepted', reference: body.reference });
+        // Success needs the server to say what happened to the message. A bare
+        // "ok" (the answer given to a filled honeypot field) is not a delivery.
+        if (res.ok && body.ok && (body.delivery === 'accepted' || body.delivery === 'dry-run')) {
+            setSuccess({ delivery: body.delivery, reference: body.reference });
             setState('success');
             return;
         }
 
         if (res.status === 429) {
             setFailure({
-                message: 'You have sent several inquiries in a short time. Please wait a little while before trying again.',
+                message: 'Too many attempts from this connection in a short time. Please wait a while before trying again.',
                 showFallback: true,
             });
-        } else if (body.delivery === 'failed') {
-            // The server could not hand the message to the email provider.
-            setFailure({ message: 'Your inquiry could not be delivered.', reference: body.reference, showFallback: true });
+        } else if (res.status === 400 && body.error) {
+            // The server found a problem with what was typed.
+            setFailure({ message: body.error, showFallback: false });
         } else {
-            setFailure({ message: body.error || 'Submission failed. Please check the form and try again.', showFallback: false });
+            // Not delivered: the provider did not take it, or the server failed before answering.
+            setFailure({ message: 'Your inquiry could not be delivered.', reference: body.reference, showFallback: true });
         }
         setState('error');
     }

@@ -213,6 +213,20 @@ describe('successful provider hand-off', () => {
         expect(payload.html).not.toContain('<b>actions</b>');
     });
 
+    it('never lets the sender address add fields to the mailto link in the inquiry', async () => {
+        vi.stubEnv('RESEND_API_KEY', 're_test_key');
+        providerAccepts();
+        const { emailService } = await loadEmail();
+
+        await emailService.sendContactInquiry({ ...inquiry, email: 'x?bcc=attacker%40evil.example&subject=a@b.co' });
+
+        const payload = sendMock.mock.calls[0][0];
+        expect(payload.html).toContain('href="mailto:x%3Fbcc%3Dattacker%2540evil.example%26subject%3Da@b.co"');
+        expect(payload.html).not.toContain('href="mailto:x?bcc');
+        // Not usable as a Reply-To either.
+        expect(payload.replyTo).toBeUndefined();
+    });
+
     it('omits Reply-To when the submitter address is not usable', async () => {
         vi.stubEnv('RESEND_API_KEY', 're_test_key');
         providerAccepts();
@@ -288,17 +302,95 @@ describe('bulk sends never count unsent mail', () => {
         expect(payload[0].replyTo).toBe(CTO);
     });
 
-    it('falls back to individual sends when a batch is rejected and counts only acceptances', async () => {
+    it('asks for permissive validation and counts only the messages the provider took', async () => {
         vi.stubEnv('RESEND_API_KEY', 're_test_key');
-        batchMock.mockResolvedValue(providerRejects('batch unavailable', 500));
-        sendMock
-            .mockResolvedValueOnce({ data: { id: 'em_1' }, error: null, headers: null })
-            .mockResolvedValueOnce(providerRejects('bad address', 422));
+        batchMock.mockResolvedValue({
+            data: { data: [{ id: 'em_1' }], errors: [{ index: 1, message: 'Invalid `to` field.' }] },
+            error: null,
+            headers: null,
+        });
+        const { emailService } = await loadEmail();
+
+        const result = await emailService.sendTreasuryUpdateAlert(['a@example.com', 'bad@example'], 'Update', 'Body');
+
+        expect(result).toEqual({ sent: 1, failed: 1, dryRun: false });
+        const [, options] = batchMock.mock.calls[0];
+        expect(options).toMatchObject({ batchValidation: 'permissive', idempotencyKey: expect.any(String) });
+        // One bad address never triggers a per-recipient resend of the batch.
+        expect(batchMock).toHaveBeenCalledTimes(1);
+        expect(sendMock).not.toHaveBeenCalled();
+    });
+
+    it('treats a plain refusal as final: no retry, no per-recipient resend', async () => {
+        vi.stubEnv('RESEND_API_KEY', 're_test_key');
+        batchMock.mockResolvedValue(providerRejects('The ariintegratedholdings.com domain is not verified.', 403));
         const { emailService } = await loadEmail();
 
         const result = await emailService.sendTreasuryUpdateAlert(['a@example.com', 'b@example.com'], 'Update', 'Body');
 
-        expect(result).toEqual({ sent: 1, failed: 1, dryRun: false });
-        expect(sendMock).toHaveBeenCalledTimes(2);
+        expect(result).toEqual({ sent: 0, failed: 2, dryRun: false });
+        expect(batchMock).toHaveBeenCalledTimes(1);
+        expect(sendMock).not.toHaveBeenCalled();
+    });
+
+    it('retries a batch once with the same idempotency key when the provider gives no usable answer', async () => {
+        vi.stubEnv('RESEND_API_KEY', 're_test_key');
+        vi.useFakeTimers();
+        batchMock
+            .mockRejectedValueOnce(new Error('socket hang up'))
+            .mockResolvedValueOnce({ data: { data: [{ id: 'em_1' }, { id: 'em_2' }] }, error: null, headers: null });
+        const { emailService } = await loadEmail();
+
+        const pending = emailService.sendTreasuryUpdateAlert(['a@example.com', 'b@example.com'], 'Update', 'Body');
+        await vi.runAllTimersAsync();
+        const result = await pending;
+        vi.useRealTimers();
+
+        expect(result).toEqual({ sent: 2, failed: 0, dryRun: false });
+        expect(batchMock).toHaveBeenCalledTimes(2);
+        // Same key on both attempts, so an accepted-but-unanswered batch is not sent twice.
+        expect(batchMock.mock.calls[1][1].idempotencyKey).toBe(batchMock.mock.calls[0][1].idempotencyKey);
+        expect(sendMock).not.toHaveBeenCalled();
+    });
+
+    it('gives up after the one retry and reports the batch as failed', async () => {
+        vi.stubEnv('RESEND_API_KEY', 're_test_key');
+        vi.useFakeTimers();
+        batchMock.mockResolvedValue(providerRejects('rate limit exceeded', 429));
+        const { emailService } = await loadEmail();
+
+        const pending = emailService.sendTreasuryUpdateAlert(['a@example.com', 'b@example.com'], 'Update', 'Body');
+        await vi.runAllTimersAsync();
+        const result = await pending;
+        vi.useRealTimers();
+
+        expect(result).toEqual({ sent: 0, failed: 2, dryRun: false });
+        expect(batchMock).toHaveBeenCalledTimes(2);
+        expect(sendMock).not.toHaveBeenCalled();
+    });
+
+    it('counts an accepted batch once even when the answer has no message ids', async () => {
+        vi.stubEnv('RESEND_API_KEY', 're_test_key');
+        batchMock.mockResolvedValue({ data: null, error: null, headers: null });
+        const { emailService } = await loadEmail();
+
+        const result = await emailService.sendTreasuryUpdateAlert(['a@example.com', 'b@example.com'], 'Update', 'Body');
+
+        expect(result).toEqual({ sent: 2, failed: 0, dryRun: false });
+        expect(batchMock).toHaveBeenCalledTimes(1);
+        expect(sendMock).not.toHaveBeenCalled();
+    });
+
+    it('sends more than one hundred recipients as separate batches with distinct keys', async () => {
+        vi.stubEnv('RESEND_API_KEY', 're_test_key');
+        batchMock.mockResolvedValue({ data: { data: [] }, error: null, headers: null });
+        const { emailService } = await loadEmail();
+        const recipients = Array.from({ length: 150 }, (_, i) => `investor${i}@example.com`);
+
+        const result = await emailService.sendTreasuryUpdateAlert([...recipients, 'INVESTOR0@example.com'], 'Update', 'Body');
+
+        expect(result).toEqual({ sent: 150, failed: 0, dryRun: false });
+        expect(batchMock.mock.calls.map(([payload]) => payload.length)).toEqual([100, 50]);
+        expect(batchMock.mock.calls[0][1].idempotencyKey).not.toBe(batchMock.mock.calls[1][1].idempotencyKey);
     });
 });

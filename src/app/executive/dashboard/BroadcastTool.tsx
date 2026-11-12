@@ -41,13 +41,14 @@ export default function BroadcastTool({ subscriberCount, onSent }: BroadcastTool
                 error?: string;
             };
             if (!res.ok || !data.ok) throw new Error(data.error || 'Broadcast failed.');
-            if (data.dryRun) {
-                // Local dry run: nothing left the server, so never show the "sent" state.
-                addToast(data.message || 'Dry run: no emails were sent.', 'warning');
+            const sent = data.sent ?? 0;
+            if (data.dryRun || sent === 0) {
+                // A dry run, or an empty subscriber list by the time it was sent:
+                // nothing left the server, so never show the "sent" state.
+                addToast(data.message || (data.dryRun ? 'Dry run: no emails were sent.' : 'No alerts were sent.'), 'warning');
                 setSendState('idle');
                 return;
             }
-            const sent = data.sent ?? 0;
             setSentCount(sent);
             setFailedCount(data.failed ?? 0);
             setSendState('sent');

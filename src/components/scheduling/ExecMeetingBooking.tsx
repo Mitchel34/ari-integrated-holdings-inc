@@ -13,8 +13,11 @@ export function ExecMeetingBooking() {
 
     async function handleNotifyAll() {
         setNotifyStatus('sending');
+        setNotifyError('');
+
+        let res: Response;
         try {
-            const res = await fetch('/api/executive/meeting-notify', {
+            res = await fetch('/api/executive/meeting-notify', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -22,15 +25,29 @@ export function ExecMeetingBooking() {
                     message: 'A new executive Zoom meeting has been scheduled via Calendly. Please check your email for the Calendly invitation and Zoom link.',
                 }),
             });
-            const data = (await res.json()) as { ok?: boolean; dryRun?: boolean; error?: string };
-            if (!res.ok || !data.ok) throw new Error(data.error || 'Failed to notify.');
+        } catch {
+            setNotifyError('Could not reach the server, so no notification was sent. Please try again.');
+            setNotifyStatus('error');
+            return;
+        }
+
+        const data = (await res.json().catch(() => ({}))) as { ok?: boolean; dryRun?: boolean; error?: string };
+
+        if (res.ok && data.ok) {
             // A dry run logs the message locally and sends nothing, so it must not read as "Notified!".
             setNotifyStatus(data.dryRun ? 'dry-run' : 'sent');
-        } catch (err) {
-            // The API says why nothing was sent (delivery not configured, or the provider refused).
-            setNotifyError(err instanceof Error ? err.message : '');
-            setNotifyStatus('error');
+            return;
         }
+
+        if (res.status === 401 || res.status === 403) {
+            setNotifyError('Your session has expired. Sign in again to send notifications.');
+        } else if ((res.status === 502 || res.status === 503) && data.error) {
+            // The API explains why nothing was sent (delivery not configured, the provider refused, the list could not be loaded).
+            setNotifyError(data.error);
+        } else {
+            setNotifyError('');
+        }
+        setNotifyStatus('error');
     }
 
     return (
