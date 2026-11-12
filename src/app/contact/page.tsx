@@ -6,8 +6,10 @@ import { SectionHeader } from '../../components/ui/SectionHeader';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { MeetingTypeSelector } from '../../components/scheduling/MeetingTypeSelector';
+import { ZoomMeetingScheduler } from '../../components/scheduling/ZoomMeetingScheduler';
+import { ContactEmail } from '../../components/brand/ContactEmail';
 import { CONTACT } from '../../lib/site';
-import { HAS_PUBLIC_BOOKING } from '../../lib/scheduling';
+import { HAS_PUBLIC_BOOKING, HAS_ZOOM_BOOKING, getConfiguredMeetingTypes } from '../../lib/scheduling';
 import ContactForm from './ContactForm';
 import styles from './contact.module.css';
 
@@ -17,7 +19,8 @@ export const metadata: Metadata = {
     alternates: { canonical: '/contact' },
 };
 
-const [emailLocal, emailDomain] = CONTACT.email.split('@');
+/** Per-type Calendly events are the fallback when the Zoom event is turned off. */
+const HAS_MEETING_TYPES = getConfiguredMeetingTypes().length > 0;
 
 export default function ContactPage() {
     return (
@@ -54,7 +57,7 @@ export default function ContactPage() {
                                 </div>
                             </div>
                             <a href={CONTACT.mailto} className={`${styles.mailto} mono`}>
-                                {emailLocal}@<wbr />{emailDomain}
+                                <ContactEmail />
                             </a>
                             <p className={styles.responseWindow}>
                                 <Clock size={16} strokeWidth={1.75} aria-hidden="true" />
@@ -94,7 +97,7 @@ export default function ContactPage() {
                                     <h2 className={styles.cardTitle}>Prefer to talk?</h2>
                                 </div>
                                 <p className={styles.cardBody}>
-                                    Book a meeting directly on the calendar below.
+                                    Book a Zoom meeting directly on our calendar below.
                                 </p>
                                 <Button asChild variant="secondary" size="md">
                                     <a href="#schedule">Book a meeting</a>
@@ -111,9 +114,9 @@ export default function ContactPage() {
                         eyebrow="Calendar"
                         id="schedule-title"
                         title="Schedule a meeting"
-                        lead="Select a meeting type and book a time. Calendly sends you a confirmation with the call details."
+                        lead="Choose what you would like to discuss and book a Zoom meeting directly on our calendar. Calendly sends you a confirmation with the call details."
                     />
-                    <MeetingTypeSelector />
+                    {HAS_ZOOM_BOOKING ? <ZoomMeetingScheduler /> : HAS_MEETING_TYPES ? <MeetingTypeSelector /> : null}
                 </Section>
             ) : null}
         </>

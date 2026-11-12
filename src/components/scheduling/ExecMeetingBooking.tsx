@@ -79,7 +79,7 @@ export function ExecMeetingBooking() {
 
             <div className={styles.embedContainer}>
                 {CALENDLY_EXEC_ZOOM_URL ? (
-                    <CalendlyEmbed url={CALENDLY_EXEC_ZOOM_URL} />
+                    <CalendlyEmbed url={CALENDLY_EXEC_ZOOM_URL} label="Schedule an executive Zoom meeting" />
                 ) : (
                     <div className={styles.placeholder}>
                         <span className={styles.placeholderIcon} aria-hidden="true">

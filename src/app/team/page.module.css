@@ -10,24 +10,62 @@
     list-style: none;
 }
 
-.gridItem {
+/* Each card spans three shared rows (identity, facts, bio) so the same element
+   sits at the same height in every card, whatever the text length. */
+.gridItem,
+.gridItem .member {
+    display: grid;
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+    row-gap: 1.25rem;
     min-width: 0;
 }
 
-.member {
+.gridItem .member {
+    align-content: start;
+}
+
+/* Once any bio is open, let each card take its own height so the others do not stretch with it. */
+.grid:has(.bio[open]) {
+    align-items: start;
+}
+
+.grid:has(.bio[open]) .gridItem,
+.grid:has(.bio[open]) .gridItem .member {
+    grid-row: auto;
+    grid-template-rows: none;
+}
+
+/* Fallback for browsers without subgrid: a plain column, still equal heights. */
+@supports not (grid-template-rows: subgrid) {
+    .gridItem,
+    .gridItem .member {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        height: 100%;
+    }
+}
+
+/* ── Identity row ─────────────────────────────────────────────────────── */
+
+.identity {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    height: 100%;
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.identityText {
+    min-width: 0;
 }
 
 .monogram {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 72px;
-    height: 72px;
-    margin-bottom: 1.25rem;
+    width: 64px;
+    height: 64px;
     border-radius: var(--r-full);
     background: var(--glass-1-bg);
     border: 1px solid var(--glass-1-border);
@@ -36,7 +74,7 @@
         0 0 0 1px var(--gold-a45),
         0 0 0 5px var(--gold-a08);
     font-family: var(--font-display);
-    font-size: 1.375rem;
+    font-size: 1.25rem;
     font-weight: 500;
     letter-spacing: 0.06em;
     color: var(--gold-300);
@@ -46,32 +84,132 @@
 .name {
     font-size: var(--fs-h3);
     color: var(--text-1);
+    overflow-wrap: anywhere;
 }
 
 .role {
     margin-top: 0.35rem;
-    font-size: var(--fs-small);
+    font-size: var(--fs-caption);
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+    line-height: 1.45;
     color: var(--gold-500);
 }
 
+/* ── Facts row ────────────────────────────────────────────────────────── */
+
+.facts {
+    display: grid;
+    align-content: start;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 1.1rem 0 0;
+    list-style: none;
+    border-top: 1px solid var(--line-1);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--text-1);
+}
+
+.facts li {
+    position: relative;
+    padding-left: 1.25rem;
+}
+
+.facts li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    width: 7px;
+    height: 7px;
+    border-radius: var(--r-full);
+    background: var(--gold-500);
+    box-shadow: 0 0 0 3px var(--gold-a12);
+}
+
+/* ── Bio row (expandable) + correspondence ────────────────────────────── */
+
+.tail {
+    display: flex;
+    flex-direction: column;
+    align-self: start;
+    min-width: 0;
+    width: 100%;
+}
+
 .bio {
-    margin-top: 1rem;
+    width: 100%;
+}
+
+.bio summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 44px;
+    padding: 0 0.25rem 0 0;
+    cursor: pointer;
+    list-style: none;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--gold-300);
+    border-radius: var(--r-sm);
+    transition: color var(--dur-base) var(--ease-out);
+}
+
+.bio summary::-webkit-details-marker {
+    display: none;
+}
+
+.bio summary::after {
+    content: '+';
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: var(--r-full);
+    border: 1px solid var(--gold-a30);
+    background: var(--gold-a08);
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1;
+    transition:
+        border-color var(--dur-base) var(--ease-out),
+        background var(--dur-base) var(--ease-out);
+}
+
+.bio[open] summary::after {
+    content: '\2212';
+}
+
+.bio summary:hover {
+    color: var(--text-1);
+}
+
+.bio summary:hover::after {
+    border-color: var(--gold-a45);
+    background: var(--gold-a12);
+}
+
+.bio summary:focus-visible {
+    outline: 2px solid var(--gold-300);
+    outline-offset: 3px;
+    box-shadow: var(--sh-focus);
+}
+
+.bio p {
+    margin: 0.4rem 0 0;
     font-size: 0.9375rem;
     line-height: 1.7;
     color: var(--text-2);
 }
 
-.bio:not(:last-child) {
-    margin-bottom: 1.5rem;
-}
-
-/* Column flex: push the correspondence block to the bottom of the stretched card. */
 .correspondence {
     width: 100%;
-    margin-top: auto;
+    margin-top: 1.25rem;
     padding-top: 1.25rem;
     border-top: 1px solid var(--line-1);
 }

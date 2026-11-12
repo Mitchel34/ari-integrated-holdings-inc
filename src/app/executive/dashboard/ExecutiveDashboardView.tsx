@@ -2,10 +2,11 @@ import Link from 'next/link';
 import { Bell, DollarSign, Settings, TrendingUp, Users } from 'lucide-react';
 import type { TreasuryFreshness, TreasurySnapshot } from '@/lib/treasury/snapshot';
 import { CONTACT } from '@/lib/site';
-import { HAS_PUBLIC_BOOKING } from '@/lib/scheduling';
+import { HAS_ZOOM_BOOKING, getConfiguredMeetingTypes } from '@/lib/scheduling';
 import { Container } from '@/components/ui/Container';
 import { Button } from '@/components/ui/Button';
 import { MeetingTypeSelector } from '@/components/scheduling/MeetingTypeSelector';
+import { ZoomMeetingScheduler } from '@/components/scheduling/ZoomMeetingScheduler';
 import { ExecMeetingBooking } from '@/components/scheduling/ExecMeetingBooking';
 import {
     DataTable,
@@ -30,6 +31,9 @@ import { ValueBarChart } from '@/components/dashboard/DashboardCharts';
 import BroadcastCenter from './BroadcastCenter';
 import { TradingSystemStatus } from './TradingSystemStatus';
 import styles from './page.module.css';
+
+/** Per-type Calendly events take precedence; the Zoom event is the fallback. */
+const HAS_MEETING_TYPES = getConfiguredMeetingTypes().length > 0;
 
 export interface RecentSubscriber {
     email: string;
@@ -211,13 +215,17 @@ export function ExecutiveDashboardView({
                         eyebrow="Scheduling"
                         title="Schedule investor meeting"
                         description={
-                            HAS_PUBLIC_BOOKING
+                            HAS_MEETING_TYPES
                                 ? 'Book investor meetings and partnership calls.'
-                                : 'Public booking is hidden until a NEXT_PUBLIC_CALENDLY_* URL is configured.'
+                                : HAS_ZOOM_BOOKING
+                                  ? 'Book a Zoom meeting with the leadership team.'
+                                  : 'Public booking is hidden until a NEXT_PUBLIC_CALENDLY_* URL is configured.'
                         }
                     >
-                        {HAS_PUBLIC_BOOKING ? (
+                        {HAS_MEETING_TYPES ? (
                             <MeetingTypeSelector />
+                        ) : HAS_ZOOM_BOOKING ? (
+                            <ZoomMeetingScheduler />
                         ) : (
                             <EmptyState
                                 title="No public meeting types configured"

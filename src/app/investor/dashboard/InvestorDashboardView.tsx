@@ -2,10 +2,11 @@ import { CalendarClock, DollarSign, FileText, TrendingUp, WalletCards } from 'lu
 import type { TreasuryFreshness, TreasurySnapshot } from '@/lib/treasury/snapshot';
 import type { InvestorDocument, InvestorEvent } from '@/lib/investor/updates';
 import { CONTACT } from '@/lib/site';
-import { HAS_PUBLIC_BOOKING } from '@/lib/scheduling';
+import { HAS_ZOOM_BOOKING, getConfiguredMeetingTypes } from '@/lib/scheduling';
 import { Container } from '@/components/ui/Container';
 import { AssetChip } from '@/components/brand/AssetChip';
 import { MeetingTypeSelector } from '@/components/scheduling/MeetingTypeSelector';
+import { ZoomMeetingScheduler } from '@/components/scheduling/ZoomMeetingScheduler';
 import {
     DataTable,
     DashboardHeader,
@@ -27,6 +28,9 @@ import {
 } from '@/components/dashboard/Dashboard';
 import { AllocationChart, ValueBarChart } from '@/components/dashboard/DashboardCharts';
 import styles from './page.module.css';
+
+/** Per-type Calendly events take precedence; the Zoom event is the fallback. */
+const HAS_MEETING_TYPES = getConfiguredMeetingTypes().length > 0;
 
 export interface InvestorDashboardViewProps {
     firstName: string;
@@ -238,13 +242,17 @@ export function InvestorDashboardView({ firstName, snapshot, freshness, document
                     eyebrow="Scheduling"
                     title="Schedule a meeting"
                     description={
-                        HAS_PUBLIC_BOOKING
+                        HAS_MEETING_TYPES
                             ? 'Book time directly with the Ari leadership team. Calendly sends you a confirmation with call details and adds the meeting to the executive calendar.'
-                            : 'Online booking is not configured yet. Email the executive team to arrange a call.'
+                            : HAS_ZOOM_BOOKING
+                              ? 'Book a Zoom meeting with the leadership team.'
+                              : 'Online booking is not configured yet. Email the executive team to arrange a call.'
                     }
                 >
-                    {HAS_PUBLIC_BOOKING ? (
+                    {HAS_MEETING_TYPES ? (
                         <MeetingTypeSelector />
+                    ) : HAS_ZOOM_BOOKING ? (
+                        <ZoomMeetingScheduler />
                     ) : (
                         <EmptyState
                             title="Request a meeting by email"

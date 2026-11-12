@@ -6,6 +6,7 @@ import { Section } from '../../components/layout/Section';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { SectionHeader } from '../../components/ui/SectionHeader';
+import { ContactEmail } from '../../components/brand/ContactEmail';
 import { PRIMARY_CTA } from '../../lib/scheduling';
 import { CONTACT, SITE, getSiteUrl } from '../../lib/site';
 import styles from './page.module.css';
@@ -21,6 +22,8 @@ interface TeamMember {
     name: string;
     initials: string;
     role: string;
+    /** Three facts drawn strictly from the bio, shown before the full text. */
+    facts: [string, string, string];
     bio: string;
     /** Show the correspondence chip for this person. */
     correspondence?: boolean;
@@ -31,18 +34,33 @@ const TEAM: TeamMember[] = [
         name: 'Curtis Carson',
         initials: 'CC',
         role: 'Chief Executive Officer & Chairman',
+        facts: [
+            '40+ years of corporate and entrepreneurial experience',
+            '16 years in corporate insurance',
+            '26 years leading a risk management consulting firm',
+        ],
         bio: 'Co-founder, CEO, and Chairman of Ari Integrated Holdings with more than 40 years of combined corporate and entrepreneurial experience. A first-generation college graduate with a degree in Economics and Business Management, Curtis spent 16 years in corporate insurance before founding and leading a Loss Control and Risk Management consulting firm for 26 years. His background in probabilistic risk assessment, capital preservation, and decision-making under uncertainty shapes Ari’s long-term treasury strategy. He leads with a ten-year investment horizon focused on balance sheet strength, disciplined capital deployment, and compounding intrinsic value over time.',
     },
     {
         name: 'Judith Carson',
         initials: 'JC',
         role: 'Chief Marketing Officer',
+        facts: [
+            '24 years leading a loss control and risk consulting firm',
+            'Advised Fortune 500 companies at The Wyatt Company',
+            'BBA, University of Wisconsin',
+        ],
         bio: 'Co-founder, CMO, and Board Member of Ari Integrated Holdings with a career spanning risk management, actuarial consulting, and entrepreneurship. Judy earned her BBA from the University of Wisconsin, double-majoring in Risk Management & Insurance and Personnel Management. She began at The Wyatt Company (now Willis Towers Watson), advising Fortune 500 corporations and public entities on alternative risk-financing strategies. After senior risk management roles at a major hospital group and a Fortune 100 company, she founded and led a loss control and risk consulting firm for 24 years. At Ari, she brings analytical rigor and entrepreneurial experience to marketing strategy and AI-driven growth.',
     },
     {
         name: 'Mitchel Carson',
         initials: 'MC',
         role: 'Chief Technology Officer & Director',
+        facts: [
+            "Leads Ari's technology and the Harmony platform",
+            'Data and analytics behind treasury monitoring',
+            'Director of Ari Integrated Holdings',
+        ],
         bio: 'Leads Ari’s technology: the Harmony research and risk-analysis platform, the data and analytics behind treasury monitoring, and the company’s investor systems, including this website and the investor portal. Serves as a director of Ari Integrated Holdings.',
         correspondence: true,
     },
@@ -58,9 +76,6 @@ const BOARD: BoardMember[] = [
     { name: 'Judith Carson', role: 'Board Member' },
     { name: 'Mitchel Carson', role: 'Director' },
 ];
-
-/** Split so the chip can wrap at the "@" instead of mid-word on narrow cards. */
-const [emailLocal, emailDomain] = CONTACT.email.split('@');
 
 const GOVERNANCE = [
     {
@@ -146,29 +161,42 @@ export default function TeamPage() {
                     {TEAM.map((member) => (
                         <li key={member.name} className={styles.gridItem}>
                             <Card as="article" variant="glass" className={styles.member} aria-labelledby={`member-${member.initials}`}>
-                                <div className={styles.monogram} aria-hidden="true">
-                                    {member.initials}
-                                </div>
-                                <h3 id={`member-${member.initials}`} className={styles.name}>
-                                    {member.name}
-                                </h3>
-                                <p className={styles.role}>{member.role}</p>
-                                <p className={styles.bio}>{member.bio}</p>
-                                {member.correspondence ? (
-                                    <div className={styles.correspondence}>
-                                        <p className={styles.correspondenceLabel}>Correspondence</p>
-                                        <a href={CONTACT.mailto} className={styles.mailChip}>
-                                            <Mail aria-hidden="true" />
-                                            <span>
-                                                {emailLocal}@<wbr />
-                                                {emailDomain}
-                                            </span>
-                                        </a>
-                                        <p className={styles.correspondenceNote}>
-                                            Expect a reply {CONTACT.responseWindow}.
-                                        </p>
+                                <div className={styles.identity}>
+                                    <div className={styles.monogram} aria-hidden="true">
+                                        {member.initials}
                                     </div>
-                                ) : null}
+                                    <div className={styles.identityText}>
+                                        <h3 id={`member-${member.initials}`} className={styles.name}>
+                                            {member.name}
+                                        </h3>
+                                        <p className={styles.role}>{member.role}</p>
+                                    </div>
+                                </div>
+                                <ul className={styles.facts} aria-label={`Key facts about ${member.name}`}>
+                                    {member.facts.map((fact) => (
+                                        <li key={fact}>{fact}</li>
+                                    ))}
+                                </ul>
+                                <div className={styles.tail}>
+                                    <details className={styles.bio}>
+                                        <summary>Full bio</summary>
+                                        <p>{member.bio}</p>
+                                    </details>
+                                    {member.correspondence ? (
+                                        <div className={styles.correspondence}>
+                                            <p className={styles.correspondenceLabel}>Correspondence</p>
+                                            <a href={CONTACT.mailto} className={styles.mailChip}>
+                                                <Mail aria-hidden="true" />
+                                                <span>
+                                                    <ContactEmail />
+                                                </span>
+                                            </a>
+                                            <p className={styles.correspondenceNote}>
+                                                Expect a reply {CONTACT.responseWindow}.
+                                            </p>
+                                        </div>
+                                    ) : null}
+                                </div>
                             </Card>
                         </li>
                     ))}

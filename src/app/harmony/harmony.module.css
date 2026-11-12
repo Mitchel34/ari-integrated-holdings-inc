@@ -13,29 +13,6 @@
     flex-shrink: 0;
 }
 
-/* ── Functions ────────────────────────────────────────────────────────── */
-
-.functions {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1rem;
-}
-
-.function {
-    display: flex;
-    flex-direction: column;
-    gap: 0.9rem;
-}
-
-.functionTitle {
-    font-size: var(--fs-h3);
-}
-
-.functionText {
-    color: var(--text-2);
-    line-height: 1.6;
-}
-
 /* ── Boundaries ───────────────────────────────────────────────────────── */
 
 .boundaries {
@@ -135,10 +112,6 @@
 }
 
 @media (min-width: 768px) {
-    .functions {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
     .closing {
         flex-direction: row;
         align-items: center;

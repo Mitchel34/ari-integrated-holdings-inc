@@ -1,0 +1,257 @@
+/* ── Layout: loop on the left, detail panel on the right ──────────────── */
+
+.wrapper {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: center;
+    margin-top: clamp(2rem, 4vw, 3rem);
+}
+
+/* ── The 2 × 2 loop ───────────────────────────────────────────────────── */
+
+.loop {
+    --gap-x: 64px;
+    --gap-y: 56px;
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+    gap: var(--gap-y) var(--gap-x);
+}
+
+.node {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.55rem;
+    min-width: 0;
+    min-height: 108px;
+    padding: 1rem 1.1rem;
+    text-align: left;
+    border-radius: var(--r-md);
+    border: 1px solid var(--glass-1-border);
+    background: var(--glass-1-bg);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    color: var(--text-1);
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition:
+        border-color var(--dur-base) var(--ease-out),
+        background var(--dur-base) var(--ease-out),
+        box-shadow var(--dur-base) var(--ease-out),
+        transform var(--dur-base) var(--ease-out);
+}
+
+.node:hover {
+    border-color: var(--gold-a30);
+    background: var(--gold-a08);
+    transform: translateY(-2px);
+}
+
+.nodeActive,
+.nodeActive:hover {
+    border-color: var(--gold-500);
+    background: var(--gold-a12);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 0 0 1px var(--gold-a20),
+        var(--sh-glow-gold);
+}
+
+/* Clockwise placement: 1 top-left, 2 top-right, 3 bottom-right, 4 bottom-left. */
+.node1 { grid-area: 1 / 1; }
+.node2 { grid-area: 1 / 2; }
+.node3 { grid-area: 2 / 2; }
+.node4 { grid-area: 2 / 1; }
+
+.nodeHead {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nodeIcon {
+    flex-shrink: 0;
+    color: var(--text-3);
+    transition: color var(--dur-base) var(--ease-out);
+}
+
+.stepLabel {
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    transition: color var(--dur-base) var(--ease-out);
+}
+
+.nodeActive .stepLabel,
+.nodeActive .nodeIcon {
+    color: var(--gold-300);
+}
+
+.stepTitle {
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+}
+
+/* ── Arrows between nodes ─────────────────────────────────────────────── */
+
+.arrow {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--r-full);
+    border: 1px solid var(--line-1);
+    background: var(--bg-1);
+    color: var(--text-3);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    transition:
+        color var(--dur-base) var(--ease-out),
+        border-color var(--dur-base) var(--ease-out);
+}
+
+.arrow svg {
+    width: 18px;
+    height: 18px;
+}
+
+.arrowActive {
+    border-color: var(--gold-a45);
+    color: var(--gold-300);
+}
+
+/* 1 → 2 across the top, 2 → 3 down the right, 3 → 4 across the bottom, 4 → 1 up the left. */
+.arrow1 {
+    left: 50%;
+    top: calc((100% - var(--gap-y)) / 4);
+}
+
+.arrow2 {
+    left: calc(100% - (100% - var(--gap-x)) / 4);
+    top: 50%;
+}
+
+.arrow2 svg {
+    transform: rotate(90deg);
+}
+
+.arrow3 {
+    left: 50%;
+    top: calc(100% - (100% - var(--gap-y)) / 4);
+}
+
+.arrow3 svg {
+    transform: rotate(180deg);
+}
+
+.arrow4 {
+    left: calc((100% - var(--gap-x)) / 4);
+    top: 50%;
+}
+
+.arrow4 svg {
+    transform: rotate(270deg);
+}
+
+/* ── Detail panel ─────────────────────────────────────────────────────── */
+
+.detail {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-height: 17rem;
+}
+
+.detailBody {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.detailStep {
+    margin: 0;
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold-500);
+}
+
+.detailTitle {
+    font-size: var(--fs-h3);
+    color: var(--text-1);
+}
+
+.detailCopy {
+    margin: 0;
+    color: var(--text-2);
+    line-height: 1.7;
+}
+
+.detailHint {
+    margin: auto 0 0;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--line-1);
+    font-size: var(--fs-small);
+    color: var(--text-3);
+}
+
+/* ── Breakpoints ──────────────────────────────────────────────────────── */
+
+@media (max-width: 899px) {
+    .wrapper {
+        grid-template-columns: minmax(0, 1fr);
+        align-items: stretch;
+    }
+
+    .detail {
+        min-height: 14rem;
+    }
+}
+
+@media (max-width: 479px) {
+    .loop {
+        --gap-x: 40px;
+        --gap-y: 44px;
+    }
+
+    .node {
+        min-height: 96px;
+        padding: 0.85rem 0.9rem;
+    }
+
+    .stepTitle {
+        font-size: 0.9375rem;
+    }
+
+    .arrow {
+        width: 28px;
+        height: 28px;
+    }
+
+    .arrow svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .node,
+    .nodeIcon,
+    .stepLabel,
+    .arrow {
+        transition: none;
+    }
+
+    .node:hover {
+        transform: none;
+    }
+}
