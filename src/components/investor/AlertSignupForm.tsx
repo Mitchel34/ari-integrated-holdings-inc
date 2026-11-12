@@ -4,10 +4,8 @@ import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
-import {
-    INITIAL_ALERT_SIGNUP_STATE,
-    subscribeInvestorAlertsAction,
-} from '@/app/investors/actions';
+import { subscribeInvestorAlertsAction } from '@/app/investors/actions';
+import { INITIAL_ALERT_SIGNUP_STATE } from '@/app/investors/alert-signup-state';
 import styles from './AlertSignupForm.module.css';
 
 function SubmitButton() {
