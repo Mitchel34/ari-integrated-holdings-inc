@@ -18,7 +18,7 @@ Corporate website and investor dashboard for Ari Integrated Holdings Inc., a dig
 - The 50 / 30 / 20 target allocation is public (it describes strategy). `TREASURY_FRAMEWORK` and `PRINCIPLES` in `src/lib/site.ts` are the public treasury copy.
 - Harmony is "Ari's internal technology platform for treasury research, risk analysis, and controlled strategy evaluation" (`HARMONY` in `src/lib/site.ts`). Never "operating subsidiary", "trading app", or any revenue/cost claim.
 - Public announcements live in `src/lib/investor/updates.ts` ("Company Updates", route `/updates`, feed `/api/updates`); keep only current, supportable items.
-- Meeting booking UI comes from `src/lib/scheduling.ts`; only configured Calendly types are shown and `PRIMARY_CTA` falls back to "Contact Us".
+- Meeting booking: the contact page books one Zoom event (`ZOOM_MEETING_URL`, default the executive 30-minute Calendly event, overridable with `NEXT_PUBLIC_CALENDLY_ZOOM_MEETING_URL`; empty string turns it off) through `ZoomMeetingScheduler` with the chosen topic recorded as a tracking parameter. Dashboards use per-type links when configured and fall back to the Zoom scheduler. `PRIMARY_CTA` reads "Book a Meeting" only when some booking is configured.
 - Say "email address", not "work email". State that correspondence is routed to the CTO only on `/contact` and in the Footer.
 
 ## Correspondence Routing (important)
@@ -36,21 +36,25 @@ src/
 │   ├── executive/                # Executive dashboard, settings, subscribers (protected)
 │   ├── investor/dashboard/       # Investor dashboard (protected)
 │   ├── login/                    # Sign-in
-│   ├── (public pages)            # thesis, harmony, team, investors, updates, contact, privacy, terms, disclaimer
+│   ├── (public pages)            # thesis, assets, harmony, team, investors, updates, contact, privacy, terms, disclaimer
 │   ├── layout.tsx                # Fonts, metadata defaults, SiteBackground, Navbar, Footer
 │   ├── globals.css               # Design tokens + utilities (.eyebrow, .mono, .glass-1/2/3, .hairline)
 │   ├── sitemap.ts / robots.ts / manifest.ts / opengraph-image.tsx / not-found.tsx
 ├── components/
-│   ├── brand/                    # Logo, AssetChip, AllocationRing, AllocationBar
+│   ├── brand/                    # Logo, AssetChip, ContactEmail, AllocationRing (+ AllocationExplorer: interactive ring with asset detail), AllocationBar
+│   ├── allocation/               # AssetsNav: the ring as scroll-spy navigation for /assets
 │   ├── ui/                       # Button, Card, Input/Textarea/Select, SectionHeader, StatTile, Reveal, Toast, Sheet, Container
-│   ├── layout/                   # Navbar, Footer, SiteBackground, PageHero, Section, DocumentPage
+│   ├── layout/                   # Navbar, Footer, SiteBackground, PageHero, Section, DocumentPage, PageTransitions
+│   ├── thesis/                   # ThesisSection, ThesisRail (guided read + scroll spy), BasketMixer (concentration-only)
+│   ├── harmony/                  # HarmonyLoop (four-node research → risk → evaluation → human decision loop)
 │   ├── dashboard/                # Dashboard primitives + Recharts wrappers
-│   ├── scheduling/               # CalendlyEmbed, MeetingTypeSelector, ExecMeetingBooking
+│   ├── scheduling/               # CalendlyEmbed (explicit init), ZoomMeetingScheduler + ZoomMeetingModal (<dialog>), MeetingTypeSelector, ExecMeetingBooking
 │   ├── investor/                 # AlertSignupForm
 │   └── auth/                     # LoginForm, AuthSessionProvider
 └── lib/
-    ├── site.ts                   # SITE, CONTACT (CTO), ALLOCATION, PRINCIPLES, HARMONY, GOVERNING_LAW_STATE, PRIMARY_NAV
-    ├── scheduling.ts             # Configured Calendly meeting types, HAS_PUBLIC_BOOKING, PRIMARY_CTA
+    ├── site.ts                   # SITE, CONTACT (CTO), ALLOCATION (weights, roles, public facts per asset), PRINCIPLES, HARMONY, GOVERNING_LAW_STATE, PRIMARY_NAV
+    ├── scheduling.ts             # Zoom meeting event + topics (contact page), per-type Calendly links (dashboards), HAS_PUBLIC_BOOKING, PRIMARY_CTA
+    ├── useScrollSpy.ts           # useScrollSpy(ids) + scrollToSection(id) for the thesis rail and /assets nav
     ├── email.ts                  # Resend wrapper, templates, escapeHtml, CORRESPONDENCE_EMAIL
     ├── treasury/snapshot.ts      # ETF holdings, cash, share count (manual CFO data)
     └── investor/updates.ts       # Company updates, documents, events (static data)
@@ -63,6 +67,8 @@ src/
 - All financial numbers (dashboards only) use `--font-mono` with `tabular-nums`; show an "as of · source" line and the freshness state (`getTreasuryFreshness`) under live figures. No abbreviated values, no count-ups, no fabricated data.
 - Interior pages start with `PageHero`; sections use `Section`; long-form legal/disclosure pages use `DocumentPage`.
 - Motion: `Reveal` for entrance, `--dur-*` / `--ease-*` tokens; everything respects `prefers-reduced-motion`.
+- Interactive presentation (ported from PR #9): `AllocationExplorer` (ring + asset chips + role/points + link to `/assets#key`), the thesis `ThesisRail` and `BasketMixer` (concentration only, never performance), the `HarmonyLoop`, team cards with facts + `<details>` bios, `Card` spotlight (pointer-following gold light; off on touch and reduced motion).
+- Page transitions: `PageTransitions` (mounted in `layout.tsx`) intercepts internal link clicks and replays them through `router.push` inside `document.startViewTransition`; the new page opens through a gold-rimmed circle from the click point and any element with `view-transition-name: allocation-ring` morphs between pages. Exactly ONE ring per page may carry `transitionName="allocation-ring"`. Hash links, `/api/*`, modified clicks, reduced motion, and browsers without the API fall back to ordinary navigation.
 
 ## Key Files
 - `src/lib/treasury/snapshot.ts` — holdings and cash from the latest CFO report (dashboards only). Update here when a new report arrives.
@@ -90,7 +96,8 @@ NEXTAUTH_SECRET= / NEXTAUTH_URL=
 RESEND_API_KEY= / RESEND_FROM_EMAIL= / RESEND_FROM_NAME=   # required for any delivery
 CORRESPONDENCE_EMAIL=                 # optional override; defaults to the CTO
 EMAIL_DRY_RUN=                        # local only: log instead of send, reported as not delivered
-NEXT_PUBLIC_CALENDLY_EXEC_ZOOM_URL=   # + EXEC_INTRO / INVESTOR_BRIEFING / PARTNERSHIP
+NEXT_PUBLIC_CALENDLY_ZOOM_MEETING_URL=  # contact-page Zoom event (defaults to the executive 30-minute event)
+NEXT_PUBLIC_CALENDLY_EXEC_ZOOM_URL=   # + EXEC_INTRO / INVESTOR_BRIEFING / PARTNERSHIP (dashboards)
 ```
 
 ## Common Issues
@@ -98,6 +105,7 @@ NEXT_PUBLIC_CALENDLY_EXEC_ZOOM_URL=   # + EXEC_INTRO / INVESTOR_BRIEFING / PARTN
 - **Calendly appears too small:** check the heights listed above.
 - **Login 401 errors:** usually `DATABASE_URL` misconfiguration or a Neon connection issue.
 - **Emails not delivered:** sign in as an executive and open `/api/executive/email-status`; `apiKeyConfigured: false` means `RESEND_API_KEY` is unset on that deployment (the contact form then returns 503 and shows an error). A 502 means the provider rejected the message, usually because the from-domain is not verified in Resend. Search the runtime logs for `[email]` lines by `ref=`; an `accepted` line carries the provider message id to look up in Resend's delivery events.
+- **Investor alert signup:** rate-limited per client (5 valid signups per 15 minutes, in memory) and site-wide (30 new subscriptions per hour, counted in the database); one confirmation per address; addresses an executive deactivated are never re-enabled by a new signup. Covered by `tests/alert-signup.test.ts`.
 - **ESLint React Compiler rules:** no `setState` directly inside `useEffect` bodies; no reassigning variables during render (use `reduce`/`map`).
 
 ## Commands

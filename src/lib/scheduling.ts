@@ -1,50 +1,90 @@
 /**
- * Public meeting types backed by Calendly event URLs.
+ * Public meeting scheduling.
  *
- * Each NEXT_PUBLIC_* variable is referenced literally so Next.js inlines it
- * into client bundles. A meeting type is only offered when its URL is set,
- * so a public "Book a meeting" call to action never leads to a dead end.
+ * Two mechanisms share this module:
+ *
+ * 1. The Zoom meeting event behind the contact-page scheduler. Every topic
+ *    books the same Calendly event (Calendly creates the Zoom link on
+ *    booking); the chosen topic is recorded on the booking as a tracking
+ *    parameter so the host knows what to prepare for.
+ * 2. Per-type Calendly events used by the signed-in dashboards. Each
+ *    NEXT_PUBLIC_* variable is referenced literally so Next.js inlines it
+ *    into client bundles; a type is only offered when its URL is set.
+ *
+ * `HAS_PUBLIC_BOOKING` is true when either mechanism is available, so a
+ * public "Book a meeting" call to action never leads to a dead end.
  */
 
-export interface MeetingType {
+export interface MeetingTopic {
     id: string;
     label: string;
-    duration: string;
     description: string;
-    url: string;
 }
 
-const MEETING_TYPES: MeetingType[] = [
+/** What a visitor can ask to talk about. All topics book the same Zoom event. */
+export const MEETING_TOPICS: readonly MeetingTopic[] = [
     {
         id: 'intro',
         label: 'Introductory Call',
-        duration: '30 min',
         description: 'Meet the leadership team and explore whether Ari aligns with your investment strategy.',
-        url: process.env.NEXT_PUBLIC_CALENDLY_EXEC_INTRO_URL ?? '',
     },
     {
         id: 'briefing',
         label: 'Investor Briefing',
-        duration: '60 min',
         description: 'Treasury framework review, diligence questions, and investment structure discussion.',
-        url: process.env.NEXT_PUBLIC_CALENDLY_INVESTOR_BRIEFING_URL ?? '',
     },
     {
         id: 'partnership',
         label: 'Partnership Discussion',
-        duration: '45 min',
         description: 'For institutional partners, strategic collaborators, and treasury service providers.',
-        url: process.env.NEXT_PUBLIC_CALENDLY_PARTNERSHIP_URL ?? '',
     },
+] as const;
+
+/**
+ * Calendly event behind the Zoom meeting modal. Calendly creates the Zoom link
+ * when a time is booked. Override with NEXT_PUBLIC_CALENDLY_ZOOM_MEETING_URL;
+ * set it to an empty string to turn public booking off.
+ */
+export const ZOOM_MEETING_URL: string = (
+    process.env.NEXT_PUBLIC_CALENDLY_ZOOM_MEETING_URL ?? 'https://calendly.com/mitchel-carson/30min'
+).trim();
+
+/** Length of the event above, shown beside the booking controls. */
+export const ZOOM_MEETING_DURATION = '30 minutes';
+
+/**
+ * Add tracking parameters so the booking in Calendly shows that it came from
+ * this site and which topic the visitor picked.
+ */
+export function zoomMeetingUrlForTopic(topicId: string): string {
+    const url = new URL(ZOOM_MEETING_URL);
+    url.searchParams.set('utm_source', 'ari-website');
+    url.searchParams.set('utm_medium', 'contact-page');
+    url.searchParams.set('utm_campaign', topicId);
+    return url.toString();
+}
+
+export interface MeetingType extends MeetingTopic {
+    duration: string;
+    url: string;
+}
+
+const MEETING_TYPES: MeetingType[] = [
+    { ...MEETING_TOPICS[0], duration: '30 min', url: process.env.NEXT_PUBLIC_CALENDLY_EXEC_INTRO_URL ?? '' },
+    { ...MEETING_TOPICS[1], duration: '60 min', url: process.env.NEXT_PUBLIC_CALENDLY_INVESTOR_BRIEFING_URL ?? '' },
+    { ...MEETING_TOPICS[2], duration: '45 min', url: process.env.NEXT_PUBLIC_CALENDLY_PARTNERSHIP_URL ?? '' },
 ];
 
-/** Meeting types with a configured booking URL, in display order. */
+/** Per-type meeting events with a configured booking URL, in display order (dashboards). */
 export function getConfiguredMeetingTypes(): MeetingType[] {
     return MEETING_TYPES.filter((type) => type.url.trim().length > 0);
 }
 
-/** True when at least one public meeting type can be booked online. */
-export const HAS_PUBLIC_BOOKING = getConfiguredMeetingTypes().length > 0;
+/** True when the Zoom meeting event is configured. */
+export const HAS_ZOOM_BOOKING = ZOOM_MEETING_URL.length > 0;
+
+/** True when at least one public meeting can be booked online. */
+export const HAS_PUBLIC_BOOKING = HAS_ZOOM_BOOKING || getConfiguredMeetingTypes().length > 0;
 
 /** Where the primary call to action should send people. */
 export const PRIMARY_CTA = HAS_PUBLIC_BOOKING

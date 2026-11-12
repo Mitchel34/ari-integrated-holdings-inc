@@ -2,11 +2,11 @@ import Link from 'next/link';
 import { CONTACT } from '@/lib/site';
 import { PRIMARY_CTA } from '@/lib/scheduling';
 import { Card } from '@/components/ui/Card';
+import { ContactEmail } from '@/components/brand/ContactEmail';
 import { Button } from '@/components/ui/Button';
 import styles from './HomeSections.module.css';
 
 export function ClosingCta() {
-    const [emailLocal, emailDomain] = CONTACT.email.split('@');
 
     return (
         <Card as="section" variant="elevated" className={styles.cta} aria-labelledby="cta-title">
@@ -24,8 +24,7 @@ export function ClosingCta() {
                 </Button>
                 <Button asChild variant="secondary" size="lg">
                     <a href={CONTACT.mailto} className={styles.ctaEmail}>
-                        {emailLocal}@<wbr />
-                        {emailDomain}
+                        <ContactEmail />
                     </a>
                 </Button>
             </div>

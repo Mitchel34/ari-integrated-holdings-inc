@@ -3,11 +3,13 @@ import { Mail, ArrowUpRight } from 'lucide-react';
 import { Container } from '../ui/Container';
 import { Logo } from '../brand/Logo';
 import { AssetChip } from '../brand/AssetChip';
+import { ContactEmail } from '../brand/ContactEmail';
 import { ALLOCATION, CONTACT, SITE } from '@/lib/site';
 import styles from './Footer.module.css';
 
 const COMPANY_LINKS = [
     { href: '/thesis', label: 'Investment Thesis' },
+    { href: '/assets', label: 'Target Assets' },
     { href: '/harmony', label: 'Harmony' },
     { href: '/team', label: 'Leadership' },
     { href: '/contact', label: 'Contact' },
@@ -80,9 +82,7 @@ export function Footer() {
                         <p className={styles.contactTitle}>{CONTACT.title}</p>
                         <a href={CONTACT.mailto} className={styles.contactEmail}>
                             <Mail aria-hidden="true" />
-                            <span>
-                                {CONTACT.email.split('@')[0]}@<wbr />{CONTACT.email.split('@')[1]}
-                            </span>
+                            <span><ContactEmail /></span>
                         </a>
                         <p className={styles.contactNote}>
                             All investor, partnership, and press inquiries are routed to the CTO.

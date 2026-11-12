@@ -13,7 +13,7 @@ All inbound correspondence from the site is routed to the CTO, **Mitchel Carson 
 | Source | What happens |
 | --- | --- |
 | Contact form (`/contact` → `POST /api/contact`) | Emailed to the CTO with `Reply-To` set to the sender and a per-inquiry reference (`ARI-YYYYMMDD-XXXXXX`) in the subject. If the provider does not accept the message the visitor gets an error with that reference and a direct `mailto:` fallback, never a success screen. Rate-limited and honeypot-protected. |
-| Investor alert signup (`/investors#alerts`) | Subscriber gets a confirmation; the CTO gets a "new subscriber" notice. Rate-limited and honeypot-protected; addresses an executive deactivated are not silently re-enabled. |
+| Investor alert signup (`/investors#alerts`) | Subscriber gets one confirmation; the CTO gets a "new subscriber" notice. Honeypot-protected, rate-limited per client (5 per 15 min) and site-wide (30 per hour, counted in the database); addresses an executive deactivated are not silently re-enabled. |
 | Investor broadcasts (executive dashboard) | Sent as one email per subscriber (addresses are never shared), reply-to the CTO. |
 | Executive meeting notification (`POST /api/executive/meeting-notify`) | Sent to every executive in the database, with the CTO always included. |
 | Every displayed email address and `mailto:` link | `CONTACT.email` from `src/lib/site.ts`. |
@@ -77,9 +77,10 @@ The site follows an "institutional glass" direction: flat navy ground, three gla
 - Fonts: Sora (display), Inter (body), JetBrains Mono (all financial figures)
 - Site constants (name, tagline, CTO contact, 50 / 30 / 20 allocation, treasury framework copy, Harmony positioning, `GOVERNING_LAW_STATE`): `src/lib/site.ts`
 - Company updates, investor documents, events: `src/lib/investor/updates.ts` (the old `/disclosures` route and `/api/disclosures` redirect to `/updates` and `/api/updates`)
-- Meeting scheduling: `src/lib/scheduling.ts` exposes only meeting types whose Calendly URL is configured; when none is, booking UI is hidden and the primary CTA reads "Contact Us"​
+- Meeting scheduling: `src/lib/scheduling.ts` — the contact page books one Zoom event through a modal scheduler (`NEXT_PUBLIC_CALENDLY_ZOOM_MEETING_URL`, with a default); dashboards use per-type Calendly links when configured. When nothing is configured the booking UI is hidden and the primary CTA reads "Contact Us"
 - UI primitives: `src/components/ui/` — `Button`, `Card`, `Input`/`Textarea`/`Select`, `SectionHeader`, `StatTile`, `Reveal`, `Toast`, `Sheet`, `Container`
-- Brand primitives: `src/components/brand/` — `Logo`, `AssetChip`, `AllocationRing`, `AllocationBar`
+- Brand primitives: `src/components/brand/` — `Logo`, `AssetChip`, `ContactEmail`, `AllocationRing`, `AllocationExplorer` (interactive ring), `AllocationBar`
+- Interactive presentation: `ThesisRail` and `BasketMixer` (`src/components/thesis/`), `HarmonyLoop` (`src/components/harmony/`), `AssetsNav` (`src/components/allocation/`), `PageTransitions` (view-transition page reveals), `Card` spotlight
 - Layout: `src/components/layout/` — `Navbar`, `Footer`, `SiteBackground`, `PageHero`, `Section`, `DocumentPage`
 - Dashboard primitives: `src/components/dashboard/` — `DashboardShell`, `DashboardHeader`, `DashboardPanel`, `MetricCard`, `MetricGrid`, `DataTable`, badges, empty/error states, Recharts wrappers
 

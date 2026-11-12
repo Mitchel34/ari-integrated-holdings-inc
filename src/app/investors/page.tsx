@@ -6,6 +6,7 @@ import { Section } from '../../components/layout/Section';
 import { SectionHeader } from '../../components/ui/SectionHeader';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
+import { ContactEmail } from '@/components/brand/ContactEmail';
 import { AssetChip } from '../../components/brand/AssetChip';
 import { AlertSignupForm } from '../../components/investor/AlertSignupForm';
 import { formatDateIso, formatUtcTime } from '@/lib/format';
@@ -31,7 +32,6 @@ export default function InvestorsPage() {
     const documents = getInvestorDocuments();
     const now = new Date();
     const upcomingEvents = getUpcomingInvestorEvents(now);
-    const [emailLocal, emailDomain] = CONTACT.email.split('@');
 
     return (
         <>
@@ -206,7 +206,7 @@ export default function InvestorsPage() {
                                 <dt>Email</dt>
                                 <dd>
                                     <a href={CONTACT.mailto} className={`mono ${styles.email}`}>
-                                        {emailLocal}@<wbr />{emailDomain}
+                                        <ContactEmail />
                                     </a>
                                 </dd>
                             </div>

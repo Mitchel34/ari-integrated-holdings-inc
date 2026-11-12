@@ -25,6 +25,19 @@ interface AllocationRingProps {
     className?: string;
     /** Accessible description; a sensible default is generated. */
     ariaLabel?: string;
+    /**
+     * Highlighted segment (its symbol). The other segments dim. Pointer
+     * interaction on the arcs is enabled whenever `onSelect` or `onPreview`
+     * is given; keyboard users select through the controls rendered beside
+     * the ring (see AllocationExplorer), so the arcs themselves stay
+     * decorative for assistive technology.
+     */
+    activeSymbol?: string | null;
+    onSelect?: (symbol: string) => void;
+    /** Hover / pointer preview; `null` when the pointer leaves. */
+    onPreview?: (symbol: string | null) => void;
+    /** `view-transition-name` so the ring carries over between pages that both show it. */
+    transitionName?: string;
 }
 
 const SEGMENT_STROKE: Record<string, string> = {
@@ -55,6 +68,10 @@ export function AllocationRing({
     compact = false,
     className = '',
     ariaLabel,
+    activeSymbol = null,
+    onSelect,
+    onPreview,
+    transitionName,
 }: AllocationRingProps) {
     const gradientId = `ring-sol-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
     const viewBox = 100;
@@ -64,6 +81,8 @@ export function AllocationRing({
     const circumference = 2 * Math.PI * radius;
     const gap = segments.length > 1 ? Math.min(1.2, circumference * 0.008) : 0;
     const total = segments.reduce((sum, s) => sum + Math.max(0, s.value), 0) || 1;
+    const interactive = Boolean(onSelect || onPreview);
+    const hasActive = activeSymbol !== null && activeSymbol !== undefined;
 
     const arcs = segments.reduce<
         Array<RingSegment & { length: number; offset: number; fraction: number; strokeColor: string }>
@@ -84,10 +103,16 @@ export function AllocationRing({
             .join(', ')}`;
 
     const wrapperStyle = { '--ring-size': `${size}px` } as CSSProperties;
+    const svgStyle = transitionName ? ({ viewTransitionName: transitionName } as CSSProperties) : undefined;
 
     return (
-        <div className={`${styles.wrapper} ${className}`.trim()} style={wrapperStyle} role="img" aria-label={description}>
-            <svg className={styles.svg} viewBox={`0 0 ${viewBox} ${viewBox}`} aria-hidden="true" focusable="false">
+        <div
+            className={`${styles.wrapper} ${interactive ? styles.interactive : ''} ${className}`.trim()}
+            style={wrapperStyle}
+            role="img"
+            aria-label={description}
+        >
+            <svg className={styles.svg} style={svgStyle} viewBox={`0 0 ${viewBox} ${viewBox}`} aria-hidden="true" focusable="false">
                 <defs>
                     <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
                         <stop offset="0%" stopColor="#9945FF" />
@@ -105,24 +130,35 @@ export function AllocationRing({
                 <circle className={styles.track} cx={center} cy={center} r={radius} strokeWidth={stroke} />
 
                 <g transform={`rotate(-90 ${center} ${center})`}>
-                    {arcs.map((arc) => (
-                        <circle
-                            key={arc.symbol}
-                            className={styles.segment}
-                            cx={center}
-                            cy={center}
-                            r={radius}
-                            strokeWidth={stroke}
-                            stroke={arc.strokeColor}
-                            strokeDashoffset={arc.offset}
-                            style={
-                                {
-                                    '--dash': `${arc.length} ${circumference - arc.length}`,
-                                    '--circ': `${circumference}`,
-                                } as CSSProperties
-                            }
-                        />
-                    ))}
+                    {arcs.map((arc) => {
+                        const isActive = hasActive && arc.symbol.toUpperCase() === String(activeSymbol).toUpperCase();
+                        return (
+                            <circle
+                                key={arc.symbol}
+                                className={[
+                                    styles.segment,
+                                    hasActive ? (isActive ? styles.segmentActive : styles.segmentDimmed) : '',
+                                ]
+                                    .filter(Boolean)
+                                    .join(' ')}
+                                cx={center}
+                                cy={center}
+                                r={radius}
+                                strokeWidth={isActive ? stroke * 1.35 : stroke}
+                                stroke={arc.strokeColor}
+                                strokeDashoffset={arc.offset}
+                                style={
+                                    {
+                                        '--dash': `${arc.length} ${circumference - arc.length}`,
+                                        '--circ': `${circumference}`,
+                                    } as CSSProperties
+                                }
+                                onPointerEnter={interactive ? () => onPreview?.(arc.symbol) : undefined}
+                                onPointerLeave={interactive ? () => onPreview?.(null) : undefined}
+                                onClick={interactive ? () => onSelect?.(arc.symbol) : undefined}
+                            />
+                        );
+                    })}
                 </g>
             </svg>
 

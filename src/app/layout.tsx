@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono, Sora } from "next/font/google";
 import { SiteHeader } from "../components/layout/Navbar";
 import { Footer } from "../components/layout/Footer";
 import { SiteBackground } from "../components/layout/SiteBackground";
+import { PageTransitions } from "../components/layout/PageTransitions";
 import { AuthSessionProvider } from "../components/auth/AuthSessionProvider";
 import { ToastProvider } from "../components/ui/Toast";
 import { CONTACT, SITE, getSiteUrl } from "../lib/site";
@@ -102,6 +103,7 @@ export default function RootLayout({
               <main id="main-content" tabIndex={-1}>{children}</main>
               <Footer />
             </div>
+            <PageTransitions />
           </ToastProvider>
         </AuthSessionProvider>
       </body>

@@ -18,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const routes: Array<{ path: string; priority: number; changeFrequency: Frequency; lastModified: Date }> = [
         { path: '/', priority: 1, changeFrequency: 'weekly', lastModified: newest(SITE_UPDATED, updateDate) },
         { path: '/thesis', priority: 0.9, changeFrequency: 'monthly', lastModified: SITE_UPDATED },
+        { path: '/assets', priority: 0.8, changeFrequency: 'monthly', lastModified: SITE_UPDATED },
         { path: '/investors', priority: 0.9, changeFrequency: 'weekly', lastModified: newest(SITE_UPDATED, updateDate) },
         { path: '/updates', priority: 0.8, changeFrequency: 'weekly', lastModified: newest(SITE_UPDATED, updateDate) },
         { path: '/harmony', priority: 0.7, changeFrequency: 'monthly', lastModified: SITE_UPDATED },

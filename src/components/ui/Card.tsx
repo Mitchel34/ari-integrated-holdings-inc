@@ -1,4 +1,5 @@
 import type { ElementType, ReactNode } from 'react';
+import { CardSpotlight } from './CardSpotlight';
 import styles from './Card.module.css';
 
 export type CardVariant = 'subtle' | 'glass' | 'elevated' | 'solid' | 'default';
@@ -14,6 +15,8 @@ interface CardProps {
     /** 3px top rail in an asset/brand color. */
     accent?: CardAccent;
     padding?: 'none' | 'sm' | 'md';
+    /** Pointer-following gold spotlight on hover (default on). */
+    spotlight?: boolean;
     as?: ElementType;
     id?: string;
     style?: React.CSSProperties;
@@ -36,6 +39,7 @@ export function Card({
     interactive = false,
     accent,
     padding = 'md',
+    spotlight = true,
     as: Tag = 'div',
     ...rest
 }: CardProps) {
@@ -52,6 +56,7 @@ export function Card({
 
     return (
         <Tag className={classes} {...rest}>
+            {spotlight ? <CardSpotlight /> : null}
             {children}
         </Tag>
     );
