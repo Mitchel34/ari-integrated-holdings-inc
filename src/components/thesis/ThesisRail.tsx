@@ -7,33 +7,30 @@ import styles from './ThesisRail.module.css';
 
 export interface ThesisChapter {
     id: string;
+    num: string;
     title: string;
 }
 
 interface ThesisRailProps {
-    chapters: readonly ThesisChapter[];
+    chapters: ThesisChapter[];
 }
 
-const numeral = (index: number) => String(index + 1).padStart(2, '0');
-
 /**
- * Reading guide for the thesis: a sticky chapter list with a gold progress
- * track on large screens, and a sticky progress bar with previous / next
- * controls under the navbar on small screens. Section ids are the targets.
+ * Reading guide for the thesis: a sticky chapter list on desktop and a sticky
+ * progress bar with previous/next controls on small screens.
  */
 export function ThesisRail({ chapters }: ThesisRailProps) {
     const ids = useMemo(() => chapters.map((chapter) => chapter.id), [chapters]);
     const { active, progress } = useScrollSpy(ids);
-    const current = chapters[active] ?? chapters[0];
+    const current = chapters[active];
     const previous = chapters[active - 1];
     const next = chapters[active + 1];
     const percent = `${(progress * 100).toFixed(1)}%`;
-    const total = numeral(chapters.length - 1);
 
     return (
         <>
             <nav className={styles.rail} aria-label="Thesis sections">
-                <p className="eyebrow">Guided read</p>
+                <p className={styles.railLabel}>Guided read</p>
                 <div className={styles.railBody}>
                     <span className={styles.track} aria-hidden="true">
                         <span className={styles.trackFill} style={{ height: percent }} />
@@ -43,20 +40,14 @@ export function ThesisRail({ chapters }: ThesisRailProps) {
                             <li key={chapter.id}>
                                 <a
                                     href={`#${chapter.id}`}
-                                    className={[
-                                        styles.item,
-                                        index === active ? styles.itemActive : '',
-                                        index < active ? styles.itemDone : '',
-                                    ]
-                                        .filter(Boolean)
-                                        .join(' ')}
+                                    className={`${styles.item} ${index === active ? styles.itemActive : ''} ${index < active ? styles.itemDone : ''}`.trim()}
                                     aria-current={index === active ? 'step' : undefined}
                                     onClick={(event) => {
                                         event.preventDefault();
                                         scrollToSection(chapter.id);
                                     }}
                                 >
-                                    <span className={`${styles.itemNum} mono`}>{numeral(index)}</span>
+                                    <span className={styles.itemNum}>{chapter.num}</span>
                                     <span className={styles.itemTitle}>{chapter.title}</span>
                                 </a>
                             </li>
@@ -65,12 +56,10 @@ export function ThesisRail({ chapters }: ThesisRailProps) {
                 </div>
             </nav>
 
-            <nav className={styles.bar} aria-label="Thesis progress">
+            <div className={styles.bar} role="navigation" aria-label="Thesis progress">
                 <div className={styles.barInner}>
                     <p className={styles.barText}>
-                        <span className={`${styles.barNum} mono`}>
-                            {numeral(active)} / {total}
-                        </span>
+                        <span className={styles.barNum}>{current.num} / {chapters[chapters.length - 1].num}</span>
                         <span className={styles.barTitle}>{current.title}</span>
                     </p>
                     <div className={styles.barButtons}>
@@ -97,7 +86,7 @@ export function ThesisRail({ chapters }: ThesisRailProps) {
                 <span className={styles.barTrack} aria-hidden="true">
                     <span className={styles.barFill} style={{ width: percent }} />
                 </span>
-            </nav>
+            </div>
         </>
     );
 }

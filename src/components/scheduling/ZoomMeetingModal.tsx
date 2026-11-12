@@ -3,8 +3,8 @@
 import { useEffect, useRef } from 'react';
 import { ExternalLink, Video, X } from 'lucide-react';
 import { CalendlyEmbed } from './CalendlyEmbed';
-import { ContactEmail } from '@/components/brand/ContactEmail';
-import { CONTACT } from '@/lib/site';
+import { ContactEmail } from '@/components/ui/ContactEmail';
+import { CONTACT_EMAIL } from '@/lib/contact';
 import { ZOOM_MEETING_DURATION } from '@/lib/scheduling';
 import styles from './ZoomMeetingModal.module.css';
 
@@ -20,8 +20,7 @@ interface ZoomMeetingModalProps {
 /**
  * Modal scheduler for a Zoom meeting. Uses the native <dialog>, which sits in
  * the browser's top layer: no z-index or stacking-context concerns, and focus
- * trapping, Escape to close, and focus return come built in. The page scroll
- * lock is global (`html:has(dialog[open])` in globals.css).
+ * trapping, Escape to close, and focus return come built in.
  */
 export function ZoomMeetingModal({ open, onClose, topic, url }: ZoomMeetingModalProps) {
     const dialogRef = useRef<HTMLDialogElement>(null);
@@ -47,17 +46,17 @@ export function ZoomMeetingModal({ open, onClose, topic, url }: ZoomMeetingModal
             <div className={styles.panel}>
                 <header className={styles.header}>
                     <span className={styles.icon} aria-hidden="true">
-                        <Video size={22} strokeWidth={1.75} />
+                        <Video />
                     </span>
                     <div className={styles.heading}>
-                        <p className="eyebrow">Zoom meeting · {ZOOM_MEETING_DURATION}</p>
+                        <p className={styles.eyebrow}>Zoom meeting · {ZOOM_MEETING_DURATION}</p>
                         <h2 id="zoom-meeting-title" className={styles.title}>{topic}</h2>
                         <p className={styles.subtitle}>
                             Pick a time. A Zoom link is generated automatically and sent with your confirmation email.
                         </p>
                     </div>
                     <button type="button" className={styles.close} aria-label="Close scheduler" onClick={onClose}>
-                        <X size={18} strokeWidth={2} aria-hidden="true" />
+                        <X aria-hidden="true" />
                     </button>
                 </header>
 
@@ -74,13 +73,13 @@ export function ZoomMeetingModal({ open, onClose, topic, url }: ZoomMeetingModal
                 <footer className={styles.footer}>
                     <p>
                         Trouble booking? Email{' '}
-                        <a href={CONTACT.mailto} className={`${styles.link} mono`}>
+                        <a href={`mailto:${CONTACT_EMAIL}`} className={styles.link}>
                             <ContactEmail />
                         </a>
                     </p>
                     <a href={url} target="_blank" rel="noopener noreferrer" className={styles.link}>
                         Open in a new tab
-                        <ExternalLink size={14} strokeWidth={1.75} aria-hidden="true" />
+                        <ExternalLink aria-hidden="true" />
                     </a>
                 </footer>
             </div>

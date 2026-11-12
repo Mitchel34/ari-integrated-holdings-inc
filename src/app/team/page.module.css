@@ -1,53 +1,70 @@
-/* ── Executive grid ───────────────────────────────────────────────────── */
+.page {
+    padding: 0;
+}
+
+.heroSection {
+    padding: clamp(3rem, 6vw, 4.5rem) 0 clamp(2rem, 4vw, 3rem);
+    background:
+        radial-gradient(ellipse at 18% 50%, rgba(226, 192, 68, 0.1) 0%, transparent 58%),
+        radial-gradient(ellipse at 82% 50%, rgba(192, 197, 203, 0.07) 0%, transparent 52%);
+}
+
+.gridSection {
+    padding: clamp(3rem, 6vw, 4.5rem) 0;
+}
+
+.sectionHeader {
+    text-align: center;
+    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+}
+
+.sectionHeader h1 {
+    font-size: clamp(2rem, 4.2vw, 2.75rem);
+    margin-bottom: 0.8rem;
+    background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.sectionHeader p {
+    color: #d8e1ec;
+    font-size: 1.06rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
 
 .grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(1rem, 2.5vw, 1.5rem);
-    align-items: stretch;
-    margin: 0;
-    padding: 0;
-    list-style: none;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+    gap: clamp(1rem, 3vw, 1.5rem);
 }
 
-/* Each card spans three shared rows (identity, facts, bio) so the same element
-   sits at the same height in every card, whatever the text length. */
-.gridItem,
-.gridItem .member {
+/* Each card spans three shared rows (identity, facts, bio) so the same
+   element sits at the same height in every card, whatever the text length. */
+.memberShell,
+.memberCard {
     display: grid;
     grid-row: span 3;
     grid-template-rows: subgrid;
-    row-gap: 1.25rem;
-    min-width: 0;
+    row-gap: 1.15rem;
 }
 
-.gridItem .member {
+.memberCard {
     align-content: start;
+    padding: 0.5rem 0.25rem;
 }
 
-/* Once any bio is open, let each card take its own height so the others do not stretch with it. */
+/* Once a bio is open, let each card take its own height so the others do not stretch with it. */
 .grid:has(.bio[open]) {
     align-items: start;
 }
 
-.grid:has(.bio[open]) .gridItem,
-.grid:has(.bio[open]) .gridItem .member {
+.grid:has(.bio[open]) .memberShell,
+.grid:has(.bio[open]) .memberCard {
     grid-row: auto;
     grid-template-rows: none;
 }
-
-/* Fallback for browsers without subgrid: a plain column, still equal heights. */
-@supports not (grid-template-rows: subgrid) {
-    .gridItem,
-    .gridItem .member {
-        display: flex;
-        flex-direction: column;
-        gap: 1.25rem;
-        height: 100%;
-    }
-}
-
-/* ── Identity row ─────────────────────────────────────────────────────── */
 
 .identity {
     display: flex;
@@ -56,107 +73,84 @@
     min-width: 0;
 }
 
-.identityText {
-    min-width: 0;
-}
-
-.monogram {
-    display: inline-flex;
+.avatar {
+    display: flex;
     align-items: center;
     justify-content: center;
-    width: 64px;
-    height: 64px;
-    border-radius: var(--r-full);
-    background: var(--glass-1-bg);
-    border: 1px solid var(--glass-1-border);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        0 0 0 1px var(--gold-a45),
-        0 0 0 5px var(--gold-a08);
-    font-family: var(--font-display);
-    font-size: 1.25rem;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    color: var(--gold-300);
+    width: 60px;
+    height: 60px;
+    border-radius: 999px;
+    background: var(--gradient-gold);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary-bg);
+    box-shadow: 0 6px 20px rgba(194, 155, 78, 0.3);
     flex-shrink: 0;
 }
 
 .name {
-    font-size: var(--fs-h3);
-    color: var(--text-1);
-    overflow-wrap: anywhere;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+    background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .role {
-    margin-top: 0.35rem;
-    font-size: var(--fs-caption);
-    font-weight: 600;
-    letter-spacing: 0.08em;
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
     text-transform: uppercase;
-    line-height: 1.45;
-    color: var(--gold-500);
+    letter-spacing: 0.06em;
+    line-height: 1.4;
 }
 
-/* ── Facts row ────────────────────────────────────────────────────────── */
-
 .facts {
+    list-style: none;
+    margin: 0;
+    padding: 1.1rem 0 0;
     display: grid;
     align-content: start;
     gap: 0.6rem;
-    margin: 0;
-    padding: 1.1rem 0 0;
-    list-style: none;
-    border-top: 1px solid var(--line-1);
-    font-size: 0.9375rem;
+    border-top: 1px solid rgba(194, 155, 78, 0.3);
+    color: var(--color-text-main);
+    font-size: 0.975rem;
     line-height: 1.5;
-    color: var(--text-1);
 }
 
 .facts li {
     position: relative;
-    padding-left: 1.25rem;
+    padding-left: 1.2rem;
 }
 
 .facts li::before {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
-    top: 0.5em;
+    top: 0.55em;
     width: 7px;
     height: 7px;
-    border-radius: var(--r-full);
-    background: var(--gold-500);
-    box-shadow: 0 0 0 3px var(--gold-a12);
-}
-
-/* ── Bio row (expandable) + correspondence ────────────────────────────── */
-
-.tail {
-    display: flex;
-    flex-direction: column;
-    align-self: start;
-    min-width: 0;
-    width: 100%;
+    border-radius: 50%;
+    background: var(--gradient-gold);
 }
 
 .bio {
-    width: 100%;
+    align-self: start;
 }
 
 .bio summary {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
     min-height: 44px;
-    padding: 0 0.25rem 0 0;
     cursor: pointer;
     list-style: none;
-    font-size: var(--fs-small);
+    color: var(--color-accent-gold-bright);
+    font-size: 0.9rem;
     font-weight: 600;
-    letter-spacing: 0.02em;
-    color: var(--gold-300);
-    border-radius: var(--r-sm);
-    transition: color var(--dur-base) var(--ease-out);
 }
 
 .bio summary::-webkit-details-marker {
@@ -164,235 +158,33 @@
 }
 
 .bio summary::after {
-    content: '+';
-    display: inline-grid;
-    place-items: center;
-    width: 22px;
-    height: 22px;
-    border-radius: var(--r-full);
-    border: 1px solid var(--gold-a30);
-    background: var(--gold-a08);
-    font-family: var(--font-mono);
-    font-size: 0.95rem;
+    content: "+";
+    font-size: 1.1rem;
     font-weight: 500;
     line-height: 1;
-    transition:
-        border-color var(--dur-base) var(--ease-out),
-        background var(--dur-base) var(--ease-out);
 }
 
 .bio[open] summary::after {
-    content: '\2212';
-}
-
-.bio summary:hover {
-    color: var(--text-1);
-}
-
-.bio summary:hover::after {
-    border-color: var(--gold-a45);
-    background: var(--gold-a12);
+    content: "\2212";
 }
 
 .bio summary:focus-visible {
-    outline: 2px solid var(--gold-300);
-    outline-offset: 3px;
-    box-shadow: var(--sh-focus);
+    outline: 2px solid var(--color-accent-gold);
+    outline-offset: 2px;
+    border-radius: 8px;
 }
 
 .bio p {
     margin: 0.4rem 0 0;
     font-size: 0.9375rem;
+    color: var(--color-text-muted);
     line-height: 1.7;
-    color: var(--text-2);
 }
 
-.correspondence {
-    width: 100%;
-    margin-top: 1.25rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--line-1);
-}
-
-.correspondenceLabel {
-    font-size: var(--fs-caption);
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--text-3);
-}
-
-.mailChip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    max-width: 100%;
-    min-height: 44px;
-    margin-top: 0.6rem;
-    padding: 0.5rem 0.9rem;
-    border-radius: var(--r-full);
-    border: 1px solid var(--gold-a30);
-    background: var(--gold-a08);
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    color: var(--gold-300);
-    overflow-wrap: anywhere;
-    transition:
-        border-color var(--dur-base) var(--ease-out),
-        background var(--dur-base) var(--ease-out);
-}
-
-.mailChip svg {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-}
-
-.mailChip:hover {
-    border-color: var(--gold-a45);
-    background: var(--gold-a12);
-    color: var(--text-1);
-}
-
-.correspondenceNote {
-    margin-top: 0.75rem;
-    font-size: var(--fs-small);
-    line-height: 1.55;
-    color: var(--text-3);
-}
-
-/* ── Governance band ──────────────────────────────────────────────────── */
-
-.governanceGrid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(1rem, 2.5vw, 1.5rem);
-    align-items: start;
-}
-
-.governanceItem {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.iconTile {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    margin-bottom: 1rem;
-    border-radius: var(--r-sm);
-    background: var(--glass-1-bg);
-    border: 1px solid var(--glass-1-border);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-    color: var(--gold-500);
-}
-
-.governanceTitle {
-    font-size: 1.125rem;
-    color: var(--text-1);
-}
-
-.governanceBody {
-    margin-top: 0.6rem;
-    font-size: 0.9375rem;
-    line-height: 1.65;
-    color: var(--text-2);
-}
-
-.boardList {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.boardList li {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 0.25rem 1rem;
-    padding: 0.55rem 0;
-    border-bottom: 1px solid var(--line-1);
-}
-
-.boardList li:last-child {
-    border-bottom: 0;
-}
-
-.boardName {
-    font-weight: 600;
-    color: var(--text-1);
-}
-
-.boardRole {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--gold-500);
-}
-
-/* ── Closing CTA ──────────────────────────────────────────────────────── */
-
-.cta {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.ctaText {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    max-width: 56ch;
-}
-
-.ctaTitle {
-    font-size: var(--fs-h2);
-    color: var(--text-1);
-}
-
-.ctaLead {
-    color: var(--text-2);
-    line-height: 1.6;
-}
-
-.ctaActions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    flex-shrink: 0;
-}
-
-/* ── Breakpoints ──────────────────────────────────────────────────────── */
-
-@media (max-width: 639px) {
-    .ctaActions > * {
-        flex: 1 1 100%;
-    }
-}
-
-@media (min-width: 768px) {
-    .governanceGrid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-}
-
-@media (min-width: 1024px) {
+@media (max-width: 767px) {
     .grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .cta {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        gap: 2.5rem;
+        grid-template-columns: 1fr;
+        max-width: 440px;
+        margin: 0 auto;
     }
 }

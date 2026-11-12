@@ -1,16 +1,10 @@
 import { cloneElement, isValidElement } from 'react';
 import styles from './Button.module.css';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
-export type ButtonSize = 'sm' | 'md' | 'lg';
-
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: ButtonVariant;
-    size?: ButtonSize;
-    /** Render the child element (e.g. a Link) with button styling. */
+    variant?: 'primary' | 'secondary' | 'outline';
+    size?: 'sm' | 'md' | 'lg';
     asChild?: boolean;
-    /** Stretch to the container width. */
-    block?: boolean;
 }
 
 export function Button({
@@ -19,19 +13,9 @@ export function Button({
     size = 'md',
     className = '',
     asChild = false,
-    block = false,
-    type,
     ...props
 }: ButtonProps) {
-    const buttonClassName = [
-        styles.button,
-        styles[variant],
-        styles[size],
-        block ? styles.block : '',
-        className,
-    ]
-        .filter(Boolean)
-        .join(' ');
+    const buttonClassName = `${styles.button} ${styles[variant]} ${styles[size]} ${className}`.trim();
 
     if (asChild && isValidElement(children)) {
         const child = children as React.ReactElement<{ className?: string }>;
@@ -41,7 +25,10 @@ export function Button({
     }
 
     return (
-        <button type={type ?? 'button'} className={buttonClassName} {...props}>
+        <button
+            className={buttonClassName}
+            {...props}
+        >
             {children}
         </button>
     );

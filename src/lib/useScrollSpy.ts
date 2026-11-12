@@ -14,7 +14,7 @@ interface ScrollSpyState {
  * The "reading line" sits `anchorRatio` of the way down the viewport.
  * Pass a stable `ids` array (module constant or memoized).
  */
-export function useScrollSpy(ids: readonly string[], anchorRatio = 0.35): ScrollSpyState {
+export function useScrollSpy(ids: string[], anchorRatio = 0.35): ScrollSpyState {
     const [state, setState] = useState<ScrollSpyState>({ active: 0, progress: 0 });
 
     useEffect(() => {
@@ -62,7 +62,7 @@ export function useScrollSpy(ids: readonly string[], anchorRatio = 0.35): Scroll
     return state;
 }
 
-/** Scroll a section into view, honoring reduced motion, and record it in the URL hash. */
+/** Scroll a section into view, honoring reduced-motion, and record it in the URL hash. */
 export function scrollToSection(id: string) {
     const element = document.getElementById(id);
     if (!element) return;

@@ -1,0 +1,82 @@
+.backgroundContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.gradientOverlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(226, 192, 68, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(96, 165, 250, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(167, 139, 250, 0.06) 0%, transparent 70%);
+}
+
+.particleCanvas {
+  position: absolute;
+  inset: 0;
+}
+
+.floatingCoins {
+  position: absolute;
+  inset: 0;
+}
+
+.coin {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  opacity: 0.12;
+  background: linear-gradient(135deg, var(--color-accent-gold), #b8941f);
+  color: var(--color-primary-bg);
+  box-shadow: 0 0 40px rgba(226, 192, 68, 0.3);
+  animation: float 8s ease-in-out infinite;
+}
+
+.coin1 {
+  top: 15%;
+  left: 10%;
+  animation-delay: 0s;
+  animation-duration: 9s;
+}
+
+.coin2 {
+  top: 60%;
+  right: 12%;
+  animation-delay: 2s;
+  animation-duration: 7s;
+  width: 50px;
+  height: 50px;
+  font-size: 1.25rem;
+}
+
+.coin3 {
+  bottom: 18%;
+  left: 18%;
+  animation-delay: 4s;
+  animation-duration: 10s;
+  width: 45px;
+  height: 45px;
+  font-size: 1.1rem;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-25px) rotate(8deg);
+  }
+}

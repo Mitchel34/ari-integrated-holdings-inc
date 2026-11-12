@@ -17,8 +17,7 @@ type CalendlyWindow = Window & { Calendly?: CalendlyApi };
 
 const SCRIPT_ID = 'calendly-widget-script';
 const SCRIPT_SRC = 'https://assets.calendly.com/assets/external/widget.js';
-/** Calendly theme parameters matched to the site palette (navy ground, light text, gold primary). */
-const THEME_PARAMS = 'hide_gdpr_banner=1&background_color=0A1324&text_color=F4F7FB&primary_color=C29B4E';
+const THEME_PARAMS = 'hide_gdpr_banner=1&background_color=0A1324&text_color=e2e8f0&primary_color=E8C87A';
 
 function withTheme(url: string): string {
     return `${url}${url.includes('?') ? '&' : '?'}${THEME_PARAMS}`;

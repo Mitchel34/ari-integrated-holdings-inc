@@ -1,63 +1,25 @@
-import type { ElementType, ReactNode } from 'react';
-import { CardSpotlight } from './CardSpotlight';
+'use client';
+
 import styles from './Card.module.css';
 
-export type CardVariant = 'subtle' | 'glass' | 'elevated' | 'solid' | 'default';
-export type CardAccent = 'btc' | 'eth' | 'sol' | 'gold';
-
 interface CardProps {
-    children: ReactNode;
+    children: React.ReactNode;
     className?: string;
-    /** `subtle` (tier 1), `glass` (tier 2, default), `elevated` (tier 3), `solid` (opaque). */
-    variant?: CardVariant;
-    /** Adds hover lift + gold edge. Use only when the whole card is a link/button. */
-    interactive?: boolean;
-    /** 3px top rail in an asset/brand color. */
-    accent?: CardAccent;
-    padding?: 'none' | 'sm' | 'md';
-    /** Pointer-following gold spotlight on hover (default on). */
-    spotlight?: boolean;
-    as?: ElementType;
-    id?: string;
-    style?: React.CSSProperties;
-    role?: string;
-    'aria-label'?: string;
-    'aria-labelledby'?: string;
+    variant?: 'default' | 'glass';
 }
 
-const accentClass: Record<CardAccent, string> = {
-    btc: styles.accentBtc,
-    eth: styles.accentEth,
-    sol: styles.accentSol,
-    gold: styles.accentGold,
-};
+/** Track the pointer so the card's spotlight (see Card.module.css) follows it. */
+function trackPointer(event: React.PointerEvent<HTMLDivElement>) {
+    const card = event.currentTarget;
+    const rect = card.getBoundingClientRect();
+    card.style.setProperty('--spot-x', `${event.clientX - rect.left}px`);
+    card.style.setProperty('--spot-y', `${event.clientY - rect.top}px`);
+}
 
-export function Card({
-    children,
-    className = '',
-    variant = 'glass',
-    interactive = false,
-    accent,
-    padding = 'md',
-    spotlight = true,
-    as: Tag = 'div',
-    ...rest
-}: CardProps) {
-    const classes = [
-        styles.card,
-        styles[variant],
-        interactive ? styles.interactive : '',
-        accent ? accentClass[accent] : '',
-        padding === 'sm' ? styles.padSm : padding === 'none' ? styles.padNone : '',
-        className,
-    ]
-        .filter(Boolean)
-        .join(' ');
-
+export function Card({ children, className = '', variant = 'default' }: CardProps) {
     return (
-        <Tag className={classes} {...rest}>
-            {spotlight ? <CardSpotlight /> : null}
+        <div className={`${styles.card} ${styles[variant]} ${className}`} onPointerMove={trackPointer}>
             {children}
-        </Tag>
+        </div>
     );
 }

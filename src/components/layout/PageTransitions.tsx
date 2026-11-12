@@ -23,10 +23,10 @@ interface ViewTransitionDocument {
  * from wherever the visitor clicked, and the allocation ring morphs between pages
  * that both show it (see the `::view-transition-*` rules in globals.css).
  *
- * Internal link clicks are intercepted and replayed through `router.push`
- * inside `document.startViewTransition`. The browser snapshots the current
- * page, we resolve once React has committed the new route, and the new page is
- * revealed on top of the snapshot.
+ * How it works: internal link clicks are intercepted and replayed through
+ * `router.push` inside `document.startViewTransition`. The browser snapshots the
+ * current page, we resolve once React has committed the new route, and the new
+ * page is revealed on top of the snapshot.
  *
  * Browsers without the View Transitions API, and visitors who prefer reduced
  * motion, get ordinary navigation: the click is left untouched.

@@ -1,46 +1,48 @@
-import type { Metadata } from 'next';
-import { Suspense } from 'react';
-import Link from 'next/link';
-import { Logo } from '../../components/brand/Logo';
-import { Card } from '../../components/ui/Card';
-import { Container } from '../../components/ui/Container';
-import { LoginForm } from '../../components/auth/LoginForm';
-import styles from './page.module.css';
+"use client";
 
-export const metadata: Metadata = {
-    title: 'Investor Portal',
-    description: 'Sign in to the Ari Integrated Holdings investor portal to view treasury information and investor documents.',
-    robots: { index: false, follow: false },
-    alternates: { canonical: '/login' },
-};
+import { Suspense } from "react";
+import Image from "next/image";
+import { Container } from "../../components/ui/Container";
+import { LoginForm } from "../../components/auth/LoginForm";
+import styles from "./page.module.css";
+
+function LoginContent() {
+  return <LoginForm />;
+}
 
 export default function LoginPage() {
-    return (
-        <div className={styles.page}>
-            <Container className={styles.container}>
-                <Card variant="elevated" className={styles.card} as="section" aria-labelledby="login-title">
-                    <header className={styles.head}>
-                        <Logo size={56} wordmark={false} href={null} priority className={styles.logo} />
-                        <h1 id="login-title" className={styles.title}>
-                            Investor Portal
-                        </h1>
-                        <p className={styles.subtitle}>
-                            Sign in to view treasury information and investor documents.
-                        </p>
-                    </header>
+  return (
+    <div className={styles.loginPage}>
+      <Container className={styles.loginContainer}>
+        <div className={styles.loginCard}>
+          <div className={styles.loginHeader}>
+            <Image
+              src="/logo.jpeg"
+              alt="Ari Integrated Holdings Inc."
+              width={110}
+              height={110}
+              className={styles.loginLogo}
+              priority
+            />
+            <h1 className={styles.title}>Investor Portal</h1>
+            <p className={styles.subtitle}>
+              Secure access to your investment dashboard
+            </p>
+          </div>
 
-                    <Suspense fallback={<p className={styles.loading}>Loading sign-in…</p>}>
-                        <LoginForm />
-                    </Suspense>
-                </Card>
-
-                <p className={styles.access}>
-                    Need access?{' '}
-                    <Link href="/contact" className={styles.accessLink}>
-                        Contact us.
-                    </Link>
-                </p>
-            </Container>
+          <Suspense fallback={<div className={styles.loading}>Loading...</div>}>
+            <LoginContent />
+          </Suspense>
         </div>
-    );
+
+        <div className={styles.portalInfo}>
+          <h2>Need Access?</h2>
+          <p>
+            Portal access is provided to verified investors only. Contact the
+            Ari Integrated Holdings Inc. team for onboarding assistance.
+          </p>
+        </div>
+      </Container>
+    </div>
+  );
 }

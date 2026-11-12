@@ -1,17 +1,14 @@
 'use client';
 
-import { useState, type CSSProperties } from 'react';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { AssetChip } from '@/components/brand/AssetChip';
+import { useState } from 'react';
 import {
-    ALLOCATION,
     ASSET_KEYS,
+    TARGET_ASSETS,
     TARGET_WEIGHTS,
-    getAsset,
+    blendedIllustrativeCagrPct,
     type AssetKey,
     type AssetWeights,
-} from '@/lib/site';
+} from '@/lib/allocation';
 import styles from './BasketMixer.module.css';
 
 /** Move one weight and rebalance the other two proportionally so the total stays 100. */
@@ -47,17 +44,6 @@ function describeMix(weights: AssetWeights, largest: AssetKey): string {
     return 'ETH is above its 30% target, which takes weight away from the BTC anchor.';
 }
 
-/** Sum of absolute point differences from target, counted once (each point moved appears on both sides). */
-function driftFromTarget(weights: AssetWeights): number {
-    const total = ASSET_KEYS.reduce((sum, key) => sum + Math.abs(weights[key] - TARGET_WEIGHTS[key]), 0);
-    return Math.round(total / 2);
-}
-
-/**
- * Hypothetical basket mixer. Illustrates concentration only: how far a mix
- * drifts from the 50 / 30 / 20 target and how large its biggest position is.
- * No prices, holdings, or performance figures.
- */
 export function BasketMixer() {
     const [weights, setWeights] = useState<AssetWeights>(TARGET_WEIGHTS);
 
@@ -65,113 +51,82 @@ export function BasketMixer() {
         (top, key) => (weights[key] > weights[top] ? key : top),
         'btc',
     );
-    const largestSymbol = getAsset(largest).symbol;
-    const drift = driftFromTarget(weights);
+    // Floor rather than round so the target mix reads "~70%", matching the figure stated above.
+    const blended = Math.floor(blendedIllustrativeCagrPct(weights));
 
     return (
-        <Card variant="glass" as="section" spotlight={false} className={styles.mixer} aria-labelledby="basket-mixer-title">
+        <div className={styles.mixer}>
             <div className={styles.header}>
-                <h3 id="basket-mixer-title" className={styles.title}>Try a different mix</h3>
-                <p className={styles.hint}>Drag any slider. The other two rebalance so the total stays 100%.</p>
+                <h3 className={styles.title}>Try a different mix</h3>
+                <p className={styles.hint}>
+                    Drag any slider. The other two rebalance so the total stays 100%.
+                </p>
             </div>
 
             <div className={styles.sliders}>
-                {ALLOCATION.map((asset) => (
+                {TARGET_ASSETS.map((asset) => (
                     <div
                         key={asset.key}
                         className={styles.sliderRow}
-                        style={{ '--asset-color': `var(--${asset.key})` } as CSSProperties}
+                        style={{ '--asset-color': asset.color } as React.CSSProperties}
                     >
-                        <label htmlFor={`mix-${asset.key}`} className={styles.sliderLabel}>
-                            <AssetChip symbol={asset.symbol} />
-                            <span className="sr-only"> {asset.name} weight</span>
-                        </label>
+                        <label htmlFor={`mix-${asset.key}`}>{asset.symbol}</label>
                         <input
                             id={`mix-${asset.key}`}
-                            className={styles.slider}
                             type="range"
                             min={0}
                             max={100}
                             step={1}
                             value={weights[asset.key]}
                             onChange={(event) => {
-                                const value = Number(event.target.value);
-                                setWeights((current) => rebalance(current, asset.key, value));
+                                setWeights((current) => rebalance(current, asset.key, Number(event.target.value)));
                             }}
                         />
-                        <output htmlFor={`mix-${asset.key}`} className={`${styles.sliderValue} mono`}>
-                            {weights[asset.key]}%
-                        </output>
+                        <output htmlFor={`mix-${asset.key}`}>{weights[asset.key]}%</output>
                     </div>
                 ))}
             </div>
 
             <div className={styles.bars}>
                 <div className={styles.barRow}>
-                    <span className={styles.barLabel}>This mix</span>
-                    <div
-                        className={styles.bar}
-                        role="img"
-                        aria-label={`This mix: ${ALLOCATION.map((asset) => `${asset.symbol} ${weights[asset.key]} percent`).join(', ')}`}
-                    >
-                        {ALLOCATION.map((asset) => (
-                            <span
-                                key={asset.key}
-                                className={styles.barSegment}
-                                style={{ width: `${weights[asset.key]}%`, background: `var(--${asset.key})` }}
-                            />
+                    <span>This mix</span>
+                    <div className={styles.bar}>
+                        {TARGET_ASSETS.map((asset) => (
+                            <i key={asset.key} style={{ width: `${weights[asset.key]}%`, background: asset.color }} />
                         ))}
                     </div>
                 </div>
                 <div className={styles.barRow}>
-                    <span className={styles.barLabel}>Target</span>
-                    <div
-                        className={styles.bar}
-                        role="img"
-                        aria-label={`Target: ${ALLOCATION.map((asset) => `${asset.symbol} ${asset.weight} percent`).join(', ')}`}
-                    >
-                        {ALLOCATION.map((asset) => (
-                            <span
-                                key={asset.key}
-                                className={styles.barSegment}
-                                style={{ width: `${asset.weight}%`, background: `var(--${asset.key})` }}
-                            />
+                    <span>Target</span>
+                    <div className={styles.bar}>
+                        {TARGET_ASSETS.map((asset) => (
+                            <i key={asset.key} style={{ width: `${asset.targetPct}%`, background: asset.color }} />
                         ))}
                     </div>
                 </div>
             </div>
 
-            <dl className={styles.stats}>
+            <div className={styles.stats}>
                 <div className={styles.stat}>
-                    <dt className={styles.statLabel}>Largest single position</dt>
-                    <dd className={`${styles.statValue} mono`}>
-                        {weights[largest]}% <span className={styles.statUnit}>{largestSymbol}</span>
-                    </dd>
+                    <p className={styles.statValue}>~{blended}%</p>
+                    <p className={styles.statLabel}>Illustrative blended CAGR, Apr 2020 to Mar 2025</p>
                 </div>
                 <div className={styles.stat}>
-                    <dt className={styles.statLabel}>Drift from target</dt>
-                    <dd className={`${styles.statValue} mono`}>
-                        {drift} <span className={styles.statUnit}>pts</span>
-                    </dd>
+                    <p className={styles.statValue}>{weights[largest]}%</p>
+                    <p className={styles.statLabel}>Largest single position ({largest.toUpperCase()})</p>
                 </div>
-            </dl>
+            </div>
 
             <p className={styles.message} aria-live="polite">{describeMix(weights, largest)}</p>
 
-            <Button
-                variant="secondary"
-                size="sm"
-                className={styles.reset}
-                onClick={() => setWeights(TARGET_WEIGHTS)}
-                disabled={drift === 0}
-            >
+            <button type="button" className={styles.reset} onClick={() => setWeights(TARGET_WEIGHTS)}>
                 Reset to 50 / 30 / 20
-            </Button>
+            </button>
 
             <p className={styles.fine}>
-                Hypothetical mixes for illustration of concentration only. The target mix is the thesis.
-                Not investment advice.
+                Weighted average of the approximate figures above. Hypothetical and for illustrative context
+                only; not financial advice. Past performance is not indicative of future results.
             </p>
-        </Card>
+        </div>
     );
 }

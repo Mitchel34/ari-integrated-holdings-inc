@@ -1,111 +1,75 @@
 'use client';
 
-import { useEffect, useState, useSyncExternalStore } from 'react';
-import { Activity, ArrowRight, FlaskConical, Search, Users } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
-import { Card } from '@/components/ui/Card';
+import { useEffect, useState } from 'react';
+import { ArrowRight } from 'lucide-react';
 import styles from './HarmonyLoop.module.css';
 
 interface LoopStep {
-    id: string;
     title: string;
+    source: string;
     copy: string;
-    icon: LucideIcon;
 }
 
-/**
- * The four-node loop: research → risk → controlled evaluation → human decision.
- * The first three steps keep the copy from the "What Harmony does" cards they
- * replaced; the fourth is the boundary that closes the loop.
- */
+// Each step keeps the copy from the card it replaced.
 const STEPS: LoopStep[] = [
     {
-        id: 'research',
-        title: 'Treasury research',
-        copy: 'Market structure, liquidity, and allocation analysis for the BTC, ETH, and SOL exposure held in the treasury framework.',
-        icon: Search,
+        title: 'A small allocation trades',
+        source: 'Limited Scope & Risk Controls',
+        copy: 'A small portion of assets is allocated to trading with strict risk limits to protect the core BTC, ETH, and SOL treasury holdings.',
     },
     {
-        id: 'risk',
-        title: 'Risk analysis',
-        copy: 'Volatility, correlation, and drawdown monitoring across the target allocation, so the board and executive team see risk before it compounds.',
-        icon: Activity,
+        title: 'Modest, steady revenue',
+        source: 'Proprietary Platform',
+        copy: 'An internal trading application employing algorithmic and AI-driven strategies. It operates as an internal-only platform today, with a customer-facing product roadmap under active evaluation.',
     },
     {
-        id: 'evaluation',
-        title: 'Controlled strategy evaluation',
-        copy: 'Models and strategies are evaluated in a bounded, internal environment. Nothing leaves that environment without human review.',
-        icon: FlaskConical,
+        title: 'Bills paid without selling',
+        source: 'Purpose',
+        copy: 'Its primary role is to generate modest, steady revenue to cover operating expenses and reduce the need to liquidate core treasury assets.',
     },
     {
-        id: 'decision',
-        title: 'Human decision',
-        copy: 'Harmony produces analysis; people make the calls. Allocation, risk, and disclosure decisions rest with the board and executive team, and the loop runs inside defined governance and risk boundaries.',
-        icon: Users,
+        title: 'Models inform the treasury',
+        source: 'AI Sandbox',
+        copy: 'Harmony serves as a testing ground for analytics and models that inform broader treasury allocation decisions.',
     },
 ];
 
-const AUTO_ADVANCE_MS = 3200;
 const NODE_CLASSES = [styles.node1, styles.node2, styles.node3, styles.node4];
 const ARROW_CLASSES = [styles.arrow1, styles.arrow2, styles.arrow3, styles.arrow4];
-
-const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
-
-function subscribeReducedMotion(onChange: () => void) {
-    const query = window.matchMedia(REDUCED_MOTION_QUERY);
-    query.addEventListener('change', onChange);
-    return () => query.removeEventListener('change', onChange);
-}
-
-function getReducedMotion() {
-    return window.matchMedia(REDUCED_MOTION_QUERY).matches;
-}
-
-function getServerReducedMotion() {
-    return false;
-}
 
 export function HarmonyLoop() {
     const [active, setActive] = useState(0);
     const [interacted, setInteracted] = useState(false);
-    const reducedMotion = useSyncExternalStore(subscribeReducedMotion, getReducedMotion, getServerReducedMotion);
-    const autoAdvancing = !interacted && !reducedMotion;
 
     useEffect(() => {
-        if (!autoAdvancing) return;
+        if (interacted) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         const id = window.setInterval(() => {
             setActive((index) => (index + 1) % STEPS.length);
-        }, AUTO_ADVANCE_MS);
+        }, 3200);
         return () => window.clearInterval(id);
-    }, [autoAdvancing]);
+    }, [interacted]);
 
     const step = STEPS[active];
 
     return (
         <div className={styles.wrapper}>
-            <div className={styles.loop} role="group" aria-label="The Harmony loop, four steps in sequence">
-                {STEPS.map((item, index) => {
-                    const Icon = item.icon;
-                    const isActive = index === active;
-                    return (
-                        <button
-                            key={item.id}
-                            type="button"
-                            className={`${styles.node} ${NODE_CLASSES[index]} ${isActive ? styles.nodeActive : ''}`.trim()}
-                            aria-pressed={isActive}
-                            onClick={() => {
-                                setInteracted(true);
-                                setActive(index);
-                            }}
-                        >
-                            <span className={styles.nodeHead}>
-                                <Icon className={styles.nodeIcon} size={16} strokeWidth={1.75} aria-hidden="true" />
-                                <span className={`${styles.stepLabel} mono`}>Step {index + 1}</span>
-                            </span>
-                            <span className={styles.stepTitle}>{item.title}</span>
-                        </button>
-                    );
-                })}
+            <div className={styles.loop}>
+                {STEPS.map((item, index) => (
+                    <button
+                        key={item.title}
+                        type="button"
+                        className={`${styles.node} ${NODE_CLASSES[index]} ${index === active ? styles.nodeActive : ''}`.trim()}
+                        aria-pressed={index === active}
+                        onClick={() => {
+                            setInteracted(true);
+                            setActive(index);
+                        }}
+                    >
+                        <span className={styles.stepLabel}>Step {index + 1}</span>
+                        <span className={styles.stepTitle}>{item.title}</span>
+                    </button>
+                ))}
                 {ARROW_CLASSES.map((arrowClass, index) => (
                     <span
                         key={arrowClass}
@@ -117,22 +81,14 @@ export function HarmonyLoop() {
                 ))}
             </div>
 
-            <Card variant="elevated" className={styles.detail}>
-                <div className={styles.detailBody} aria-live={interacted ? 'polite' : 'off'}>
-                    <p className={`${styles.detailStep} mono`}>
-                        Step {active + 1} of {STEPS.length}
-                    </p>
-                    <h3 className={styles.detailTitle}>{step.title}</h3>
-                    <p className={styles.detailCopy}>{step.copy}</p>
-                </div>
+            <div className={styles.detail} aria-live={interacted ? 'polite' : 'off'}>
+                <p className={styles.detailStep}>Step {active + 1} of {STEPS.length}</p>
+                <h3 className={styles.detailTitle}>{step.source}</h3>
+                <p className={styles.detailCopy}>{step.copy}</p>
                 <p className={styles.detailHint}>
-                    {interacted
-                        ? 'Select another step to continue around the loop.'
-                        : reducedMotion
-                          ? 'Select a step to read it.'
-                          : 'Select a step to pause the loop.'}
+                    {interacted ? 'Select another step to continue around the loop.' : 'Select a step to pause the loop.'}
                 </p>
-            </Card>
+            </div>
         </div>
     );
 }

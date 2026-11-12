@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { ArrowRight, Video } from 'lucide-react';
+import { MEETING_TYPES } from './MeetingTypeSelector';
 import { ZoomMeetingModal } from './ZoomMeetingModal';
-import { ContactEmail } from '@/components/brand/ContactEmail';
-import { CONTACT } from '@/lib/site';
-import { MEETING_TOPICS, ZOOM_MEETING_DURATION, zoomMeetingUrlForTopic } from '@/lib/scheduling';
+import { ContactEmail } from '@/components/ui/ContactEmail';
+import { CONTACT_EMAIL } from '@/lib/contact';
+import { ZOOM_MEETING_DURATION, zoomMeetingUrlForTopic } from '@/lib/scheduling';
 import styles from './ZoomMeetingScheduler.module.css';
 
 /**
@@ -16,29 +17,29 @@ import styles from './ZoomMeetingScheduler.module.css';
 export function ZoomMeetingScheduler() {
     const [open, setOpen] = useState(false);
     // Kept after closing so the modal's title does not change while it closes.
-    const [topicId, setTopicId] = useState(MEETING_TOPICS[0].id);
-    const topic = MEETING_TOPICS.find((entry) => entry.id === topicId) ?? MEETING_TOPICS[0];
+    const [topicId, setTopicId] = useState(MEETING_TYPES[0].id);
+    const topic = MEETING_TYPES.find((type) => type.id === topicId) ?? MEETING_TYPES[0];
 
     return (
         <div className={styles.wrapper}>
             <ul className={styles.topics}>
-                {MEETING_TOPICS.map((entry) => (
-                    <li key={entry.id} className={styles.item}>
+                {MEETING_TYPES.map((type) => (
+                    <li key={type.id}>
                         <button
                             type="button"
-                            className={`${styles.topic} glass-1`}
+                            className={styles.topic}
                             aria-haspopup="dialog"
                             onClick={() => {
-                                setTopicId(entry.id);
+                                setTopicId(type.id);
                                 setOpen(true);
                             }}
                         >
-                            <span className={styles.topicLabel}>{entry.label}</span>
-                            <span className={styles.topicDesc}>{entry.description}</span>
+                            <span className={styles.topicLabel}>{type.label}</span>
+                            <span className={styles.topicDesc}>{type.description}</span>
                             <span className={styles.topicAction}>
-                                <Video size={16} strokeWidth={1.75} aria-hidden="true" />
+                                <Video aria-hidden="true" />
                                 Schedule on Zoom
-                                <ArrowRight size={16} strokeWidth={1.75} aria-hidden="true" className={styles.arrow} />
+                                <ArrowRight aria-hidden="true" className={styles.arrow} />
                             </span>
                         </button>
                     </li>
@@ -47,7 +48,7 @@ export function ZoomMeetingScheduler() {
 
             <p className={styles.note}>
                 Each meeting is {ZOOM_MEETING_DURATION} on Zoom. Questions about scheduling? Email{' '}
-                <a href={CONTACT.mailto} className={`${styles.email} mono`}>
+                <a href={`mailto:${CONTACT_EMAIL}`} className={styles.email}>
                     <ContactEmail />
                 </a>
                 .

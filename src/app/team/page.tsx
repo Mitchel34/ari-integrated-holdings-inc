@@ -1,38 +1,18 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import { ArrowRight, Landmark, Mail, Scale, Timer } from 'lucide-react';
-import { PageHero } from '../../components/layout/PageHero';
-import { Section } from '../../components/layout/Section';
-import { Button } from '../../components/ui/Button';
+import { Container } from '../../components/ui/Container';
 import { Card } from '../../components/ui/Card';
-import { SectionHeader } from '../../components/ui/SectionHeader';
-import { ContactEmail } from '../../components/brand/ContactEmail';
-import { PRIMARY_CTA } from '../../lib/scheduling';
-import { CONTACT, SITE, getSiteUrl } from '../../lib/site';
 import styles from './page.module.css';
-
-export const metadata: Metadata = {
-    title: 'Leadership',
-    description:
-        'The leadership team of Ari Integrated Holdings Inc.: Curtis Carson (Chief Executive Officer & Chairman), Judith Carson (Chief Marketing Officer & Board Member), and Mitchel Carson (Chief Technology Officer & Director).',
-    alternates: { canonical: '/team' },
-};
 
 interface TeamMember {
     name: string;
-    initials: string;
     role: string;
-    /** Three facts drawn strictly from the bio, shown before the full text. */
-    facts: [string, string, string];
+    /** Three facts drawn from the bio, shown before the full text. */
+    facts: string[];
     bio: string;
-    /** Show the correspondence chip for this person. */
-    correspondence?: boolean;
 }
 
 const TEAM: TeamMember[] = [
     {
         name: 'Curtis Carson',
-        initials: 'CC',
         role: 'Chief Executive Officer & Chairman',
         facts: [
             '40+ years of corporate and entrepreneurial experience',
@@ -43,7 +23,6 @@ const TEAM: TeamMember[] = [
     },
     {
         name: 'Judith Carson',
-        initials: 'JC',
         role: 'Chief Marketing Officer',
         facts: [
             '24 years leading a loss control and risk consulting firm',
@@ -54,203 +33,56 @@ const TEAM: TeamMember[] = [
     },
     {
         name: 'Mitchel Carson',
-        initials: 'MC',
-        role: 'Chief Technology Officer & Director',
+        role: 'Chief Technology Officer',
         facts: [
-            "Leads Ari's technology and the Harmony platform",
-            'Data and analytics behind treasury monitoring',
-            'Director of Ari Integrated Holdings',
+            'Leads AI development',
+            'Builds the Harmony Trading App',
+            'Algorithmic trading systems and data analytics',
         ],
-        bio: 'Leads Ari’s technology: the Harmony research and risk-analysis platform, the data and analytics behind treasury monitoring, and the company’s investor systems, including this website and the investor portal. Serves as a director of Ari Integrated Holdings.',
-        correspondence: true,
+        bio: 'Leads AI development and the Harmony Trading App. Expert in algorithmic trading systems, data analytics, and software architecture.',
     },
 ];
-
-interface BoardMember {
-    name: string;
-    role: 'Chairman' | 'Board Member' | 'Director';
-}
-
-const BOARD: BoardMember[] = [
-    { name: 'Curtis Carson', role: 'Chairman' },
-    { name: 'Judith Carson', role: 'Board Member' },
-    { name: 'Mitchel Carson', role: 'Director' },
-];
-
-const GOVERNANCE = [
-    {
-        id: 'board',
-        icon: Landmark,
-        title: 'Board of directors',
-        body: (
-            <ul className={styles.boardList}>
-                {BOARD.map((member) => (
-                    <li key={member.name}>
-                        <span className={styles.boardName}>{member.name}</span>
-                        <span className={styles.boardRole}>{member.role}</span>
-                    </li>
-                ))}
-            </ul>
-        ),
-    },
-    {
-        id: 'horizon',
-        icon: Timer,
-        title: 'Ten-year horizon',
-        body: (
-            <p>
-                The treasury is managed against a ten-year investment horizon: balance sheet strength, disciplined
-                capital deployment, and compounding intrinsic value take precedence over short-term results.
-            </p>
-        ),
-    },
-    {
-        id: 'decisions',
-        icon: Scale,
-        title: 'Human decisions',
-        body: (
-            <p>
-                AI-assisted analysis informs the work, but final allocation, risk, and disclosure decisions rest with
-                the board and executive team. Decades of loss-control and risk-management practice set the tone.
-            </p>
-        ),
-    },
-];
-
-/** Schema.org Organization with executives (employee) and board (member). */
-const ORGANIZATION_JSON_LD = {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: SITE.legalName,
-    url: getSiteUrl(),
-    employee: TEAM.map((member) => ({
-        '@type': 'Person',
-        name: member.name,
-        jobTitle: member.role,
-    })),
-    member: BOARD.map((member) => ({
-        '@type': 'Person',
-        name: member.name,
-        jobTitle: member.role,
-    })),
-};
 
 export default function TeamPage() {
     return (
-        <>
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_JSON_LD) }}
-            />
+        <div className={styles.page}>
+            <section className={styles.heroSection}>
+                <Container>
+                    <div className={styles.sectionHeader}>
+                        <h1>Leadership Team</h1>
+                        <p>Experienced Leadership with Crypto and AI Expertise</p>
+                    </div>
+                </Container>
+            </section>
 
-            <PageHero
-                eyebrow="Team"
-                title="Leadership"
-                lead="Risk-management veterans and a technology lead running a disciplined digital-asset treasury."
-            />
-
-            <Section flush aria-labelledby="executives-title">
-                <SectionHeader
-                    id="executives-title"
-                    eyebrow="Executive team"
-                    title="Focused leadership, direct accountability."
-                    lead={`${SITE.shortName} is led by its co-founders and its CTO. Decisions are made close to the numbers.`}
-                    compact
-                />
-                <ul className={styles.grid}>
+            <Container className={styles.gridSection}>
+                <div className={styles.grid}>
                     {TEAM.map((member) => (
-                        <li key={member.name} className={styles.gridItem}>
-                            <Card as="article" variant="glass" className={styles.member} aria-labelledby={`member-${member.initials}`}>
+                        <Card key={member.name} variant="glass" className={styles.memberShell}>
+                            <article className={styles.memberCard}>
                                 <div className={styles.identity}>
-                                    <div className={styles.monogram} aria-hidden="true">
-                                        {member.initials}
+                                    <div className={styles.avatar} aria-hidden="true">
+                                        {member.name.charAt(0)}
                                     </div>
-                                    <div className={styles.identityText}>
-                                        <h3 id={`member-${member.initials}`} className={styles.name}>
-                                            {member.name}
-                                        </h3>
+                                    <div>
+                                        <h2 className={styles.name}>{member.name}</h2>
                                         <p className={styles.role}>{member.role}</p>
                                     </div>
                                 </div>
-                                <ul className={styles.facts} aria-label={`Key facts about ${member.name}`}>
+                                <ul className={styles.facts}>
                                     {member.facts.map((fact) => (
                                         <li key={fact}>{fact}</li>
                                     ))}
                                 </ul>
-                                <div className={styles.tail}>
-                                    <details className={styles.bio}>
-                                        <summary>Full bio</summary>
-                                        <p>{member.bio}</p>
-                                    </details>
-                                    {member.correspondence ? (
-                                        <div className={styles.correspondence}>
-                                            <p className={styles.correspondenceLabel}>Correspondence</p>
-                                            <a href={CONTACT.mailto} className={styles.mailChip}>
-                                                <Mail aria-hidden="true" />
-                                                <span>
-                                                    <ContactEmail />
-                                                </span>
-                                            </a>
-                                            <p className={styles.correspondenceNote}>
-                                                Expect a reply {CONTACT.responseWindow}.
-                                            </p>
-                                        </div>
-                                    ) : null}
-                                </div>
-                            </Card>
-                        </li>
-                    ))}
-                </ul>
-            </Section>
-
-            <Section tone="alt" hairline aria-labelledby="governance-title">
-                <SectionHeader
-                    id="governance-title"
-                    eyebrow="Governance"
-                    title="How decisions are made"
-                    lead="A small board, a long horizon, and people accountable for every allocation."
-                />
-                <div className={styles.governanceGrid}>
-                    {GOVERNANCE.map(({ id, icon: Icon, title, body }) => (
-                        <Card key={id} as="article" variant="subtle" padding="sm" className={styles.governanceItem}>
-                            <span className={styles.iconTile} aria-hidden="true">
-                                <Icon size={20} strokeWidth={1.75} />
-                            </span>
-                            <h3 className={styles.governanceTitle}>{title}</h3>
-                            <div className={styles.governanceBody}>{body}</div>
+                                <details className={styles.bio}>
+                                    <summary>Full bio</summary>
+                                    <p>{member.bio}</p>
+                                </details>
+                            </article>
                         </Card>
                     ))}
                 </div>
-            </Section>
-
-            <Section compact aria-labelledby="cta-title">
-                <Card variant="glass" className={styles.cta}>
-                    <div className={styles.ctaText}>
-                        <p className="eyebrow">Meet the team</p>
-                        <h2 id="cta-title" className={styles.ctaTitle}>
-                            Talk with an executive
-                        </h2>
-                        <p className={styles.ctaLead}>
-                            Investor, partnership, press, and technical questions are welcome. Reach us through the
-                            contact page or write to the CTO directly.
-                        </p>
-                    </div>
-                    <div className={styles.ctaActions}>
-                        <Button asChild>
-                            <Link href={PRIMARY_CTA.href}>
-                                {PRIMARY_CTA.label}
-                                <ArrowRight aria-hidden="true" />
-                            </Link>
-                        </Button>
-                        <Button asChild variant="secondary">
-                            <a href={CONTACT.mailto}>
-                                <Mail aria-hidden="true" />
-                                Email the CTO
-                            </a>
-                        </Button>
-                    </div>
-                </Card>
-            </Section>
-        </>
+            </Container>
+        </div>
     );
 }

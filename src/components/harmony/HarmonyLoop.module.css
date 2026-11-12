@@ -1,21 +1,17 @@
-/* ── Layout: loop on the left, detail panel on the right ──────────────── */
-
 .wrapper {
     display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
     gap: clamp(1.5rem, 4vw, 3rem);
     align-items: center;
     margin-top: clamp(2rem, 4vw, 3rem);
 }
 
-/* ── The 2 × 2 loop ───────────────────────────────────────────────────── */
-
 .loop {
     --gap-x: 64px;
-    --gap-y: 56px;
+    --gap-y: 52px;
     position: relative;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr 1fr;
     grid-auto-rows: 1fr;
     gap: var(--gap-y) var(--gap-x);
 }
@@ -23,112 +19,75 @@
 .node {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 0.55rem;
+    gap: 0.3rem;
     min-width: 0;
-    min-height: 108px;
+    min-height: 96px;
     padding: 1rem 1.1rem;
     text-align: left;
-    border-radius: var(--r-md);
-    border: 1px solid var(--glass-1-border);
-    background: var(--glass-1-bg);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-    color: var(--text-1);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.05) 100%);
+    color: var(--color-text-main);
     font-family: var(--font-sans);
     cursor: pointer;
-    transition:
-        border-color var(--dur-base) var(--ease-out),
-        background var(--dur-base) var(--ease-out),
-        box-shadow var(--dur-base) var(--ease-out),
-        transform var(--dur-base) var(--ease-out);
+    transition: border-color 0.26s ease-in-out, background-color 0.26s ease-in-out, transform 0.26s ease-in-out;
 }
 
 .node:hover {
-    border-color: var(--gold-a30);
-    background: var(--gold-a08);
+    border-color: rgba(226, 192, 68, 0.45);
     transform: translateY(-2px);
 }
 
-.nodeActive,
-.nodeActive:hover {
-    border-color: var(--gold-500);
-    background: var(--gold-a12);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.1),
-        0 0 0 1px var(--gold-a20),
-        var(--sh-glow-gold);
+.nodeActive {
+    border-color: var(--color-accent-gold-bright);
+    background: rgba(226, 192, 68, 0.14);
 }
 
-/* Clockwise placement: 1 top-left, 2 top-right, 3 bottom-right, 4 bottom-left. */
 .node1 { grid-area: 1 / 1; }
 .node2 { grid-area: 1 / 2; }
 .node3 { grid-area: 2 / 2; }
 .node4 { grid-area: 2 / 1; }
 
-.nodeHead {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.nodeIcon {
-    flex-shrink: 0;
-    color: var(--text-3);
-    transition: color var(--dur-base) var(--ease-out);
-}
-
 .stepLabel {
-    font-size: var(--fs-caption);
-    font-weight: 600;
+    font-size: 0.72rem;
+    font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--text-3);
-    transition: color var(--dur-base) var(--ease-out);
+    color: rgba(214, 222, 233, 0.7);
+    transition: color 0.26s ease-in-out;
 }
 
-.nodeActive .stepLabel,
-.nodeActive .nodeIcon {
-    color: var(--gold-300);
+.nodeActive .stepLabel {
+    color: var(--color-accent-gold-bright);
 }
 
 .stepTitle {
-    font-family: var(--font-display);
-    font-size: 1.0625rem;
+    font-size: 1.05rem;
     font-weight: 600;
     line-height: 1.3;
-    letter-spacing: -0.01em;
 }
-
-/* ── Arrows between nodes ─────────────────────────────────────────────── */
 
 .arrow {
     position: absolute;
     display: grid;
     place-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: var(--r-full);
-    border: 1px solid var(--line-1);
-    background: var(--bg-1);
-    color: var(--text-3);
+    width: 26px;
+    height: 26px;
+    color: rgba(214, 222, 233, 0.55);
     transform: translate(-50%, -50%);
-    pointer-events: none;
-    transition:
-        color var(--dur-base) var(--ease-out),
-        border-color var(--dur-base) var(--ease-out);
+    transition: color 0.26s ease-in-out;
 }
 
 .arrow svg {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
 }
 
 .arrowActive {
-    border-color: var(--gold-a45);
-    color: var(--gold-300);
+    color: var(--color-accent-gold-bright);
 }
 
-/* 1 → 2 across the top, 2 → 3 down the right, 3 → 4 across the bottom, 4 → 1 up the left. */
+/* Clockwise: 1 → 2 across the top, 2 → 3 down the right, 3 → 4 across the bottom, 4 → 1 up the left. */
 .arrow1 {
     left: 50%;
     top: calc((100% - var(--gap-y)) / 4);
@@ -161,91 +120,71 @@
     transform: rotate(270deg);
 }
 
-/* ── Detail panel ─────────────────────────────────────────────────────── */
-
 .detail {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    min-height: 17rem;
-}
-
-.detailBody {
-    display: flex;
-    flex-direction: column;
     gap: 0.6rem;
+    min-height: 15rem;
+    padding: clamp(1.2rem, 2.5vw, 1.75rem);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.06) 100%);
 }
 
 .detailStep {
     margin: 0;
-    font-size: var(--fs-caption);
-    font-weight: 600;
+    font-size: 0.75rem;
+    font-weight: 700;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--gold-500);
+    color: var(--color-accent-gold-bright);
 }
 
 .detailTitle {
-    font-size: var(--fs-h3);
-    color: var(--text-1);
+    font-size: 1.3rem;
+    color: var(--color-text-main);
 }
 
 .detailCopy {
     margin: 0;
-    color: var(--text-2);
-    line-height: 1.7;
+    color: var(--color-text-muted);
+    line-height: 1.72;
 }
 
 .detailHint {
     margin: auto 0 0;
-    padding-top: 0.85rem;
-    border-top: 1px solid var(--line-1);
-    font-size: var(--fs-small);
-    color: var(--text-3);
+    padding-top: 0.5rem;
+    font-size: 0.82rem;
+    color: rgba(214, 222, 233, 0.66);
 }
-
-/* ── Breakpoints ──────────────────────────────────────────────────────── */
 
 @media (max-width: 899px) {
     .wrapper {
         grid-template-columns: minmax(0, 1fr);
-        align-items: stretch;
     }
 
     .detail {
-        min-height: 14rem;
+        min-height: 13rem;
     }
 }
 
-@media (max-width: 479px) {
+@media (max-width: 480px) {
     .loop {
-        --gap-x: 40px;
-        --gap-y: 44px;
+        --gap-x: 38px;
+        --gap-y: 42px;
     }
 
     .node {
-        min-height: 96px;
-        padding: 0.85rem 0.9rem;
+        padding: 0.8rem 0.85rem;
     }
 
     .stepTitle {
-        font-size: 0.9375rem;
-    }
-
-    .arrow {
-        width: 28px;
-        height: 28px;
-    }
-
-    .arrow svg {
-        width: 16px;
-        height: 16px;
+        font-size: 0.95rem;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .node,
-    .nodeIcon,
     .stepLabel,
     .arrow {
         transition: none;

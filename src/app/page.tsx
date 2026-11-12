@@ -1,80 +1,96 @@
-import type { Metadata } from 'next';
 import Link from 'next/link';
-import { SITE, TREASURY_FRAMEWORK } from '@/lib/site';
-import { getCompanyUpdates } from '@/lib/investor/updates';
-import { Section } from '@/components/layout/Section';
-import { SectionHeader } from '@/components/ui/SectionHeader';
-import { Button } from '@/components/ui/Button';
-import { HomeHero } from '@/components/home/HomeHero';
-import { HoldingsGrid } from '@/components/home/HoldingsGrid';
-import { PillarsGrid } from '@/components/home/PillarsGrid';
-import { EnginesSplit } from '@/components/home/EnginesSplit';
-import { LatestUpdates } from '@/components/home/LatestUpdates';
-import { ClosingCta } from '@/components/home/ClosingCta';
+import Image from 'next/image';
+import { Landmark, ScanEye, TrendingUp } from 'lucide-react';
+import { Container } from '../components/ui/Container';
+import { Button } from '../components/ui/Button';
+import { Card } from '../components/ui/Card';
+import { AllocationRing } from '../components/allocation/AllocationRing';
 import styles from './page.module.css';
 
-export const metadata: Metadata = {
-    title: { absolute: `${SITE.name} — ${SITE.tagline}` },
-    description: SITE.description,
-    alternates: { canonical: '/' },
-};
+export default function Home() {
+  return (
+    <>
+      <section className={styles.hero}>
+        <Container>
+          <div className={styles.heroGrid}>
+            <div className={styles.heroCopy}>
+              <Image
+                src="/logo.jpeg"
+                alt="Ari Integrated Holdings Inc."
+                width={220}
+                height={220}
+                className={styles.heroLogo}
+                priority
+              />
+              <p className={styles.heroEyebrow}>Leadership &amp; Strength</p>
+              <h1>Building the Strategic Reserve of the Digital Age</h1>
+              <p className={styles.heroLead}>
+                Ari Integrated Holdings Inc. follows a disciplined long-term treasury strategy centered on
+                BTC, ETH, and SOL with a target allocation of 50% / 30% / 20%.
+              </p>
+              <div className={styles.heroActions}>
+                <Button asChild size="lg">
+                  <Link href="/thesis">Read Our Thesis</Link>
+                </Button>
+                <Button asChild variant="outline" size="lg">
+                  <Link href="/contact">Contact Us</Link>
+                </Button>
+              </div>
+            </div>
 
-export default function HomePage() {
-    const latestUpdates = getCompanyUpdates().slice(0, 3);
+            <div className={styles.heroRing}>
+              <h2 className={styles.srOnly}>Allocation Framework</h2>
+              <AllocationRing
+                layout="stacked"
+                autoCycle
+                caption="Designed around volatility hierarchy, correlation structure, and asymmetric payoffs."
+              />
+            </div>
+          </div>
+        </Container>
+      </section>
 
-    return (
-        <>
-            <HomeHero />
-
-            <Section id="framework" aria-labelledby="framework-title">
-                <SectionHeader
-                    id="framework-title"
-                    eyebrow="Treasury framework"
-                    title={TREASURY_FRAMEWORK.title}
-                    lead={TREASURY_FRAMEWORK.summary}
-                />
-                <HoldingsGrid />
-            </Section>
-
-            <Section id="pillars" tone="alt" hairline aria-labelledby="pillars-title">
-                <SectionHeader
-                    id="pillars-title"
-                    eyebrow="Strategic pillars"
-                    title="How we operate"
-                    lead="The business model rests on three tenets that govern every allocation decision."
-                />
-                <PillarsGrid />
-            </Section>
-
-            <Section id="engines" aria-labelledby="engines-title">
-                <SectionHeader
-                    id="engines-title"
-                    eyebrow="Treasury and technology"
-                    title="A reserve, and the platform behind it"
-                    lead="A long-horizon treasury, supported by an internal research and risk-analysis platform that informs human decisions."
-                />
-                <EnginesSplit />
-            </Section>
-
-            <Section id="updates" tone="alt" aria-labelledby="updates-title">
-                <SectionHeader
-                    id="updates-title"
-                    eyebrow="Company updates"
-                    title="Latest updates"
-                    lead="Company, governance, and investor-relations announcements as they are published."
-                    aside={
-                        <Button asChild variant="outline">
-                            <Link href="/updates">All updates</Link>
-                        </Button>
-                    }
-                />
-                <LatestUpdates items={latestUpdates} />
-            </Section>
-
-            <Section id="contact-cta" compact>
-                <ClosingCta />
-                <p className={styles.risk}>Digital assets remain volatile; interim drawdowns can be substantial.</p>
-            </Section>
-        </>
-    );
+      <section className={styles.section}>
+        <Container>
+          <div className={styles.sectionHeader}>
+            <h2>Strategic Pillars</h2>
+            <p>Our business model rests on three core tenets.</p>
+          </div>
+          <div className={styles.grid}>
+            <Card variant="glass">
+              <div className={styles.cardIcon}>
+                <Landmark aria-hidden="true" />
+              </div>
+              <h3 className={styles.cardTitle}>Disciplined Treasury</h3>
+              <p className={styles.cardText}>
+                A long-duration balance-sheet approach with explicit BTC/ETH/SOL target weights and
+                ongoing risk monitoring rather than short-term trading.
+              </p>
+            </Card>
+            <Card variant="glass">
+              <div className={styles.cardIcon}>
+                <ScanEye aria-hidden="true" />
+              </div>
+              <h3 className={styles.cardTitle}>AI-Assisted Oversight</h3>
+              <p className={styles.cardText}>
+                AI supports scenario analysis, volatility mapping, and allocation discipline while
+                human governance remains responsible for final decisions.
+              </p>
+            </Card>
+            <Card variant="glass">
+              <div className={styles.cardIcon}>
+                <TrendingUp aria-hidden="true" />
+              </div>
+              <h3 className={styles.cardTitle}>Asymmetric Exposure</h3>
+              <p className={styles.cardText}>
+                The mix seeks strong upside capture across cycles while avoiding concentration into
+                a single high-beta crypto position.
+              </p>
+            </Card>
+          </div>
+          <p className={styles.sectionNote}>Digital assets remain volatile; interim drawdowns can be substantial.</p>
+        </Container>
+      </section>
+    </>
+  );
 }

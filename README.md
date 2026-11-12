@@ -1,33 +1,14 @@
-# Ari Integrated Holdings — Corporate Website & Investor Portal
+# Ari Integrated Holdings Frontend
 
-Next.js 16 (App Router) site for Ari Integrated Holdings Inc.: public corporate pages, investor relations and company updates, an email-alert list, and password-protected investor and executive dashboards.
+Next.js 16 frontend for Ari Integrated Holdings investor relations, executive operations, treasury reporting, and future read-only trading-system status surfaces.
 
-## Public-site principle
+## Local Setup
 
-The public site publishes strategy and process only: the 50 / 30 / 20 target allocation, the treasury framework, and company updates. Treasury values, holdings, prices, cost basis, cash, P&L, NAV, share counts, and performance figures appear only inside the authenticated investor and executive dashboards. `/api/treasury/snapshot` requires a signed-in session. Harmony is described as Ari's internal technology platform for treasury research, risk analysis, and controlled strategy evaluation; it is not presented as a subsidiary or a revenue line.
-
-## Correspondence routing
-
-All inbound correspondence from the site is routed to the CTO, **Mitchel Carson — mitchelcarson@ariintegratedholdings.com**:
-
-| Source | What happens |
-| --- | --- |
-| Contact form (`/contact` → `POST /api/contact`) | Emailed to the CTO with `Reply-To` set to the sender and a per-inquiry reference (`ARI-YYYYMMDD-XXXXXX`) in the subject. If the provider does not accept the message the visitor gets an error with that reference and a direct `mailto:` fallback, never a success screen. Rate-limited and honeypot-protected. |
-| Investor alert signup (`/investors#alerts`) | Subscriber gets one confirmation; the CTO gets a "new subscriber" notice. Honeypot-protected, rate-limited per client (5 per 15 min) and site-wide (30 per hour, counted in the database); addresses an executive deactivated are not silently re-enabled. |
-| Investor broadcasts (executive dashboard) | Sent as one email per subscriber (addresses are never shared), reply-to the CTO. |
-| Executive meeting notification (`POST /api/executive/meeting-notify`) | Sent to every executive in the database, with the CTO always included. |
-| Every displayed email address and `mailto:` link | `CONTACT.email` from `src/lib/site.ts`. |
-
-The destination can be overridden per deployment with `CORRESPONDENCE_EMAIL`; leave it unset to keep the CTO default. The old `RESEND_IR_EMAIL` variable is no longer read.
-
-## Local setup
-
-Use Node 22 (`.nvmrc`).
+Use Node 22 from `.nvmrc`.
 
 ```bash
 nvm use
 npm install
-cp env.local.example .env.local   # fill in values
 npm run dev
 ```
 
@@ -35,27 +16,19 @@ Open `http://localhost:3000`.
 
 ## Environment
 
-`env.local.example` is the canonical template. Production needs:
+Use `env.local.example` as the canonical template. Required production-style values include:
 
-- `NEXT_PUBLIC_SITE_URL` — absolute public URL (used for email links, sitemap, Open Graph)
-- `DATABASE_URL` — Neon PostgreSQL connection string
-- `NEXTAUTH_SECRET`, `NEXTAUTH_URL`
-- `RESEND_API_KEY`, `RESEND_FROM_EMAIL` (domain must be verified in Resend), `RESEND_FROM_NAME` — required; when the key is missing nothing is sent and every sender reports an explicit failure
-- `NEXT_PUBLIC_CALENDLY_*` — Calendly event URLs used by the scheduling components
-- `CORRESPONDENCE_EMAIL` — optional override of the CTO routing default
-- `EMAIL_DRY_RUN=1` — local development only: logs outbound email instead of sending it and reports it as not delivered; ignored in production builds
-
-## Delivery diagnostics
-
-- `GET /api/executive/email-status` (executive session required) reports whether `RESEND_API_KEY` is present (never its value), the effective From header, where correspondence is routed, whether dry-run mode is active, and the commit and branch the deployment was built from.
-- Every send writes one log line: `[email] accepted|rejected|transport|not_configured|dry-run kind=<sender> ref=<reference> …` with the provider message id on success. Contact inquiries carry the same reference in the visitor's confirmation, the email subject and footer, and the provider tags.
-- "Accepted" means the provider queued the message; it is not confirmation that it reached an inbox. Check the provider's delivery events for the message id when a recipient reports nothing arrived.
+- `DATABASE_URL`
+- `NEXTAUTH_SECRET`
+- `NEXTAUTH_URL`
+- `RESEND_API_KEY`
+- Calendly URLs used by scheduling components
 
 Database helpers:
 
 ```bash
 npm run db:migrate
-npm run db:seed      # reads SEED_EXECUTIVES / SEED_PASSWORD; refuses to run in production
+npm run db:seed
 npm run db:studio
 ```
 
@@ -64,35 +37,28 @@ npm run db:studio
 ```bash
 npm run typecheck
 npm run lint:src
-npm test           # vitest: email delivery outcomes and the contact API
 npm run build
-npm run verify     # all four
+npm run verify
 ```
 
-## Design system
+`npm run lint` is scoped to `src` and `prisma` so generated build artifacts are not linted.
 
-The site follows an "institutional glass" direction: flat navy ground, three glass tiers, gold and silver (from the lion emblem) as the only chrome accents, and BTC / ETH / SOL brand colors used strictly for data encoding (chips, allocation ring, bars, chart series).
+## Dashboard Architecture
 
-- Tokens and utilities: `src/app/globals.css`
-- Fonts: Sora (display), Inter (body), JetBrains Mono (all financial figures)
-- Site constants (name, tagline, CTO contact, 50 / 30 / 20 allocation, treasury framework copy, Harmony positioning, `GOVERNING_LAW_STATE`): `src/lib/site.ts`
-- Company updates, investor documents, events: `src/lib/investor/updates.ts` (the old `/disclosures` route and `/api/disclosures` redirect to `/updates` and `/api/updates`)
-- Meeting scheduling: `src/lib/scheduling.ts` — the contact page books one Zoom event through a modal scheduler (`NEXT_PUBLIC_CALENDLY_ZOOM_MEETING_URL`, with a default); dashboards use per-type Calendly links when configured. When nothing is configured the booking UI is hidden and the primary CTA reads "Contact Us"
-- UI primitives: `src/components/ui/` — `Button`, `Card`, `Input`/`Textarea`/`Select`, `SectionHeader`, `StatTile`, `Reveal`, `Toast`, `Sheet`, `Container`
-- Brand primitives: `src/components/brand/` — `Logo`, `AssetChip`, `ContactEmail`, `AllocationRing`, `AllocationExplorer` (interactive ring), `AllocationBar`
-- Interactive presentation: `ThesisRail` and `BasketMixer` (`src/components/thesis/`), `HarmonyLoop` (`src/components/harmony/`), `AssetsNav` (`src/components/allocation/`), `PageTransitions` (view-transition page reveals), `Card` spotlight
-- Layout: `src/components/layout/` — `Navbar`, `Footer`, `SiteBackground`, `PageHero`, `Section`, `DocumentPage`
-- Dashboard primitives: `src/components/dashboard/` — `DashboardShell`, `DashboardHeader`, `DashboardPanel`, `MetricCard`, `MetricGrid`, `DataTable`, badges, empty/error states, Recharts wrappers
+Shared dashboard primitives live in `src/components/dashboard`:
 
-Brand assets live in `public/brand/` (cropped emblem marks) and `src/app/icon.png` / `apple-icon.png`. Open Graph and Twitter images are generated at `src/app/opengraph-image.tsx`.
+- `DashboardShell`, `DashboardHeader`, `DashboardPanel`
+- `MetricCard`, `MetricGrid`, `DataTable`
+- `StatusBadge`, `FreshnessBadge`, `EmptyState`, `ErrorState`
+- Recharts wrappers for allocation and value charts
 
-## Treasury data
+Treasury data is currently manual and CFO-report sourced. UI surfaces must show source and freshness state until a live data pipeline is integrated.
 
-Treasury figures are manual and CFO-report sourced (`src/lib/treasury/snapshot.ts`) and are shown only to signed-in portal users. Every dashboard surface shows the as-of date, the source label, and the freshness state (stale after 14 days) until a live data pipeline exists.
+## Trading Backend Contract
 
-## Trading backend contract
+The trading system is intentionally separate from this repository. The executive dashboard includes a read-only placeholder only; no execution controls exist here.
 
-The trading system is intentionally separate from this repository. The executive dashboard includes a read-only placeholder only; no execution controls exist here. Future read-only endpoints expected from the backend:
+Future read-only endpoints expected from the backend:
 
 - `/api/trading/status`
 - `/api/trading/risk`

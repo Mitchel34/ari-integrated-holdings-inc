@@ -1,123 +1,133 @@
 # Ari Integrated Holdings Inc. - Project Context
 
 ## Overview
-Corporate website and investor dashboard for Ari Integrated Holdings Inc., a digital-asset treasury company holding BTC / ETH / SOL exposure through ETF positions (ARKB, FETH, FSOL) with a 50 / 30 / 20 target allocation.
+Corporate website and investor dashboard for Ari Integrated Holdings Inc., a treasury management company holding ETF positions (ARKB, FSOL, FETH).
 
 ## Tech Stack
-- **Framework:** Next.js 16 with App Router (React 19, TypeScript strict)
-- **Database:** Neon PostgreSQL via Prisma 7 (`@prisma/adapter-pg`)
-- **Auth:** NextAuth.js v4 (credentials, JWT sessions); route protection in `src/proxy.ts` (Next 16 "proxy", formerly middleware)
-- **Styling:** CSS Modules + design tokens in `src/app/globals.css` (no Tailwind)
-- **Fonts:** Sora (display), Inter (body), JetBrains Mono (financial figures) via `next/font/google`
-- **Email:** Resend (`src/lib/email.ts`)
-- **Scheduling:** Calendly embeds
+- **Framework:** Next.js 16 with App Router
+- **Database:** Neon PostgreSQL (migrated from Supabase)
+- **Auth:** NextAuth.js
+- **Styling:** CSS Modules
 - **Deployment:** Vercel (auto-deploy on push to main)
-
-## Public-Site Rules (important)
-- The public site publishes strategy and process only. Never render treasury values, holdings, units, prices, cost basis, cash, P&L, NAV, share counts, report dates, freshness badges, or performance/CAGR figures on a public page. Those belong to the authenticated dashboards only; `/api/treasury/snapshot` requires a session.
-- The 50 / 30 / 20 target allocation is public (it describes strategy). `TREASURY_FRAMEWORK` and `PRINCIPLES` in `src/lib/site.ts` are the public treasury copy.
-- Harmony is "Ari's internal technology platform for treasury research, risk analysis, and controlled strategy evaluation" (`HARMONY` in `src/lib/site.ts`). Never "operating subsidiary", "trading app", or any revenue/cost claim.
-- Public announcements live in `src/lib/investor/updates.ts` ("Company Updates", route `/updates`, feed `/api/updates`); keep only current, supportable items.
-- Meeting booking: the contact page books one Zoom event (`ZOOM_MEETING_URL`, default the executive 30-minute Calendly event, overridable with `NEXT_PUBLIC_CALENDLY_ZOOM_MEETING_URL`; empty string turns it off) through `ZoomMeetingScheduler` with the chosen topic recorded as a tracking parameter. Dashboards use per-type links when configured and fall back to the Zoom scheduler. `PRIMARY_CTA` reads "Book a Meeting" only when some booking is configured.
-- Say "email address", not "work email". State that correspondence is routed to the CTO only on `/contact` and in the Footer.
-
-## Correspondence Routing (important)
-All inbound correspondence is routed to the CTO: **Mitchel Carson <mitchelcarson@ariintegratedholdings.com>**.
-- Single source of truth: `CONTACT` in `src/lib/site.ts`. Never hard-code another address.
-- `src/lib/email.ts` exports `CORRESPONDENCE_EMAIL` (env `CORRESPONDENCE_EMAIL` override, defaults to the CTO).
-- Contact form → CTO (reply-to sender). Alert signups → subscriber confirmation + CTO notice. Meeting notifications → all executives + CTO.
-- Do not reintroduce `ariholdings.com`, `investor-relations@…`, or `contact@…` anywhere.
+- **Scheduling:** Calendly integration for executive meetings
 
 ## Project Structure
 ```
-src/
-├── app/                          # App Router pages
-│   ├── api/                      # Route handlers (contact, updates, treasury [auth], executive/*)
-│   ├── executive/                # Executive dashboard, settings, subscribers (protected)
-│   ├── investor/dashboard/       # Investor dashboard (protected)
-│   ├── login/                    # Sign-in
-│   ├── (public pages)            # thesis, assets, harmony, team, investors, updates, contact, privacy, terms, disclaimer
-│   ├── layout.tsx                # Fonts, metadata defaults, SiteBackground, Navbar, Footer
-│   ├── globals.css               # Design tokens + utilities (.eyebrow, .mono, .glass-1/2/3, .hairline)
-│   ├── sitemap.ts / robots.ts / manifest.ts / opengraph-image.tsx / not-found.tsx
-├── components/
-│   ├── brand/                    # Logo, AssetChip, ContactEmail, AllocationRing (+ AllocationExplorer: interactive ring with asset detail), AllocationBar
-│   ├── allocation/               # AssetsNav: the ring as scroll-spy navigation for /assets
-│   ├── ui/                       # Button, Card, Input/Textarea/Select, SectionHeader, StatTile, Reveal, Toast, Sheet, Container
-│   ├── layout/                   # Navbar, Footer, SiteBackground, PageHero, Section, DocumentPage, PageTransitions
-│   ├── thesis/                   # ThesisSection, ThesisRail (guided read + scroll spy), BasketMixer (concentration-only)
-│   ├── harmony/                  # HarmonyLoop (four-node research → risk → evaluation → human decision loop)
-│   ├── dashboard/                # Dashboard primitives + Recharts wrappers
-│   ├── scheduling/               # CalendlyEmbed (explicit init), ZoomMeetingScheduler + ZoomMeetingModal (<dialog>), MeetingTypeSelector, ExecMeetingBooking
-│   ├── investor/                 # AlertSignupForm
-│   └── auth/                     # LoginForm, AuthSessionProvider
-└── lib/
-    ├── site.ts                   # SITE, CONTACT (CTO), ALLOCATION (weights, roles, public facts per asset), PRINCIPLES, HARMONY, GOVERNING_LAW_STATE, PRIMARY_NAV
-    ├── scheduling.ts             # Zoom meeting event + topics (contact page), per-type Calendly links (dashboards), HAS_PUBLIC_BOOKING, PRIMARY_CTA
-    ├── useScrollSpy.ts           # useScrollSpy(ids) + scrollToSection(id) for the thesis rail and /assets nav
-    ├── email.ts                  # Resend wrapper, templates, escapeHtml, CORRESPONDENCE_EMAIL
-    ├── treasury/snapshot.ts      # ETF holdings, cash, share count (manual CFO data)
-    └── investor/updates.ts       # Company updates, documents, events (static data)
+web/
+├── src/
+│   ├── app/                    # Next.js App Router pages
+│   │   ├── api/               # API routes
+│   │   ├── assets/            # Target assets page (BTC/ETH/SOL)
+│   │   ├── executive/         # Executive dashboard (protected)
+│   │   ├── investor/          # Investor dashboard (protected)
+│   │   └── login/             # Authentication
+│   ├── components/
+│   │   ├── layout/            # Navbar, Footer
+│   │   ├── scheduling/        # Calendly embeds
+│   │   └── ui/                # Button, Card, Sheet, etc.
+│   └── lib/
+│       └── treasury/          # Financial data (snapshot.ts, prices.ts)
 ```
 
-## Design System ("institutional glass")
-- Flat navy ground (`--bg-0/1/2`), three glass tiers (`Card` variants `subtle` / `glass` / `elevated`, or `.glass-1/2/3`).
-- Gold (`--gold-300/500/700`) and silver are the only chrome accents. Eyebrows use `.eyebrow` (solid gold). At most one gradient-text element per page (`.text-gradient-silver` on the Home hero h1).
-- BTC / ETH / SOL colors (`--btc`, `--eth`, `--sol` + `-text/-a15/-a40`) are **data-only**: `AssetChip`, `AllocationRing`, `AllocationBar`, card `accent` rails, chart series. Never in backgrounds, buttons, headings, or glows.
-- All financial numbers (dashboards only) use `--font-mono` with `tabular-nums`; show an "as of · source" line and the freshness state (`getTreasuryFreshness`) under live figures. No abbreviated values, no count-ups, no fabricated data.
-- Interior pages start with `PageHero`; sections use `Section`; long-form legal/disclosure pages use `DocumentPage`.
-- Motion: `Reveal` for entrance, `--dur-*` / `--ease-*` tokens; everything respects `prefers-reduced-motion`.
-- Interactive presentation (ported from PR #9): `AllocationExplorer` (ring + asset chips + role/points + link to `/assets#key`), the thesis `ThesisRail` and `BasketMixer` (concentration only, never performance), the `HarmonyLoop`, team cards with facts + `<details>` bios, `Card` spotlight (pointer-following gold light; off on touch and reduced motion).
-- Page transitions: `PageTransitions` (mounted in `layout.tsx`) intercepts internal link clicks and replays them through `router.push` inside `document.startViewTransition`; the new page opens through a gold-rimmed circle from the click point and any element with `view-transition-name: allocation-ring` morphs between pages. Exactly ONE ring per page may carry `transitionName="allocation-ring"`. Hash links, `/api/*`, modified clicks, reduced motion, and browsers without the API fall back to ordinary navigation.
-
 ## Key Files
-- `src/lib/treasury/snapshot.ts` — holdings and cash from the latest CFO report (dashboards only). Update here when a new report arrives.
-- `src/lib/site.ts` — brand strings, CTO contact, allocation targets, primary nav.
-- `src/lib/email.ts` — all email templates (user input must go through `escapeHtml`). Sends return a `SendOutcome` (`accepted` / `dry-run` / `failed`), never a bare boolean; a missing `RESEND_API_KEY` is a `failed` outcome. `EMAIL_DRY_RUN` is honoured only outside production.
-- `src/app/api/contact/route.ts` — validated, rate-limited (5/hour/IP), honeypot field `website`, per-inquiry reference `ARI-YYYYMMDD-XXXXXX`; responds 503/502 (never `ok: true`) when the provider does not accept the message.
-- `src/app/api/executive/email-status/route.ts` — executive-only, presence-only view of the email configuration and the deployed commit.
 
-## CSS Stacking Context Rules
-- `SiteBackground`: fixed, `z-index: var(--z-ambient)` (0), pointer-events none
-- Navbar: sticky, `z-index: var(--z-nav)` (70)
-- Sheet overlay / content: fixed, `var(--z-sheet)` (80 / 81)
-- Toasts: `var(--z-toast)` (90)
-- Do NOT add `z-index` to `.layout-wrapper` in `globals.css` — it creates a stacking context that traps the Sheet.
+### Financial Data
+- `src/lib/treasury/snapshot.ts` - ETF holdings (ARKB/FSOL/FETH), cash positions, share count
+- Current holdings: $4,671.14 total assets, 300,008.7 shares outstanding
 
-## Calendly Sizing
-- `ExecMeetingBooking.module.css` `.embedContainer`: 900px desktop / 700px tablet / 550px mobile (explicit heights)
-- `MeetingTypeSelector.module.css` `.embedWrapper`: min-height 700px desktop / 500px tablet / clamp on mobile
+### Domain and Contact Email
+- `ariintegratedholdings.com` is the only active business domain, for the website and for email. The old `ariholdings.com` domain is not in use; do not add addresses or links on it.
+- `src/lib/contact.ts` holds them all: `SITE_DOMAIN`, `SITE_URL` (canonical `www` address), `CONTACT_EMAIL` (the one address shown on the site and the default destination for contact form inquiries), and `NO_REPLY_EMAIL` (default sender).
+- Render the contact address with `components/ui/ContactEmail.tsx`, which lets the long address wrap after the "@".
+- Outgoing mail is not set up yet: the sender domain must be verified in Resend, and `RESEND_*` env vars override the defaults.
+
+### Authentication
+- NextAuth configured with Neon PostgreSQL
+- Executive accounts: mitchel@ariintegratedholdings.com, judy@..., curtis@...
+- Protected routes: /executive/*, /investor/*
+
+### Scheduling Components
+- `src/lib/scheduling.ts` - Contact-page Zoom meeting link and duration
+- `CalendlyEmbed.tsx` - Inline Calendly widget, created with `Calendly.initInlineWidget` so it works in modals and when the URL changes
+- `ZoomMeetingScheduler.tsx` + `ZoomMeetingModal.tsx` - Contact page: topic cards open a native `<dialog>` with the Calendly scheduler (Zoom link created on booking)
+- `ExecMeetingBooking.tsx` - Executive Zoom meeting scheduler
+- `MeetingTypeSelector.tsx` - Inline meeting type selection on the investor and executive dashboards
+
+### Layout Components
+- `Sheet.tsx/module.css` - Mobile slide-out menu (z-index: 80-81)
+- `Navbar.tsx/module.css` - Sticky header (z-index: 70)
+
+## Interactive Components (Nov 2026)
+
+### Target allocation
+- `src/lib/allocation.ts` - Single source for the BTC/ETH/SOL target (weights, roles, copy, illustrative CAGR). Feeds the ring, mixer, thesis, and `/assets`.
+- `components/allocation/AllocationRing.tsx` - Interactive 50/30/20 ring (Home hero, Thesis 01, `/assets`). Shows the **target**, not current holdings.
+- `components/allocation/AssetsNav.tsx` - Ring as scroll-tracking navigation on `/assets`.
+
+### Thesis guided read
+- `app/thesis/page.tsx` + `thesis.module.css` - Seven chapters in one column; `components/thesis/ThesisRail.tsx` is the sticky chapter rail (desktop) / progress bar (mobile, z-index 60, below the navbar).
+- `components/thesis/BasketMixer.tsx` - Weight sliders in section 06. Shows hypothetical performance; keep the disclosure text beside it.
+- `src/lib/useScrollSpy.ts` - Shared scroll tracking for the rail and `/assets`.
+
+### Other
+- `components/harmony/HarmonyLoop.tsx` - Four-step loop on the Harmony page.
+- `components/ui/Card.tsx` - Client component; pointer-following spotlight via `--spot-x/--spot-y`.
+- Team cards use CSS subgrid so rows line up; bios are native `<details>`.
+
+### Page transitions
+- `components/layout/PageTransitions.tsx` intercepts internal link clicks (capture phase on `window`) and replays them through `router.push` inside `document.startViewTransition`. Styles are the `::view-transition-*` rules in `globals.css`.
+- Skipped for: same-page hash links, `/api/*`, modified clicks, `prefers-reduced-motion`, and browsers without the View Transitions API.
+- The ring's SVG has `view-transition-name: allocation-ring`. Render at most one `AllocationRing` per page or the transition is skipped.
+
+## Recent Fixes (Mar 2026)
+
+### Mobile Menu Stacking
+- **Root cause:** `layout-wrapper` in `globals.css` had `z-index: 1` creating a stacking context that trapped Sheet
+- **Fix:** Removed z-index from layout-wrapper
+
+### Calendly Sizing
+- **Root cause:** Desktop min-height was only 300px
+- **Fix:** Increased to 600px (ExecMeetingBooking) and 700px (MeetingTypeSelector)
+
+### CSS Stacking Context Rules
+- Sheet overlay: z-index 80, position fixed
+- Sheet content: z-index 81, position fixed
+- Navbar: z-index 70, position sticky
+- Do NOT add z-index to layout-wrapper - it breaks Sheet isolation
 
 ## Environment Variables
 ```
-NEXT_PUBLIC_SITE_URL=                 # https://ariintegratedholdings.com
-DATABASE_URL=                         # Neon PostgreSQL connection string
-NEXTAUTH_SECRET= / NEXTAUTH_URL=
-RESEND_API_KEY= / RESEND_FROM_EMAIL= / RESEND_FROM_NAME=   # required for any delivery
-CORRESPONDENCE_EMAIL=                 # optional override; defaults to the CTO
-EMAIL_DRY_RUN=                        # local only: log instead of send, reported as not delivered
-NEXT_PUBLIC_CALENDLY_ZOOM_MEETING_URL=  # contact-page Zoom event (defaults to the executive 30-minute event)
-NEXT_PUBLIC_CALENDLY_EXEC_ZOOM_URL=   # + EXEC_INTRO / INVESTOR_BRIEFING / PARTNERSHIP (dashboards)
+DATABASE_URL=           # Neon PostgreSQL connection string
+NEXTAUTH_SECRET=        # NextAuth secret
+NEXT_PUBLIC_CALENDLY_EXEC_ZOOM_URL=  # Calendly executive meeting link
+NEXT_PUBLIC_CALENDLY_ZOOM_MEETING_URL=  # Optional: contact page Zoom modal (defaults to calendly.com/mitchel-carson/30min)
 ```
 
 ## Common Issues
-- **Mobile menu content bleeding through:** check `.layout-wrapper` has no z-index.
-- **Calendly appears too small:** check the heights listed above.
-- **Login 401 errors:** usually `DATABASE_URL` misconfiguration or a Neon connection issue.
-- **Emails not delivered:** sign in as an executive and open `/api/executive/email-status`; `apiKeyConfigured: false` means `RESEND_API_KEY` is unset on that deployment (the contact form then returns 503 and shows an error). A 502 means the provider rejected the message, usually because the from-domain is not verified in Resend. Search the runtime logs for `[email]` lines by `ref=`; an `accepted` line carries the provider message id to look up in Resend's delivery events.
-- **Investor alert signup:** rate-limited per client (5 valid signups per 15 minutes, in memory) and site-wide (30 new subscriptions per hour, counted in the database); one confirmation per address; addresses an executive deactivated are never re-enabled by a new signup. Covered by `tests/alert-signup.test.ts`.
-- **ESLint React Compiler rules:** no `setState` directly inside `useEffect` bodies; no reassigning variables during render (use `reduce`/`map`).
+
+### Mobile menu content bleeding through
+Check that `layout-wrapper` in `globals.css` does NOT have z-index set.
+
+### Calendly appears too small
+Check min-height values in:
+- `ExecMeetingBooking.module.css` (.embedContainer)
+- `MeetingTypeSelector.module.css` (.embedWrapper)
+
+### Login 401 errors
+Usually indicates DATABASE_URL misconfiguration or Neon connection issue.
 
 ## Commands
 ```bash
-npm run dev        # Start dev server
-npm run typecheck  # tsc --noEmit
-npm run lint:src   # ESLint on src + prisma + tests
-npm test           # vitest (tests/)
-npm run build      # prisma generate && next build
-npm run verify     # typecheck + lint + test + build
+cd web
+npm run dev      # Start dev server
+npm run build    # Build for production
+npm run lint     # Run ESLint
 ```
 
 ## Git Workflow
-- Main branch: `main`; auto-deploys to Vercel on push
-- Commit message format: `type: description` (`feat`, `fix`, `chore`, `docs`)
+- Main branch: `main`
+- Auto-deploys to Vercel on push
+- Commit message format: `type: description`
+  - fix: Bug fixes
+  - feat: New features
+  - chore: Maintenance

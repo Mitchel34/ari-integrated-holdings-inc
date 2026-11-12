@@ -2,74 +2,56 @@
 
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { CheckCircle2 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
-import { subscribeInvestorAlertsAction } from '@/app/investors/actions';
-import { INITIAL_ALERT_SIGNUP_STATE } from './alert-state';
+import {
+    INITIAL_ALERT_SIGNUP_STATE,
+    subscribeInvestorAlertsAction,
+} from '@/app/investors/actions';
 import styles from './AlertSignupForm.module.css';
-
-interface AlertSignupFormProps {
-    /** Recorded with the signup so the origin of each subscription is known. */
-    source?: string;
-}
 
 function SubmitButton() {
     const { pending } = useFormStatus();
 
     return (
-        <Button type="submit" size="md" className={styles.submitButton} disabled={pending}>
-            {pending ? 'Submitting…' : 'Subscribe'}
+        <Button type="submit" size="md" disabled={pending}>
+            {pending ? 'Submitting...' : 'Subscribe'}
         </Button>
     );
 }
 
-export function AlertSignupForm({ source = 'investors-page' }: AlertSignupFormProps) {
+export function AlertSignupForm() {
     const [state, formAction] = useActionState(
         subscribeInvestorAlertsAction,
         INITIAL_ALERT_SIGNUP_STATE,
     );
 
-    const isError = state.status === 'error';
-    const isSuccess = state.status === 'success';
-
     return (
         <form className={styles.form} action={formAction}>
-            <input type="hidden" name="source" value={source} />
-            {/* Honeypot: hidden from people, filled by bots. */}
-            <div className={styles.honeypot} aria-hidden="true">
-                <label htmlFor="investor-alert-website">Website</label>
-                <input id="investor-alert-website" type="text" name="website" tabIndex={-1} autoComplete="off" />
-            </div>
-
-            <div className={styles.row}>
-                <Input
-                    label="Email address"
-                    type="email"
-                    name="email"
-                    id="investor-alert-email"
-                    placeholder="you@firm.com"
-                    autoComplete="email"
-                    inputMode="email"
-                    required
-                    hint={isError ? undefined : 'Company updates and investor event notices. Nothing else.'}
-                    error={isError ? state.message : undefined}
-                />
-                <div className={styles.submit}>
-                    <SubmitButton />
-                </div>
-            </div>
-
-            {isSuccess ? (
-                <p className={styles.success} role="status">
-                    <CheckCircle2 aria-hidden="true" focusable="false" />
-                    <span>{state.message}</span>
-                </p>
-            ) : null}
-
-            <p className={styles.fine}>
-                A confirmation is sent to the address you enter. Unsubscribe any time by replying to any alert.
+            <p className={styles.formHint}>
+                Receive treasury updates, disclosure releases, and investor event announcements.
             </p>
+            <Input
+                label="Work Email"
+                type="email"
+                name="email"
+                placeholder="investor@example.com"
+                required
+                autoComplete="email"
+            />
+            <div className={styles.actions}>
+                <SubmitButton />
+                {state.message ? (
+                    <p
+                        className={`${styles.feedback} ${
+                            state.status === 'success' ? styles.feedbackSuccess : styles.feedbackError
+                        }`.trim()}
+                        role="status"
+                    >
+                        {state.message}
+                    </p>
+                ) : null}
+            </div>
         </form>
     );
 }
