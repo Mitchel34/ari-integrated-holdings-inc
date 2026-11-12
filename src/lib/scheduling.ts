@@ -15,6 +15,21 @@
  * public "Book a meeting" call to action never leads to a dead end.
  */
 
+/**
+ * A booking link is only usable when it is an absolute https URL. Anything
+ * else (empty, whitespace, a bare host, a typo) counts as "not configured",
+ * so a bad value hides the booking controls instead of breaking the page.
+ */
+function bookingUrl(raw: string): string {
+    const value = raw.trim();
+    if (!value) return '';
+    try {
+        return new URL(value).protocol === 'https:' ? value : '';
+    } catch {
+        return '';
+    }
+}
+
 export interface MeetingTopic {
     id: string;
     label: string;
@@ -45,9 +60,9 @@ export const MEETING_TOPICS: readonly MeetingTopic[] = [
  * when a time is booked. Override with NEXT_PUBLIC_CALENDLY_ZOOM_MEETING_URL;
  * set it to an empty string to turn public booking off.
  */
-export const ZOOM_MEETING_URL: string = (
-    process.env.NEXT_PUBLIC_CALENDLY_ZOOM_MEETING_URL ?? 'https://calendly.com/mitchel-carson/30min'
-).trim();
+export const ZOOM_MEETING_URL: string = bookingUrl(
+    process.env.NEXT_PUBLIC_CALENDLY_ZOOM_MEETING_URL ?? 'https://calendly.com/mitchel-carson/30min',
+);
 
 /** Length of the event above, shown beside the booking controls. */
 export const ZOOM_MEETING_DURATION = '30 minutes';
@@ -57,6 +72,7 @@ export const ZOOM_MEETING_DURATION = '30 minutes';
  * this site and which topic the visitor picked.
  */
 export function zoomMeetingUrlForTopic(topicId: string): string {
+    if (!ZOOM_MEETING_URL) return '';
     const url = new URL(ZOOM_MEETING_URL);
     url.searchParams.set('utm_source', 'ari-website');
     url.searchParams.set('utm_medium', 'contact-page');
@@ -70,14 +86,14 @@ export interface MeetingType extends MeetingTopic {
 }
 
 const MEETING_TYPES: MeetingType[] = [
-    { ...MEETING_TOPICS[0], duration: '30 min', url: process.env.NEXT_PUBLIC_CALENDLY_EXEC_INTRO_URL ?? '' },
-    { ...MEETING_TOPICS[1], duration: '60 min', url: process.env.NEXT_PUBLIC_CALENDLY_INVESTOR_BRIEFING_URL ?? '' },
-    { ...MEETING_TOPICS[2], duration: '45 min', url: process.env.NEXT_PUBLIC_CALENDLY_PARTNERSHIP_URL ?? '' },
+    { ...MEETING_TOPICS[0], duration: '30 min', url: bookingUrl(process.env.NEXT_PUBLIC_CALENDLY_EXEC_INTRO_URL ?? '') },
+    { ...MEETING_TOPICS[1], duration: '60 min', url: bookingUrl(process.env.NEXT_PUBLIC_CALENDLY_INVESTOR_BRIEFING_URL ?? '') },
+    { ...MEETING_TOPICS[2], duration: '45 min', url: bookingUrl(process.env.NEXT_PUBLIC_CALENDLY_PARTNERSHIP_URL ?? '') },
 ];
 
-/** Per-type meeting events with a configured booking URL, in display order (dashboards). */
+/** Per-type meeting events with a usable booking URL, in display order (dashboards). */
 export function getConfiguredMeetingTypes(): MeetingType[] {
-    return MEETING_TYPES.filter((type) => type.url.trim().length > 0);
+    return MEETING_TYPES.filter((type) => type.url.length > 0);
 }
 
 /** True when the Zoom meeting event is configured. */
