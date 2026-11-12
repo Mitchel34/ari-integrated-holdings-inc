@@ -84,8 +84,20 @@
 }
 
 .section {
-  padding: clamp(3.5rem, 7vw, 5.5rem) 0;
+  padding-block: clamp(3.5rem, 7vw, 5.5rem);
   border-top: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+/*
+ * .section is also put directly on <Container>, which has its own 1.5rem side
+ * gutter. Setting only the block axis above leaves that gutter in place. From
+ * 1280px up the 1200px column is already clear of the viewport edges and these
+ * containers have always used its full width there, so that stays as it was.
+ */
+@media (min-width: 1280px) {
+  .section {
+    padding-inline: 0;
+  }
 }
 
 .sectionNote {
